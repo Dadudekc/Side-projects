@@ -1,0 +1,66 @@
+// Tesla-specific MACD and RSI strategy in Pine Script
+//@version=6
+strategy("TSLA MACD Curl + RSI Decline Strategy", overlay=true)
+
+// Input settings
+macdFastLength = input(12, "MACD Fast Length")
+macdSlowLength = input(26, "MACD Slow Length")
+macdSignalLength = input(9, "MACD Signal Length")
+rsiLength = input(14, "RSI Length")
+rsiThresholdLow = input(45, "RSI Bearish Threshold")
+rsiThresholdHigh = input(55, "RSI Bullish Threshold")
+useVolumeFilter = input(true, "Use Volume Filter")
+volatilityFilter = input(true, "Use Volatility Filter")
+volatilityMultiplier = input.float(1.0, "Volatility Multiplier", step=0.1)
+useTrailingStop = input(true, "Use Trailing Stop")
+trailingStopATR = input(true, "Use ATR for Trailing Stop")
+atrMultiplier = input.float(1.5, "ATR Multiplier for Trailing Stop", step=0.1)
+
+// Calculate MACD, RSI, Volume, ATR, and Volatility
+[macdLine, signalLine, _] = ta.macd(close, macdFastLength, macdSlowLength, macdSignalLength)
+rsi = ta.rsi(close, rsiLength)
+avgVolume = ta.sma(volume, 20)
+highVolume = volume > avgVolume
+atr = ta.atr(14)
+[bollUpper, _, bollLower] = ta.bb(close, 20, volatilityMultiplier)
+
+// Detect MACD curl
+diff = macdLine - signalLine
+macdCurlUp = ta.change(diff) > 0 and diff > 0  // MACD starts curling upwards
+macdCurlDown = ta.change(diff) < 0 and diff < 0  // MACD starts curling downwards
+
+// RSI conditions
+rsiBearish = rsi < rsiThresholdLow
+rsiBullish = rsi > rsiThresholdHigh
+
+// Volatility filter condition
+inVolatilityRange = close > bollLower and close < bollUpper
+
+// Combine conditions
+bullishSignal = macdCurlUp and not rsiBearish and (not useVolumeFilter or highVolume) and (not volatilityFilter or inVolatilityRange)
+bearishSignal = macdCurlDown and rsiBearish and (not useVolumeFilter or highVolume) and (not volatilityFilter or inVolatilityRange)
+
+// Execute trades if conditions are met
+if (bullishSignal)
+    strategy.entry("Buy", strategy.long)
+if (bearishSignal)
+    strategy.entry("Sell", strategy.short)
+
+// Trailing Stop Logic
+if (useTrailingStop)
+    if (trailingStopATR)
+        strategy.exit("Exit Long", from_entry="Buy", trail_offset=atr * atrMultiplier, trail_price=na)
+        strategy.exit("Exit Short", from_entry="Sell", trail_offset=atr * atrMultiplier, trail_price=na)
+
+// Plot signals
+plotshape(bullishSignal, style=shape.triangleup, location=location.belowbar, color=color.new(color.green, 0), size=size.small, title="Bullish Signal")
+plotshape(bearishSignal, style=shape.triangledown, location=location.abovebar, color=color.new(color.red, 0), size=size.small, title="Bearish Signal")
+
+// Optional: Highlight volume
+bgcolor(useVolumeFilter and highVolume ? color.new(color.blue, 85) : na)
+
+// Comments and documentation for user clarity
+// - RSI thresholds have been tightened to improve signal quality.
+// - Added a volatility filter based on Bollinger Bands to reduce trades in erratic market conditions.
+// - This strategy focuses on improving the win percentage by filtering out low-quality signals.
+// - ATR-based trailing stops are included for dynamic exit management.
