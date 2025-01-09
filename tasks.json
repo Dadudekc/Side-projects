@@ -1,0 +1,369 @@
+[
+    {
+        "Task Name": "Organize Public GitHub Projects",
+        "Category": "Immediate Tasks",
+        "Priority": "High",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "GitHub",
+        "Dependencies": [],
+        "Deliverables": [
+            "Grouped projects by category",
+            "Updated descriptions, tags, and READMEs for clarity",
+            "Archived irrelevant projects"
+        ],
+        "Validation Steps": [
+            "Verify projects are correctly categorized",
+            "Ensure descriptions and READMEs are clear",
+            "Confirm irrelevant projects are archived"
+        ],
+        "Notes": "Focus on clarity and relevance to current projects."
+    },
+    {
+        "Task Name": "Debug and Deploy Discord Bot",
+        "Category": "Immediate Tasks",
+        "Priority": "High",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Discord",
+        "Dependencies": [],
+        "Deliverables": [
+            "Tested commands for functionality and edge cases",
+            "Fixed critical bugs",
+            "Deployed Discord Bot",
+            "Documented usage and issues"
+        ],
+        "Validation Steps": [
+            "Ensure all commands function correctly",
+            "No critical bugs remain",
+            "Deployment is successful",
+            "Documentation is complete"
+        ],
+        "Notes": "Include edge case scenarios in testing."
+    },
+    {
+        "Task Name": "Create Unified Project Directory",
+        "Category": "Immediate Tasks",
+        "Priority": "High",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Organization",
+        "Dependencies": [],
+        "Deliverables": [
+            "Organized local files by type/framework",
+            "Synced with cloud repositories to avoid duplication"
+        ],
+        "Validation Steps": [
+            "No duplicate files in cloud",
+            "Directory structure is logical and consistent"
+        ],
+        "Notes": "Use consistent naming conventions."
+    },
+    {
+        "Task Name": "Stabilize Projects",
+        "Category": "Secondary Tasks",
+        "Priority": "Medium",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Stabilization",
+        "Dependencies": [],
+        "Deliverables": [
+            "Identified and documented status of stable projects",
+            "Categorized non-stable projects by issue type (e.g., incomplete, buggy)"
+        ],
+        "Validation Steps": [
+            "Stable projects are clearly documented",
+            "Non-stable projects are correctly categorized"
+        ],
+        "Notes": "Example stable project: TROOP"
+    },
+    {
+        "Task Name": "Add Automated Testing",
+        "Category": "Secondary Tasks",
+        "Priority": "Medium",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Testing",
+        "Dependencies": ["Stabilize Projects"],
+        "Deliverables": [
+            "Implemented unit and integration tests for stable projects",
+            "Set up automated validation pipelines"
+        ],
+        "Validation Steps": [
+            "Tests cover key functionalities",
+            "Pipelines run successfully without errors"
+        ],
+        "Notes": "Start with the most critical projects."
+    },
+    {
+        "Task Name": "Test ModelTrainingEvaluationService",
+        "Category": "Secondary Tasks",
+        "Priority": "Medium",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Testing",
+        "Dependencies": [],
+        "Deliverables": [
+            "Accurate evaluation metrics",
+            "Resolved validation issues"
+        ],
+        "Validation Steps": [
+            "Metrics match expected results",
+            "No issues remain after validation"
+        ],
+        "Notes": "Focus on metric accuracy."
+    },
+    {
+        "Task Name": "Daily Commit (Green Board)",
+        "Category": "Secondary Tasks",
+        "Priority": "Medium",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Version Control",
+        "Dependencies": [],
+        "Deliverables": [
+            "At least one meaningful commit each day"
+        ],
+        "Validation Steps": [
+            "Commit history shows daily progress",
+            "Commits are meaningful and relevant"
+        ],
+        "Notes": "Maintain streak for consistency."
+    },
+    {
+        "Task Name": "Review & Document Projects",
+        "Category": "Lower Priority Tasks",
+        "Priority": "Low",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Documentation",
+        "Dependencies": [],
+        "Deliverables": [
+            "Evaluated project progress and goals",
+            "Updated READMEs",
+            "Created backlogs with actionable tasks"
+        ],
+        "Validation Steps": [
+            "All projects have updated documentation",
+            "Backlogs are actionable and prioritized"
+        ],
+        "Notes": "Regularly schedule reviews."
+    },
+    {
+        "Task Name": "Dev Blog Update",
+        "Category": "Lower Priority Tasks",
+        "Priority": "Low",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Content",
+        "Dependencies": [],
+        "Deliverables": [
+            "Summarized stable projects and their importance",
+            "Highlighted lessons learned and future plans"
+        ],
+        "Validation Steps": [
+            "Blog post is clear, informative, and engaging"
+        ],
+        "Notes": "Use visuals where possible."
+    },
+    {
+        "Task Name": "Discord Bot Improvements",
+        "Category": "Ongoing Development",
+        "Priority": "Low",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Discord",
+        "Dependencies": ["Debug and Deploy Discord Bot"],
+        "Deliverables": [
+            "Added new features",
+            "Ensured deployability of improvements"
+        ],
+        "Validation Steps": [
+            "New features work as intended",
+            "No deployment issues"
+        ],
+        "Notes": "Gather user feedback for feature prioritization."
+    },
+    {
+        "Task Name": "Twitch Bot Development",
+        "Category": "Ongoing Development",
+        "Priority": "Low",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Twitch",
+        "Dependencies": [],
+        "Deliverables": [
+            "Built core functionality",
+            "Tested API integrations"
+        ],
+        "Validation Steps": [
+            "Bot functions correctly on Twitch",
+            "API integrations are stable"
+        ],
+        "Notes": "Ensure compliance with Twitch policies."
+    },
+    {
+        "Task Name": "Test Swift Application",
+        "Category": "Ongoing Development",
+        "Priority": "Low",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Swift",
+        "Dependencies": [],
+        "Deliverables": [
+            "Performed feature testing",
+            "Documented known issues"
+        ],
+        "Validation Steps": [
+            "All features tested",
+            "Known issues are documented for future fixes"
+        ],
+        "Notes": "Prioritize user experience in testing."
+    },
+    {
+        "Task Name": "Refine Chapters 1-1 and 1-2",
+        "Category": "Writing Goals: \"The Digital Dreamscape\"",
+        "Priority": "High",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Writing",
+        "Dependencies": [],
+        "Deliverables": [
+            "Improved descriptions of key artifacts and settings",
+            "Added subtle foreshadowing about The Rival and Dreamscape’s sentience"
+        ],
+        "Validation Steps": [
+            "Chapters 1-1 and 1-2 are more descriptive and engaging",
+            "Foreshadowing elements are effectively integrated"
+        ],
+        "Notes": "Maintain consistency with the overall narrative tone."
+    },
+    {
+        "Task Name": "Draft Chapter 1-3 Outline",
+        "Category": "Writing Goals: \"The Digital Dreamscape\"",
+        "Priority": "High",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Writing",
+        "Dependencies": ["Refine Chapters 1-1 and 1-2"],
+        "Deliverables": [
+            "Defined next setting",
+            "Defined next challenge",
+            "Outlined Victor’s evolution"
+        ],
+        "Validation Steps": [
+            "Outline is clear and provides a solid foundation for writing Chapter 1-3"
+        ],
+        "Notes": "Focus on character development and plot progression."
+    },
+    {
+        "Task Name": "Develop The Rival’s Storyline",
+        "Category": "Writing Goals: \"The Digital Dreamscape\"",
+        "Priority": "Medium",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Writing",
+        "Dependencies": ["Draft Chapter 1-3 Outline"],
+        "Deliverables": [
+            "Outlined key parallels between Victor and The Rival",
+            "Decided on tone and major events tied to The Rival’s role"
+        ],
+        "Validation Steps": [
+            "Storyline is coherent and enhances the main narrative",
+            "Parallels are meaningful and impactful"
+        ],
+        "Notes": "Ensure The Rival adds depth to the story."
+    },
+    {
+        "Task Name": "Expand Dreamscape Lore",
+        "Category": "Writing Goals: \"The Digital Dreamscape\"",
+        "Priority": "Medium",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Writing",
+        "Dependencies": [],
+        "Deliverables": [
+            "Documented artifact rules",
+            "Documented Dreamscape mechanics"
+        ],
+        "Validation Steps": [
+            "Lore is detailed and consistent",
+            "Mechanics are clearly explained"
+        ],
+        "Notes": "Use appendices if necessary for extensive lore."
+    },
+    {
+        "Task Name": "Finalize Chapter 1-3",
+        "Category": "Writing Goals: \"The Digital Dreamscape\"",
+        "Priority": "Low",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Writing",
+        "Dependencies": [
+            "Develop The Rival’s Storyline",
+            "Expand Dreamscape Lore"
+        ],
+        "Deliverables": [
+            "Written and refined narrative for Chapter 1-3"
+        ],
+        "Validation Steps": [
+            "Chapter is consistent with earlier chapters",
+            "Narrative flows smoothly"
+        ],
+        "Notes": "Seek feedback from beta readers if possible."
+    },
+    {
+        "Task Name": "Interactive Elements in Dreamscape",
+        "Category": "Writing Goals: \"The Digital Dreamscape\"",
+        "Priority": "Low",
+        "Status": "To Do",
+        "Progress (%)": 0,
+        "Owner": "User",
+        "Due Date": null,
+        "Tag": "Writing",
+        "Dependencies": ["Finalize Chapter 1-3"],
+        "Deliverables": [
+            "Introduced dynamic landscapes",
+            "Introduced reflective trials"
+        ],
+        "Validation Steps": [
+            "Interactive elements enhance the reader’s experience",
+            "Elements are well-integrated into the story"
+        ],
+        "Notes": "Ensure interactivity complements the plot."
+    }
+]
