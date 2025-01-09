@@ -1,0 +1,92 @@
+//@version=5
+strategy("Enhanced QQQ Strategy", shorttitle="QQQ_Enhanced", overlay=true, 
+     default_qty_type=strategy.percent_of_equity, default_qty_value=2)
+
+// User Inputs
+ema_fast_length = input.int(20, minval=1, title="Fast EMA Length")
+ema_slow_length = input.int(50, minval=1, title="Slow EMA Length")
+rsi_length = input.int(14, minval=1, title="RSI Length")
+adx_threshold = input.int(15, minval=1, title="ADX Threshold")  // Loosened ADX threshold
+atr_multiplier = input.float(1.5, minval=0.1, title="ATR Multiplier for Stop Loss")
+risk_reward_ratio = input.float(2.5, minval=1.0, title="Risk-Reward Ratio")  // Increased R:R
+volume_filter = input.bool(true, title="Enable Volume Filter")
+trail_stop_enabled = input.bool(true, title="Enable Trailing Stop")
+trail_atr_multiplier = input.float(1.5, minval=0.1, title="Trailing ATR Multiplier")
+trade_start_hour = input.int(9, title="Trade Start Hour (24h format)")
+trade_end_hour = input.int(15, title="Trade End Hour (24h format)")
+
+// Multi-Timeframe Confirmation
+higher_tf = input.timeframe("1D", title="Higher Timeframe for Trend")
+sma_htf = request.security(syminfo.tickerid, higher_tf, ta.sma(close, 50))
+higher_tf_trend_up = close > sma_htf
+higher_tf_trend_down = close < sma_htf
+
+// Indicators
+ema_fast = ta.ema(close, ema_fast_length)
+ema_slow = ta.ema(close, ema_slow_length)
+rsi = ta.rsi(close, rsi_length)
+[adx, di_plus, di_minus] = ta.dmi(14, 14)  // Explicit ADX smoothing
+atr = ta.atr(14)
+avg_volume = ta.sma(volume, 20)
+
+// Time Filter
+in_trading_session = (hour >= trade_start_hour and hour <= trade_end_hour)
+
+// Entry Conditions
+long_entry = in_trading_session and 
+             ta.crossover(ema_fast, ema_slow) and 
+             rsi < 70 and 
+             adx > adx_threshold and 
+             (not volume_filter or volume > avg_volume) and 
+             higher_tf_trend_up
+
+short_entry = in_trading_session and 
+              ta.crossunder(ema_fast, ema_slow) and 
+              rsi > 30 and 
+              adx > adx_threshold and 
+              (not volume_filter or volume > avg_volume) and 
+              higher_tf_trend_down
+
+// Exit Conditions
+long_exit = ta.crossunder(ema_fast, ema_slow) or ta.valuewhen(rsi > 80, close, 0)  // Add RSI-based exit
+short_exit = ta.crossover(ema_fast, ema_slow) or ta.valuewhen(rsi < 20, close, 0)  // Add RSI-based exit
+
+// Stop Loss and Take Profit
+stop_loss_long = close - (atr * atr_multiplier)
+take_profit_long = close + ((atr * atr_multiplier) * risk_reward_ratio)
+stop_loss_short = close + (atr * atr_multiplier)
+take_profit_short = close - ((atr * atr_multiplier) * risk_reward_ratio)
+
+// Trailing Stop Logic
+var float trail_stop_long = na
+var float trail_stop_short = na
+
+if trail_stop_enabled
+    trail_stop_long := close - (atr * trail_atr_multiplier)
+    trail_stop_short := close + (atr * trail_atr_multiplier)
+
+// Long Trade Execution
+if (long_entry)
+    strategy.entry("Long", strategy.long)
+    strategy.exit("Long TP/SL", "Long", stop=stop_loss_long, limit=take_profit_long)
+
+// Short Trade Execution
+if (short_entry)
+    strategy.entry("Short", strategy.short)
+    strategy.exit("Short TP/SL", "Short", stop=stop_loss_short, limit=take_profit_short)
+
+// Trailing Stops
+if (trail_stop_enabled)
+    if (strategy.position_size > 0) // Long position
+        strategy.exit("Long Trail", "Long", stop=trail_stop_long)
+    if (strategy.position_size < 0) // Short position
+        strategy.exit("Short Trail", "Short", stop=trail_stop_short)
+
+// Debugging Plots
+plot(ema_fast, color=color.blue, title="Fast EMA")
+plot(ema_slow, color=color.red, title="Slow EMA")
+hline(70, "RSI Upper", color=color.orange)
+hline(30, "RSI Lower", color=color.green)
+plot(rsi, title="RSI", color=color.purple)
+plot(adx, title="ADX", color=color.yellow)
+plot(sma_htf, title="HTF SMA", color=color.gray)
