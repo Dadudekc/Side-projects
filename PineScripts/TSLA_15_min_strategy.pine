@@ -1,6 +1,18 @@
-//@version=5
+//@version=6
 strategy("TSLA 15min Strategy", shorttitle="TSLA_15min_strategy", overlay=true, 
          default_qty_type=strategy.percent_of_equity, default_qty_value=2)
+
+
+// Purpose:
+// This strategy combines EMAs, RSI, ADX, and ATR to trade Tesla (TSLA) on a 15-minute timeframe. 
+// It dynamically manages risk and filters trades using higher-timeframe trends and volume conditions.
+
+// Performance Highlights:
+// Net Profit: 16,750.70 USD (1.68%)
+// Profit Factor: 1.724
+// Win Rate: 43.33%
+// Risk-Reward Ratio: 2.122
+
 
 // ----------------------------
 // User Inputs
@@ -14,13 +26,11 @@ ema_slow_length = input.int(50, minval=1, title="Slow EMA Length")
 rsi_length = input.int(14, minval=1, title="RSI Length")
 
 // ADX Settings
-adx_threshold = input.int(15, minval=1, title="ADX Threshold")  // Loosened ADX threshold
+adx_threshold = input.int(15, minval=1, title="ADX Threshold")
 
-// ATR Settings for Stop Loss
+// ATR Settings
 atr_multiplier = input.float(1.5, minval=0.1, title="ATR Multiplier for Stop Loss")
-
-// Risk-Reward Ratio
-risk_reward_ratio = input.float(2.5, minval=1.0, title="Risk-Reward Ratio")  // Increased R:R
+risk_reward_ratio = input.float(2.5, minval=1.0, title="Risk-Reward Ratio")
 
 // Volume Filter
 volume_filter = input.bool(true, title="Enable Volume Filter")
@@ -33,152 +43,132 @@ trail_atr_multiplier = input.float(1.5, minval=0.1, title="Trailing ATR Multipli
 trade_start_hour = input.int(9, title="Trade Start Hour (24h format)")
 trade_end_hour = input.int(15, title="Trade End Hour (24h format)")
 
-// ----------------------------
-// Multi-Timeframe Confirmation
-// ----------------------------
-
-// Define higher timeframe for trend confirmation
+// Higher Timeframe Confirmation
 higher_tf = input.timeframe("1D", title="Higher Timeframe for Trend")
 sma_htf = request.security(syminfo.tickerid, higher_tf, ta.sma(close, 50))
-
-// Determine trend direction based on higher timeframe SMA
-higher_tf_trend_up = close > sma_htf
-higher_tf_trend_down = close < sma_htf
 
 // ----------------------------
 // Indicator Calculations
 // ----------------------------
 
-// Calculate EMAs
+// Moving Averages
 ema_fast = ta.ema(close, ema_fast_length)
 ema_slow = ta.ema(close, ema_slow_length)
 
-// Calculate RSI
+// RSI and ADX
 rsi = ta.rsi(close, rsi_length)
+[adx, di_plus, di_minus] = ta.dmi(14, 14)
 
-// Calculate ADX and Directional Indicators
-[adx, di_plus, di_minus] = ta.dmi(14, 14)  // Explicit ADX smoothing
-
-// Calculate ATR for volatility
+// ATR for Stop Loss/Take Profit
 atr = ta.atr(14)
 
-// Calculate Average Volume over the last 20 periods
+// Volume Condition
 avg_volume = ta.sma(volume, 20)
+high_volume = volume > avg_volume
 
-// ----------------------------
-// Time Filter
-// ----------------------------
-
-// Determine if the current time is within the trading session
-in_trading_session = (hour >= trade_start_hour and hour <= trade_end_hour)
+// Higher Timeframe Trend
+higher_tf_trend_up = close > sma_htf
+higher_tf_trend_down = close < sma_htf
 
 // ----------------------------
 // Entry Conditions
 // ----------------------------
 
-// Long Entry Conditions:
-// - Within trading session
-// - Fast EMA crosses above Slow EMA
-// - RSI is below 70 (not overbought)
-// - ADX indicates strong trend
-// - Volume is above average if volume filter is enabled
-// - Higher timeframe trend is up
-long_entry = in_trading_session and 
-             ta.crossover(ema_fast, ema_slow) and 
+// Long Entry
+long_entry = ta.crossover(ema_fast, ema_slow) and 
              rsi < 70 and 
              adx > adx_threshold and 
-             (not volume_filter or volume > avg_volume) and 
+             (not volume_filter or high_volume) and 
              higher_tf_trend_up
 
-// Short Entry Conditions:
-// - Within trading session
-// - Fast EMA crosses below Slow EMA
-// - RSI is above 30 (not oversold)
-// - ADX indicates strong trend
-// - Volume is above average if volume filter is enabled
-// - Higher timeframe trend is down
-short_entry = in_trading_session and 
-              ta.crossunder(ema_fast, ema_slow) and 
+// Short Entry
+short_entry = ta.crossunder(ema_fast, ema_slow) and 
               rsi > 30 and 
               adx > adx_threshold and 
-              (not volume_filter or volume > avg_volume) and 
+              (not volume_filter or high_volume) and 
               higher_tf_trend_down
 
 // ----------------------------
 // Exit Conditions
 // ----------------------------
 
-// Long Exit Conditions:
-// - Fast EMA crosses below Slow EMA
-// - RSI crosses above 80 (indicating overbought)
-long_exit = ta.crossunder(ema_fast, ema_slow) or ta.valuewhen(rsi > 80, close, 0)
+// Long Exit
+long_exit = ta.crossunder(ema_fast, ema_slow) or rsi > 80
 
-// Short Exit Conditions:
-// - Fast EMA crosses above Slow EMA
-// - RSI crosses below 20 (indicating oversold)
-short_exit = ta.crossover(ema_fast, ema_slow) or ta.valuewhen(rsi < 20, close, 0)
+// Short Exit
+short_exit = ta.crossover(ema_fast, ema_slow) or rsi < 20
 
 // ----------------------------
 // Stop Loss and Take Profit Levels
 // ----------------------------
 
-// Calculate Stop Loss and Take Profit for Long Trades
+// Long
 stop_loss_long = close - (atr * atr_multiplier)
 take_profit_long = close + ((atr * atr_multiplier) * risk_reward_ratio)
 
-// Calculate Stop Loss and Take Profit for Short Trades
+// Short
 stop_loss_short = close + (atr * atr_multiplier)
 take_profit_short = close - ((atr * atr_multiplier) * risk_reward_ratio)
 
-// ----------------------------
 // Trailing Stop Logic
-// ----------------------------
-
-// Initialize trailing stop variables
-var float trail_stop_long = na
-var float trail_stop_short = na
+var float trail_stop_long = na  // Initialize as na with float type
+var float trail_stop_short = na  // Initialize as na with float type
 
 if trail_stop_enabled
-    // Update trailing stops based on ATR
+    // Update trailing stop levels
     trail_stop_long := close - (atr * trail_atr_multiplier)
     trail_stop_short := close + (atr * trail_atr_multiplier)
 
-// ----------------------------
-// Trade Execution
-// ----------------------------
-
-// Execute Long Trade
-if (long_entry)
-    strategy.entry("Long", strategy.long)
-    strategy.exit("Long TP/SL", "Long", stop=stop_loss_long, limit=take_profit_long)
-
-// Execute Short Trade
-if (short_entry)
-    strategy.entry("Short", strategy.short)
-    strategy.exit("Short TP/SL", "Short", stop=stop_loss_short, limit=take_profit_short)
-
-// Apply Trailing Stops if enabled
-if (trail_stop_enabled)
+// Apply Trailing Stops
+if trail_stop_enabled
     if (strategy.position_size > 0) // Long position
         strategy.exit("Long Trail", "Long", stop=trail_stop_long)
     if (strategy.position_size < 0) // Short position
         strategy.exit("Short Trail", "Short", stop=trail_stop_short)
 
+
 // ----------------------------
-// Debugging and Visualization
+// Trade Execution
+// ----------------------------
+
+// Long Trades
+if (long_entry)
+    strategy.entry("Long", strategy.long)
+    strategy.exit("Long TP/SL", "Long", stop=stop_loss_long, limit=take_profit_long)
+
+// Short Trades
+if (short_entry)
+    strategy.entry("Short", strategy.short)
+    strategy.exit("Short TP/SL", "Short", stop=stop_loss_short, limit=take_profit_short)
+
+// Apply Trailing Stops
+if (trail_stop_enabled)
+    if (strategy.position_size > 0) // Long
+        strategy.exit("Long Trail", "Long", stop=trail_stop_long)
+    if (strategy.position_size < 0) // Short
+        strategy.exit("Short Trail", "Short", stop=trail_stop_short)
+
+// ----------------------------
+// Visualizations
 // ----------------------------
 
 // Plot EMAs
 plot(ema_fast, color=color.blue, title="Fast EMA")
 plot(ema_slow, color=color.red, title="Slow EMA")
 
-// Plot RSI with Overbought and Oversold Levels
-hline(70, "RSI Upper", color=color.orange)
-hline(30, "RSI Lower", color=color.green)
+// RSI with Levels
+hline(70, "RSI Overbought", color=color.orange)
+hline(30, "RSI Oversold", color=color.green)
 plot(rsi, title="RSI", color=color.purple)
 
-// Plot ADX
+// ADX Plot
 plot(adx, title="ADX", color=color.yellow)
 
-// Plot Higher Timeframe SMA for Trend Confirmation
+// Higher Timeframe SMA
 plot(sma_htf, title="HTF SMA", color=color.gray)
+
+// Trade Signals
+plotshape(long_entry, style=shape.triangleup, location=location.belowbar, 
+          color=color.new(color.green, 0), size=size.small, title="Buy Signal")
+plotshape(short_entry, style=shape.triangledown, location=location.abovebar, 
+          color=color.new(color.red, 0), size=size.small, title="Sell Signal")
