@@ -1,6 +1,6 @@
 //@version=5
 strategy("TSLA 15min Strategy", shorttitle="TSLA_15min_strategy", overlay=true, 
-     default_qty_type=strategy.percent_of_equity, default_qty_value=2)
+         default_qty_type=strategy.percent_of_equity, default_qty_value=2)
 
 // ----------------------------
 // User Inputs
@@ -182,20 +182,3 @@ plot(adx, title="ADX", color=color.yellow)
 
 // Plot Higher Timeframe SMA for Trend Confirmation
 plot(sma_htf, title="HTF SMA", color=color.gray)
-
-// ----------------------------
-// Additional Enhancements
-// ----------------------------
-
-// Highlighting Entry and Exit Points for Better Visualization
-if (long_entry)
-    label.new(bar_index, high, "Long Entry", color=color.green, style=label.style_label_up, textcolor=color.white)
-
-if (short_entry)
-    label.new(bar_index, low, "Short Entry", color=color.red, style=label.style_label_down, textcolor=color.white)
-
-if (long_exit)
-    label.new(bar_index, low, "Long Exit", color=color.red, style=label.style_label_down, textcolor=color.white)
-
-if (short_exit)
-    label.new(bar_index, high, "Short Exit", color=color.green, style=label.style_label_up, textcolor=color.white)
