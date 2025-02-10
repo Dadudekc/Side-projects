@@ -7,9 +7,6 @@ import argparse
 import logging
 from datetime import datetime
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
-
 # -----------------------------
 # Regex patterns for PHP parsing
 # -----------------------------
@@ -56,7 +53,6 @@ def extract_php_details(file_path):
     # Use the first PHPDoc comment as a description if available
     description = "No description available."
     if comments:
-        # Clean up the comment by removing asterisks and extra whitespace.
         clean_lines = [line.strip(" *") for line in comments[0].strip().splitlines() if line.strip(" *")]
         description = " ".join(clean_lines)
 
@@ -75,6 +71,9 @@ def extract_php_details(file_path):
         "includes": list(set([inc[2] for inc in includes])),
         "properties": [{"visibility": vis, "name": prop_name} for vis, prop_name in properties]
     }
+
+    # Log the raw details for debugging purposes.
+    logging.debug(f"Extracted details for {file_path}: {json.dumps(details, indent=2, ensure_ascii=False)}")
     return details
 
 # -----------------------------
@@ -92,12 +91,14 @@ def scan_project(directory):
 
     for root, _, files in os.walk(directory):
         for file in files:
-            if file.endswith('.php'):
+            if file.lower().endswith('.php'):
                 file_path = os.path.join(root, file)
                 logging.info(f"Analyzing: {file_path}")
                 details = extract_php_details(file_path)
                 if details:
                     project_summary["files"].append(details)
+                else:
+                    logging.warning(f"No details extracted from {file_path}")
     return project_summary
 
 # -----------------------------
@@ -105,6 +106,10 @@ def scan_project(directory):
 # -----------------------------
 def save_summary(summary, output_dir):
     os.makedirs(output_dir, exist_ok=True)
+
+    # Debug: Dump summary to console
+    logging.debug("Final project summary:")
+    logging.debug(json.dumps(summary, indent=2, ensure_ascii=False))
 
     # Save JSON
     json_path = os.path.join(output_dir, 'project_summary.json')
@@ -129,11 +134,17 @@ def save_summary(summary, output_dir):
 # -----------------------------
 def main():
     parser = argparse.ArgumentParser(
-        description="Advanced PHP Project Analyzer: Scans PHP files to extract classes, functions, includes, and more."
+        description="Advanced PHP Project Analyzer with Debug: Scans PHP files to extract classes, functions, includes, and more."
     )
     parser.add_argument("directory", help="Path to the PHP project directory")
     parser.add_argument("-o", "--output", default="summaries", help="Output directory for summaries (default: summaries)")
+    parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     args = parser.parse_args()
+
+    # Set logging level based on debug flag
+    if args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.debug("Debug mode enabled.")
 
     if not os.path.isdir(args.directory):
         logging.error(f"The provided path '{args.directory}' is not a directory.")
@@ -141,6 +152,11 @@ def main():
 
     logging.info(f"Starting analysis of project: {args.directory}")
     summary = scan_project(args.directory)
+
+    # If no PHP files were found, warn the user.
+    if not summary["files"]:
+        logging.warning("No PHP files were analyzed. The output may be empty.")
+
     save_summary(summary, args.output)
     logging.info("Project analysis complete.")
 
