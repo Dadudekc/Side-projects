@@ -1,0 +1,62 @@
+import os
+import re
+import json
+import yaml
+
+# Directory containing PHP files
+PROJECT_DIR = '/path/to/your/project'  # Replace with your actual project path
+
+# Regex patterns to extract key components
+CLASS_PATTERN = re.compile(r'class\s+(\w+)')
+FUNCTION_PATTERN = re.compile(r'function\s+(\w+)\s*\((.*?)\)')
+NAMESPACE_PATTERN = re.compile(r'namespace\s+([\w\\]+)')
+COMMENT_PATTERN = re.compile(r'/\*\*(.*?)\*/', re.DOTALL)
+
+
+def extract_php_details(file_path):
+    with open(file_path, 'r') as file:
+        content = file.read()
+
+    namespace = NAMESPACE_PATTERN.search(content)
+    class_name = CLASS_PATTERN.search(content)
+    functions = FUNCTION_PATTERN.findall(content)
+    comments = COMMENT_PATTERN.findall(content)
+
+    # Extract the first PHPDoc comment as description if available
+    description = comments[0].strip().replace('*', '').strip() if comments else "No description available."
+
+    return {
+        "file": os.path.basename(file_path),
+        "namespace": namespace.group(1) if namespace else "None",
+        "description": description,
+        "functions": [{"name": fn[0], "parameters": fn[1]} for fn in functions]
+    }
+
+
+def summarize_project(directory):
+    summary = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith('.php'):
+                file_path = os.path.join(root, file)
+                summary.append(extract_php_details(file_path))
+
+    return summary
+
+
+def save_summary(summary, output_dir='summaries'):
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Save as JSON
+    with open(os.path.join(output_dir, 'project_summary.json'), 'w') as json_file:
+        json.dump(summary, json_file, indent=4)
+
+    # Save as YAML
+    with open(os.path.join(output_dir, 'project_summary.yaml'), 'w') as yaml_file:
+        yaml.dump(summary, yaml_file, default_flow_style=False)
+
+
+if __name__ == "__main__":
+    project_summary = summarize_project(PROJECT_DIR)
+    save_summary(project_summary)
+    print("✅ Project summary generated in JSON and YAML formats.")
