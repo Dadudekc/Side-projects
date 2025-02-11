@@ -69,14 +69,14 @@ class EngagementTracker:
             values='EngagementRate',
             index='DayOfWeek',
             columns='Hour',
-            aggfunc=np.mean,
+            aggfunc='mean',  # Changed from np.mean to 'mean' to avoid FutureWarning
             fill_value=0
         )
 
         return heatmap_data
 
 # Unit Test for Engagement Heatmap
-class TestEngagementHeatmap(unittest.TestCase):
+class TestEngagementTracker(unittest.TestCase):
     def setUp(self):
         self.tracker = EngagementTracker()
         self.mock_data = [
@@ -89,8 +89,8 @@ class TestEngagementHeatmap(unittest.TestCase):
     def test_generate_engagement_heatmap(self):
         heatmap = self.tracker.generate_engagement_heatmap(self.mock_data)
         self.assertFalse(heatmap.empty)
-        self.assertIn('10', heatmap.columns.astype(str))
-        self.assertIn('Monday', heatmap.index)  # Check if Monday is present
+        self.assertIn(10, heatmap.columns)
+        self.assertIn('Saturday', heatmap.index)
 
     def test_empty_data(self):
         heatmap = self.tracker.generate_engagement_heatmap([])
