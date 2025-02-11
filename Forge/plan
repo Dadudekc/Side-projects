@@ -5,10 +5,10 @@ Here’s the **scalable project structure** to accommodate all the planned featu
 ```
 VlogForge/
 ├── main.py                  # Entry point of the app
-├── core/
-│   ├── content_manager.py   # Handles content scheduling, auto-updates, and reminders
-│   ├── engagement_analysis.py # Engagement tracking, audience insights, and heatmaps
-│   ├── auto_posting.py      # Auto-posting scheduler for optimal timing
+├── core/ #in progress...
+│   ├── content_manager.py   # Handles content scheduling, auto-updates, and reminders #done
+│   ├── engagement_tracker.py # Engagement tracking, audience insights, and heatmaps #done
+│   ├── auto_posting.py      # Auto-posting scheduler for optimal timing 
 │   ├── ai_caption_suggester.py # AI-based title and caption generation
 │   ├── batch_content_generator.py # Generate multiple vlog scripts at once
 │   ├── referral_tracker.py  # Tracks referrals for user acquisition
@@ -70,19 +70,4 @@ VlogForge/
 | **Lead Magnet Automation** | `lead_magnet.py` |
 | **Social Engagement Bot (Optional)** | `social_engagement_bot.py` |
 
----
 
-### **🛠 Next Steps: What Should We Build First?**
-Here are **three logical starting points** based on your focus areas:
-
-1. **🚀 Lead Magnet Automation (Quick Win)**
-   - Auto-send free resources to users and track conversions.
-   - Helps **grow your email list & user base immediately**.
-
-2. **📊 Engagement Heatmap & Growth Tracker**
-   - Identify the best days/times to post for **maximum reach**.
-   - **Track follower/subscriber growth** alongside content performance.
-
-3. **🤖 Auto-Post Scheduler**
-   - Automatically **post at optimal times** based on engagement trends.
-   - Helps you **stay consistent without manual effort**.
