@@ -51,9 +51,15 @@ class ContentManager:
         today = datetime.now().date()
         return [content for content in self.content_schedule if datetime.strptime(content['Date'], '%Y-%m-%d').date() > today]
 
-    def get_due_reminders(self):
+    def get_due_reminders(self, remind_before=0):
         today = datetime.now().date()
-        return [content for content in self.content_schedule if datetime.strptime(content['Date'], '%Y-%m-%d').date() == today and content['Status'] == 'Scheduled']
+        reminder_date = today + timedelta(days=remind_before)
+
+        return [
+            content for content in self.content_schedule
+            if datetime.strptime(content['Date'], '%Y-%m-%d').date() == reminder_date
+               and content['Status'] == 'Scheduled'
+        ]
 
     def suggest_optimal_posting_time(self, engagement_data):
         if not engagement_data:
