@@ -1,13 +1,13 @@
-### **Expanded Project Structure for Full Vlog Forge Feature Set**
+### ✅ **Updated Project Structure for Full Vlog Forge Feature Set**
 
-Here’s the **scalable project structure** to accommodate all the planned features while keeping it modular and easy to expand.
+Here’s the **scalable project structure** with the current progress marked.
 
 ```
 VlogForge/
 ├── main.py                  # Entry point of the app
-├── core/ #in progress...
-│   ├── content_manager.py   # Handles content scheduling, auto-updates, and reminders #done
-│   ├── engagement_tracker.py # Engagement tracking, audience insights, and heatmaps #done
+├── core/ # in progress...
+│   ├── content_manager.py   # Handles content scheduling, auto-updates, and reminders # ✅ done
+│   ├── engagement_tracker.py # Engagement tracking, audience insights, and heatmaps # ✅ done
 │   ├── auto_posting.py      # Auto-posting scheduler for optimal timing 
 │   ├── ai_caption_suggester.py # AI-based title and caption generation
 │   ├── batch_content_generator.py # Generate multiple vlog scripts at once
@@ -52,22 +52,28 @@ VlogForge/
 ---
 
 ### **Key Features & Where They Fit**
-| Feature | Module(s) |
-|----------------------------|------------------------------------------|
-| **Auto-Post Scheduler** | `auto_posting.py` |
-| **Batch Content Generator** | `batch_content_generator.py` |
-| **AI-Driven Title & Caption Suggestions** | `ai_caption_suggester.py` |
-| **Engagement Heatmap** | `engagement_heatmap.py` |
-| **Audience Interaction Tracker** | `audience_tracker.py` |
-| **Hashtag Performance Tracker** | `hashtag_performance.py` |
-| **Content Idea Vault** | `idea_vault.py` |
-| **Auto-Highlight Generator** | `auto_highlight.py` |
-| **Daily Reflection Prompts** | `reflection_prompts.py` |
-| **Weekly/Monthly Reports** | `pdf_report_generator.py` |
-| **A/B Post Testing** | `a_b_testing.py` |
-| **Follower Growth Tracker** | `follower_growth.csv`, `engagement_tracker.py` |
-| **Referral Program Tracker** | `referral_tracker.py` |
-| **Lead Magnet Automation** | `lead_magnet.py` |
-| **Social Engagement Bot (Optional)** | `social_engagement_bot.py` |
+| Feature                         | Module(s)                                   | Status   |
+|---------------------------------|--------------------------------------------|----------|
+| **Auto-Post Scheduler**         | `auto_posting.py`                          | In Progress |
+| **Batch Content Generator**     | `batch_content_generator.py`               | In Progress |
+| **AI-Driven Title & Caption Suggestions** | `ai_caption_suggester.py`            | In Progress |
+| **Engagement Heatmap**          | `engagement_heatmap.py`                    | In Progress |
+| **Audience Interaction Tracker**| `audience_tracker.py`                      | In Progress |
+| **Hashtag Performance Tracker** | `hashtag_performance.py`                   | In Progress |
+| **Content Idea Vault**          | `idea_vault.py`                            | In Progress |
+| **Auto-Highlight Generator**    | `auto_highlight.py`                        | In Progress |
+| **Daily Reflection Prompts**    | `reflection_prompts.py`                    | In Progress |
+| **Weekly/Monthly Reports**      | `pdf_report_generator.py`                 | In Progress |
+| **A/B Post Testing**            | `a_b_testing.py`                           | In Progress |
+| **Follower Growth Tracker**     | `follower_growth.csv`, `engagement_tracker.py` | ✅ Done |
+| **Referral Program Tracker**    | `referral_tracker.py`                      | In Progress |
+| **Lead Magnet Automation**      | `lead_magnet.py`                           | In Progress |
+| **Social Engagement Bot (Optional)** | `social_engagement_bot.py`             | In Progress |
 
+---
 
+### 🚀 **What’s Next?**
+Would you like to focus on building:
+
+2. **Auto-Post Scheduler?**
+3. **Batch Content Generator?**
