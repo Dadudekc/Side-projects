@@ -6,13 +6,13 @@ Here’s the **scalable project structure** with the current progress marked.
 VlogForge/
 ├── main.py                  # Entry point of the app
 ├── core/ # in progress...
-│   ├── content_manager.py   # Handles content scheduling, auto-updates, and reminders # ✅ done
-│   ├── engagement_tracker.py # Engagement tracking, audience insights, and heatmaps # ✅ done
+│   ├── content_manager.py   # Handles content scheduling, auto-updates, and reminders # ✅ Done
+│   ├── engagement_tracker.py # Engagement tracking, audience insights, and heatmaps # ✅ Done
 │   ├── auto_posting.py      # Auto-posting scheduler for optimal timing 
 │   ├── ai_caption_suggester.py # AI-based title and caption generation
 │   ├── batch_content_generator.py # Generate multiple vlog scripts at once
 │   ├── referral_tracker.py  # Tracks referrals for user acquisition
-│   ├── lead_magnet.py       # Automates resource distribution and conversion tracking
+│   ├── lead_magnet.py       # Automates resource distribution and conversion tracking # ✅ Done
 │   ├── a_b_testing.py       # A/B testing logic for content optimization
 │   ├── hashtag_performance.py # Tracks hashtag effectiveness across platforms
 │   ├── audience_tracker.py  # Tracks top engaged users & super fans
@@ -31,7 +31,7 @@ VlogForge/
 │   ├── engagement_data.csv  # Stores historical engagement metrics
 │   ├── content_schedule.csv # Tracks vlog scheduling and statuses
 │   ├── hashtag_analysis.csv # Stores hashtag performance data
-│   ├── follower_growth.csv  # Tracks user acquisition and growth trends
+│   ├── follower_growth.csv  # Tracks user acquisition and growth trends # ✅ Done
 │   ├── referral_data.csv    # Stores referral program details
 │   └── lead_magnet_data.csv # Tracks user conversions from free resources
 ├── assets/
@@ -52,8 +52,9 @@ VlogForge/
 ---
 
 ### **Key Features & Where They Fit**
-| Feature                         | Module(s)                                   | Status   |
-|---------------------------------|--------------------------------------------|----------|
+
+| Feature                         | Module(s)                                   | Status      |
+|---------------------------------|--------------------------------------------|-------------|
 | **Auto-Post Scheduler**         | `auto_posting.py`                          | In Progress |
 | **Batch Content Generator**     | `batch_content_generator.py`               | In Progress |
 | **AI-Driven Title & Caption Suggestions** | `ai_caption_suggester.py`            | In Progress |
@@ -63,17 +64,19 @@ VlogForge/
 | **Content Idea Vault**          | `idea_vault.py`                            | In Progress |
 | **Auto-Highlight Generator**    | `auto_highlight.py`                        | In Progress |
 | **Daily Reflection Prompts**    | `reflection_prompts.py`                    | In Progress |
-| **Weekly/Monthly Reports**      | `pdf_report_generator.py`                 | In Progress |
+| **Weekly/Monthly Reports**      | `pdf_report_generator.py`                  | In Progress |
 | **A/B Post Testing**            | `a_b_testing.py`                           | In Progress |
-| **Follower Growth Tracker**     | `follower_growth.csv`, `engagement_tracker.py` | ✅ Done |
+| **Follower Growth Tracker**     | `follower_growth.csv`, `engagement_tracker.py` | ✅ Done  |
 | **Referral Program Tracker**    | `referral_tracker.py`                      | In Progress |
-| **Lead Magnet Automation**      | `lead_magnet.py`                           | In Progress |
+| **Lead Magnet Automation**      | `lead_magnet.py`                           | ✅ Done    |
 | **Social Engagement Bot (Optional)** | `social_engagement_bot.py`             | In Progress |
 
 ---
 
 ### 🚀 **What’s Next?**
+
 Would you like to focus on building:
 
-2. **Auto-Post Scheduler?**
-3. **Batch Content Generator?**
+
+2. **Batch Content Generator?**  
+3. **AI-Driven Title & Caption Suggestions?**  
