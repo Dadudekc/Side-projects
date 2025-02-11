@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import unittest
 
 class EngagementTracker:
     def calculate_engagement_rates(self, data):
@@ -73,3 +74,27 @@ class EngagementTracker:
         )
 
         return heatmap_data
+
+# Unit Test for Engagement Heatmap
+class TestEngagementHeatmap(unittest.TestCase):
+    def setUp(self):
+        self.tracker = EngagementTracker()
+        self.mock_data = [
+            {"Date": "2025-02-01 10:00", "Views": 1000, "Likes": 150, "Comments": 20},
+            {"Date": "2025-02-02 14:00", "Views": 800, "Likes": 120, "Comments": 15},
+            {"Date": "2025-02-03 18:00", "Views": 1500, "Likes": 300, "Comments": 50},
+            {"Date": "2025-02-04 10:00", "Views": 600, "Likes": 90, "Comments": 10},
+        ]
+
+    def test_generate_engagement_heatmap(self):
+        heatmap = self.tracker.generate_engagement_heatmap(self.mock_data)
+        self.assertFalse(heatmap.empty)
+        self.assertIn('10', heatmap.columns.astype(str))
+        self.assertIn('Monday', heatmap.index)  # Check if Monday is present
+
+    def test_empty_data(self):
+        heatmap = self.tracker.generate_engagement_heatmap([])
+        self.assertTrue(heatmap.empty)
+
+if __name__ == '__main__':
+    unittest.main()
