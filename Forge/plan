@@ -9,24 +9,24 @@ VlogForge/
 │   ├── content_manager.py   # Handles content scheduling, auto-updates, and reminders # ✅ Done
 │   ├── engagement_tracker.py # Engagement tracking, audience insights, and heatmaps # ✅ Done
 │   ├── auto_posting.py      # Auto-posting scheduler for optimal timing # ✅ Done
-│   ├── ai_caption_suggester.py # AI-based title and caption generation
-│   ├── batch_content_generator.py # Generate multiple vlog scripts at once
-│   ├── referral_tracker.py  # Tracks referrals for user acquisition
+│   ├── ai_caption_suggester.py # AI-based title and caption generation # ✅ Done
+│   ├── batch_content_generator.py # Generate multiple vlog scripts at once # ✅ Done
+│   ├── referral_tracker.py  # Tracks referrals for user acquisition # In Progress
 │   ├── lead_magnet.py       # Automates resource distribution and conversion tracking # ✅ Done
-│   ├── a_b_testing.py       # A/B testing logic for content optimization
-│   ├── hashtag_performance.py # Tracks hashtag effectiveness across platforms
-│   ├── audience_tracker.py  # Tracks top engaged users & super fans
-│   ├── engagement_heatmap.py # Analyzes best posting times & trends
-│   └── pdf_report_generator.py # Creates weekly/monthly performance reports
+│   ├── a_b_testing.py       # A/B testing logic for content optimization # In Progress
+│   ├── hashtag_performance.py # Tracks hashtag effectiveness across platforms # In Progress
+│   ├── audience_tracker.py  # Tracks top engaged users & super fans # In Progress
+│   ├── engagement_heatmap.py # Analyzes best posting times & trends # In Progress
+│   └── pdf_report_generator.py # Creates weekly/monthly performance reports # In Progress
 ├── ui/
-│   ├── main_window.py       # Main dashboard layout with tabbed interface
-│   ├── script_generator.py  # Vlog script generation module
-│   ├── content_calendar.py  # Content planning, scheduling, and automation
-│   ├── engagement_tracker.py # Engagement analytics and growth tracking
-│   ├── reflection_prompts.py # Journal-based reflection prompts for vlog ideas
-│   ├── idea_vault.py        # Store spontaneous vlog and content ideas
-│   ├── auto_highlight.py    # Extract key quotes from vlogs for tweet-sized content
-│   └── social_engagement_bot.py # Optional: Automate Twitter likes/comments
+│   ├── main_window.py       # Main dashboard layout with tabbed interface # In Progress
+│   ├── script_generator.py  # Vlog script generation module # In Progress
+│   ├── content_calendar.py  # Content planning, scheduling, and automation # In Progress
+│   ├── engagement_tracker.py # Engagement analytics and growth tracking # In Progress
+│   ├── reflection_prompts.py # Journal-based reflection prompts for vlog ideas # In Progress
+│   ├── idea_vault.py        # Store spontaneous vlog and content ideas # In Progress
+│   ├── auto_highlight.py    # Extract key quotes from vlogs for tweet-sized content # In Progress
+│   └── social_engagement_bot.py # Optional: Automate Twitter likes/comments # In Progress
 ├── data/
 │   ├── engagement_data.csv  # Stores historical engagement metrics
 │   ├── content_schedule.csv # Tracks vlog scheduling and statuses
@@ -56,8 +56,8 @@ VlogForge/
 | Feature                         | Module(s)                                   | Status      |
 |---------------------------------|--------------------------------------------|-------------|
 | **Auto-Post Scheduler**         | `auto_posting.py`                          | ✅ Done     |
-| **Batch Content Generator**     | `batch_content_generator.py`               | In Progress |
-| **AI-Driven Title & Caption Suggestions** | `ai_caption_suggester.py`            | In Progress |
+| **Batch Content Generator**     | `batch_content_generator.py`               | ✅ Done     |
+| **AI-Driven Title & Caption Suggestions** | `ai_caption_suggester.py`            | ✅ Done     |
 | **Engagement Heatmap**          | `engagement_heatmap.py`                    | In Progress |
 | **Audience Interaction Tracker**| `audience_tracker.py`                      | In Progress |
 | **Hashtag Performance Tracker** | `hashtag_performance.py`                   | In Progress |
@@ -70,13 +70,4 @@ VlogForge/
 | **Referral Program Tracker**    | `referral_tracker.py`                      | In Progress |
 | **Lead Magnet Automation**      | `lead_magnet.py`                           | ✅ Done    |
 | **Social Engagement Bot (Optional)** | `social_engagement_bot.py`             | In Progress |
-
----
-
-### 🚀 **What’s Next?**
-
-Would you like to focus on building:
-
-
-2. **AI-Driven Title & Caption Suggestions?**  
 
