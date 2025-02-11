@@ -8,7 +8,7 @@ VlogForge/
 ├── core/ # in progress...
 │   ├── content_manager.py   # Handles content scheduling, auto-updates, and reminders # ✅ Done
 │   ├── engagement_tracker.py # Engagement tracking, audience insights, and heatmaps # ✅ Done
-│   ├── auto_posting.py      # Auto-posting scheduler for optimal timing 
+│   ├── auto_posting.py      # Auto-posting scheduler for optimal timing # ✅ Done
 │   ├── ai_caption_suggester.py # AI-based title and caption generation
 │   ├── batch_content_generator.py # Generate multiple vlog scripts at once
 │   ├── referral_tracker.py  # Tracks referrals for user acquisition
@@ -55,7 +55,7 @@ VlogForge/
 
 | Feature                         | Module(s)                                   | Status      |
 |---------------------------------|--------------------------------------------|-------------|
-| **Auto-Post Scheduler**         | `auto_posting.py`                          | In Progress |
+| **Auto-Post Scheduler**         | `auto_posting.py`                          | ✅ Done     |
 | **Batch Content Generator**     | `batch_content_generator.py`               | In Progress |
 | **AI-Driven Title & Caption Suggestions** | `ai_caption_suggester.py`            | In Progress |
 | **Engagement Heatmap**          | `engagement_heatmap.py`                    | In Progress |
@@ -78,5 +78,5 @@ VlogForge/
 Would you like to focus on building:
 
 
-2. **Batch Content Generator?**  
-3. **AI-Driven Title & Caption Suggestions?**  
+2. **AI-Driven Title & Caption Suggestions?**  
+
