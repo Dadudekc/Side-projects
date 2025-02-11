@@ -5,6 +5,7 @@ import requests
 import unittest
 from dotenv import load_dotenv
 import os
+import hashlib
 
 # Load environment variables
 load_dotenv()
@@ -62,18 +63,36 @@ class LeadMagnet:
                 self.leads[email]['lead_score'] += 1  # Increase lead score on follow-up
 
     def send_email(self, email, content):
+        subscriber_hash = hashlib.md5(email.lower().encode()).hexdigest()
+        put_endpoint = f"{MAILCHIMP_API_ENDPOINT}/{subscriber_hash}"
+
+        payload = {
+            "email_address": email,
+            "status_if_new": "subscribed",  # Add if new
+            "merge_fields": {
+                "MESSAGE": content,
+                "ADDRESS": "123 Main St, Anytown, USA"  # Added default address
+            }
+        }
+
         try:
-            response = requests.post(
-                MAILCHIMP_API_ENDPOINT,
+            response = requests.put(
+                put_endpoint,
                 auth=("anystring", MAILCHIMP_API_KEY),
-                json={"email": email, "message": content}
+                json=payload
             )
-            if response.status_code == 200:
+
+            if response.status_code in [200, 201]:
                 print(f"Email sent to {email}: {content}")
                 return True
             else:
+                error_details = response.json().get('errors', [])
                 print(f"Failed to send email to {email}: {response.text}")
+                if error_details:
+                    for error in error_details:
+                        print(f"Field: {error.get('field')}, Message: {error.get('message')}")
                 return False
+
         except Exception as e:
             print(f"Error sending email to {email}: {e}")
             return False
@@ -83,8 +102,8 @@ class TestLeadMagnet(unittest.TestCase):
     def setUp(self):
         self.lead_magnet = LeadMagnet()
         self.mock_leads = [
-            {"email": "user1@example.com", "status": "new"},
-            {"email": "user2@example.com", "status": "new"},
+            {"email": "dadudekc@gmail.com", "status": "new"},
+            {"email": "dadudekc@gmail.com", "status": "new"}
         ]
 
     def test_send_resource_success(self):
