@@ -1,76 +1,81 @@
+Here’s the **updated plan** to reflect our current progress, including the integration of the `SocialMediaAnalyzer` with the `IdeaIntegrator` and the completion of recent tests:
+
+---
+
 ### ✅ **Updated Project Structure for Full Vlog Forge Feature Set**
 
 Here’s the **scalable project structure** with the current progress marked.
 
 ```
 VlogForge/
-├── main.py                  # Entry point of the app
-├── core/ # in progress...
-│   ├── content_manager.py   # Handles content scheduling, auto-updates, and reminders # ✅ Done
-│   ├── engagement_tracker.py # Engagement tracking, audience insights, and heatmaps # ✅ Done
-│   ├── auto_posting.py      # Auto-posting scheduler for optimal timing # ✅ Done
-│   ├── ai_caption_suggester.py # AI-based title and caption generation # ✅ Done
+├── main.py                      # Entry point of the app
+├── core/
+│   ├── content_manager.py       # Handles content scheduling, auto-updates, and reminders # ✅ Done
+│   ├── engagement_tracker.py    # Engagement tracking, audience insights, and heatmaps # ✅ Done
+│   ├── auto_posting.py          # Auto-posting scheduler for optimal timing # ✅ Done
+│   ├── ai_caption_suggester.py  # AI-based title and caption generation # ✅ Done
 │   ├── batch_content_generator.py # Generate multiple vlog scripts at once # ✅ Done
-│   ├── referral_tracker.py  # Tracks referrals for user acquisition # In Progress
-│   ├── lead_magnet.py       # Automates resource distribution and conversion tracking # ✅ Done
-│   ├── a_b_testing.py       # A/B testing logic for content optimization # In Progress
-│   ├── hashtag_performance.py # Tracks hashtag effectiveness across platforms # ✅ Done
-│   ├── audience_tracker.py  # Tracks top engaged users & super fans # ✅ Done
-│   ├── engagement_heatmap.py # Analyzes best posting times & trends # ✅ Done
-│   └── pdf_report_generator.py # Creates weekly/monthly performance reports # In Progress
+│   ├── referral_tracker.py      # Tracks referrals for user acquisition # In Progress
+│   ├── lead_magnet.py           # Automates resource distribution and conversion tracking # ✅ Done
+│   ├── a_b_testing.py           # A/B testing logic for content optimization # In Progress
+│   ├── hashtag_performance.py   # Tracks hashtag effectiveness across platforms # ✅ Done
+│   ├── audience_tracker.py      # Tracks top engaged users & super fans # ✅ Done
+│   ├── engagement_heatmap.py    # Analyzes best posting times & trends # ✅ Done
+│   ├── pdf_report_generator.py  # Creates weekly/monthly performance reports # In Progress
+│   ├── idea_vault.py            # Store spontaneous vlog and content ideas # ✅ Done
+│   ├── idea_integrator.py       # Integrates ideas with scheduling, analytics, and posting # ✅ Done
+│   └── social_media_analyzer.py # Scrapes social platforms & analyzes sentiment # ✅ Done
 ├── ui/
-│   ├── main_window.py       # Main dashboard layout with tabbed interface # In Progress
-│   ├── script_generator.py  # Vlog script generation module # In Progress
-│   ├── content_calendar.py  # Content planning, scheduling, and automation # In Progress
-│   ├── engagement_tracker.py # Engagement analytics and growth tracking # In Progress
-│   ├── reflection_prompts.py # Journal-based reflection prompts for vlog ideas # In Progress
-│   ├── idea_vault.py        # Store spontaneous vlog and content ideas # In Progress
-│   ├── auto_highlight.py    # Extract key quotes from vlogs for tweet-sized content # In Progress
+│   ├── main_window.py           # Main dashboard layout with tabbed interface # In Progress
+│   ├── script_generator.py      # Vlog script generation module # In Progress
+│   ├── content_calendar.py      # Content planning, scheduling, and automation # In Progress
+│   ├── engagement_tracker.py    # Engagement analytics and growth tracking # In Progress
+│   ├── reflection_prompts.py    # Journal-based reflection prompts for vlog ideas # In Progress
+│   ├── auto_highlight.py        # Extract key quotes from vlogs for tweet-sized content # In Progress
 │   └── social_engagement_bot.py # Optional: Automate Twitter likes/comments # In Progress
 ├── data/
-│   ├── engagement_data.csv  # Stores historical engagement metrics
-│   ├── content_schedule.csv # Tracks vlog scheduling and statuses
-│   ├── hashtag_analysis.csv # Stores hashtag performance data
-│   ├── follower_growth.csv  # Tracks user acquisition and growth trends # ✅ Done
-│   ├── referral_data.csv    # Stores referral program details
-│   └── lead_magnet_data.csv # Tracks user conversions from free resources
+│   ├── engagement_data.csv      # Stores historical engagement metrics
+│   ├── content_schedule.csv     # Tracks vlog scheduling and statuses
+│   ├── hashtag_analysis.csv     # Stores hashtag performance data
+│   ├── follower_growth.csv      # Tracks user acquisition and growth trends # ✅ Done
+│   ├── referral_data.csv        # Stores referral program details
+│   ├── lead_magnet_data.csv     # Tracks user conversions from free resources
+│   └── idea_vault.json          # Stores idea data for Vlog Forge # ✅ Done
 ├── assets/
-│   ├── icons/               # App icons and UI assets
-│   ├── styles.qss           # Custom UI styling
-│   ├── templates/           # Email templates for lead magnet automation
-│   └── pdf_reports/         # Auto-generated weekly/monthly reports
+│   ├── icons/                   # App icons and UI assets
+│   ├── styles.qss               # Custom UI styling
+│   ├── templates/               # Email templates for lead magnet automation
+│   └── pdf_reports/             # Auto-generated weekly/monthly reports
 ├── api_integrations/
-│   ├── twitter_api.py       # Twitter API integration for posting & engagement tracking
-│   ├── youtube_api.py       # YouTube API integration for video tracking
-│   ├── mailchimp_api.py     # Handles lead magnet automation
-│   ├── google_calendar.py   # Optional: Sync content schedule with Google Calendar
-│   ├── firebase_db.py       # Optional: Cloud storage for multi-device sync
-│   └── web_scraper.py       # Scrapes data from relevant sites (e.g., trending stock posts)
-└── README.md                # Project documentation
+│   ├── twitter_api.py           # Twitter API integration for posting & engagement tracking
+│   ├── youtube_api.py           # YouTube API integration for video tracking
+│   ├── mailchimp_api.py         # Handles lead magnet automation
+│   ├── google_calendar.py       # Optional: Sync content schedule with Google Calendar
+│   ├── firebase_db.py           # Optional: Cloud storage for multi-device sync
+│   └── web_scraper.py           # Scrapes data from relevant sites (e.g., trending stock posts)
+└── README.md                    # Project documentation
 ```
 
 ---
 
 ### **Key Features & Where They Fit**
 
-| Feature                         | Module(s)                                   | Status      |
-|---------------------------------|--------------------------------------------|-------------|
-| **Auto-Post Scheduler**         | `auto_posting.py`                          | ✅ Done     |
-| **Batch Content Generator**     | `batch_content_generator.py`               | ✅ Done     |
+| Feature                            | Module(s)                                   | Status      |
+|------------------------------------|--------------------------------------------|-------------|
+| **Auto-Post Scheduler**            | `auto_posting.py`                          | ✅ Done     |
+| **Batch Content Generator**        | `batch_content_generator.py`               | ✅ Done     |
 | **AI-Driven Title & Caption Suggestions** | `ai_caption_suggester.py`            | ✅ Done     |
-| **Engagement Heatmap**          | `engagement_heatmap.py`                    | ✅ Done     |
-| **Audience Interaction Tracker**| `audience_tracker.py`                      | ✅ Done     |
-| **Hashtag Performance Tracker** | `hashtag_performance.py`                   | ✅ Done     |
-| **Content Idea Vault**          | `idea_vault.py`                            | In Progress |
-| **Auto-Highlight Generator**    | `auto_highlight.py`                        | In Progress |
-| **Daily Reflection Prompts**    | `reflection_prompts.py`                    | In Progress |
-| **Weekly/Monthly Reports**      | `pdf_report_generator.py`                  | In Progress |
-| **A/B Post Testing**            | `a_b_testing.py`                           | In Progress |
-| **Follower Growth Tracker**     | `follower_growth.csv`, `engagement_tracker.py` | ✅ Done  |
-| **Referral Program Tracker**    | `referral_tracker.py`                      | In Progress |
-| **Lead Magnet Automation**      | `lead_magnet.py`                           | ✅ Done    |
-| **Social Engagement Bot (Optional)** | `social_engagement_bot.py`             | In Progress |
-
----
-
-Let me know if you'd like to focus on any specific module next or if you'd like further adjustments to the plan! 🚀
+| **Engagement Heatmap**             | `engagement_heatmap.py`                    | ✅ Done     |
+| **Audience Interaction Tracker**   | `audience_tracker.py`                      | ✅ Done     |
+| **Hashtag Performance Tracker**    | `hashtag_performance.py`                   | ✅ Done     |
+| **Content Idea Vault**             | `idea_vault.py`                            | ✅ Done     |
+| **Idea Integration & Scheduling**  | `idea_integrator.py`                       | ✅ Done     |
+| **Social Media Sentiment Analysis**| `social_media_analyzer.py`                 | ✅ Done     |
+| **Auto-Highlight Generator**       | `auto_highlight.py`                        | In Progress |
+| **Daily Reflection Prompts**       | `reflection_prompts.py`                    | In Progress |
+| **Weekly/Monthly Reports**         | `pdf_report_generator.py`                  | In Progress |
+| **A/B Post Testing**               | `a_b_testing.py`                           | In Progress |
+| **Follower Growth Tracker**        | `follower_growth.csv`, `engagement_tracker.py` | ✅ Done  |
+| **Referral Program Tracker**       | `referral_tracker.py`                      | In Progress |
+| **Lead Magnet Automation**         | `lead_magnet.py`                           | ✅ Done    |
+| **Social Engagement Bot (Optional)** | `social_engagement_bot.py`               | In Progress |
