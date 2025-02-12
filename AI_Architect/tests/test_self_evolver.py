@@ -7,10 +7,9 @@ class TestSelfEvolver(unittest.TestCase):
     def setUp(self):
         # Create the necessary directories and the test file
         self.test_file_path = "./tests/test_code.py"
-        
-        # Ensure the 'tests' directory exists
         os.makedirs(os.path.dirname(self.test_file_path), exist_ok=True)
 
+        # Making 'long_function' exceed 20 lines
         with open(self.test_file_path, "w") as file:
             file.write("""
 def long_function():
@@ -19,7 +18,22 @@ def long_function():
     c = a + b
     d = a * b
     e = a / b
-    return c + d + e
+    f = a - b
+    g = a ** b
+    h = a % b
+    i = a // b
+    j = a & b
+    k = a | b
+    l = a ^ b
+    m = a << b
+    n = a >> b
+    o = max(a, b)
+    p = min(a, b)
+    q = abs(a)
+    r = round(a)
+    s = divmod(a, b)
+    t = pow(a, b)
+    return c + d + e + f + g + h + i + j + k + l + m + n + o + p + q + r + s[0] + t
 
 def no_docstring():
     pass
