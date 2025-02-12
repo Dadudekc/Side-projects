@@ -1,0 +1,43 @@
+project_creator_api/
+├── app/
+│   ├── __init__.py
+│   ├── main.py                # FastAPI entry point
+│   ├── api/                   # API route definitions
+│   │   ├── __init__.py
+│   │   └── v1/
+│   │       ├── __init__.py
+│   │       ├── endpoints/
+│   │       │   ├── project.py         # Handles project creation endpoints
+│   │       │   └── self_improve.py     # Endpoint for adding features to itself
+│   │       └── schemas.py              # Request/response models
+│   ├── core/                  # Core functionality
+│   │   ├── __init__.py
+│   │   ├── project_manager.py         # Manages project scaffolding
+│   │   ├── code_generator.py          # AI-powered code generation
+│   │   ├── test_runner.py             # Executes tests and reports results
+│   │   └── self_evolver.py            # Logic for the system to improve itself
+│   ├── services/              # External service integrations
+│   │   ├── __init__.py
+│   │   └── ai_model.py               # Handles communication with AI models
+│   └── utils/                 # Utility functions
+│       ├── __init__.py
+│       └── file_utils.py              # File handling utilities
+│
+├── projects/                  # Auto-generated projects
+│   └── (dynamic project folders)
+│
+├── tests/                     # Unit & integration tests
+│   ├── __init__.py
+│   ├── test_project_manager.py
+│   ├── test_code_generator.py
+│   ├── test_self_evolver.py
+│   └── test_api.py
+│
+├── scripts/                   # Automation scripts
+│   ├── bootstrap_self.py             # Script to trigger self-improvement cycles
+│   └── deploy.sh                      # Deployment automation
+│
+├── requirements.txt           # Python dependencies
+├── README.md                  # Project documentation
+├── .env                       # Environment variables
+└── docker-compose.yml         # Containerization setup
