@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+"""
+pdf_report_generator.py
+
+This module generates PDF performance reports for Vlog Forge.
+It creates detailed reports featuring key metrics, trend analysis,
+summary insights, and a performance chart.
+"""
+
 import os
 from fpdf import FPDF
 from PyPDF2 import PdfReader
@@ -17,6 +26,7 @@ class PDFReportGenerator:
         normalized = {}
         for k, v in metrics.items():
             if isinstance(v, (int, float)):
+                # For CTR and Engagement Rate, append '%' for better readability
                 normalized[k] = f"{v}" if k not in ["CTR", "Engagement Rate"] else f"{v}%"
             elif isinstance(v, str):
                 normalized[k] = v
@@ -52,6 +62,7 @@ class PDFReportGenerator:
         pdf.set_font("Arial", "B", 12)
         pdf.cell(0, 10, "Summary Insights:", ln=True)
         insights = []
+        # Example insights based on key metrics
         if float(self.metrics.get("Engagement Rate", '0').replace('%', '')) > 10:
             insights.append("Great engagement rate! Keep up the good work.")
         if float(self.metrics.get("CTR", '0').replace('%', '')) < 2:
@@ -67,7 +78,11 @@ class PDFReportGenerator:
         pdf.cell(0, 10, f"Generated on {timestamp}", 0, 0, "C")
 
     def _generate_chart(self, output_path):
-        metrics = {k: float(v.replace('%', '')) if '%' in v else float(v) for k, v in self.metrics.items()}
+        # Convert metric values to floats for plotting
+        metrics = {
+            k: float(v.replace('%', '')) if '%' in v else float(v)
+            for k, v in self.metrics.items()
+        }
         plt.figure(figsize=(6, 4))
         plt.bar(metrics.keys(), metrics.values(), color='skyblue')
         plt.title('Performance Metrics Overview')
@@ -97,6 +112,15 @@ class PDFReportGenerator:
 
 
 def generate_pdf_report(data, period, output_path, previous_data=None):
+    """
+    Generate a PDF report based on the provided data.
+    
+    :param data: Dictionary containing current period metrics.
+    :param period: 'weekly' or 'monthly' (case insensitive).
+    :param output_path: Output PDF file path.
+    :param previous_data: (Optional) Dictionary containing previous period metrics.
+    :raises ValueError: If period is not 'weekly' or 'monthly'.
+    """
     if period.lower() not in ["weekly", "monthly"]:
         raise ValueError("Period must be 'weekly' or 'monthly'")
 
@@ -123,7 +147,10 @@ def generate_pdf_report(data, period, output_path, previous_data=None):
     generator.generate_pdf(output_path)
 
 
-# Unit Tests
+# ===========================
+# Unit Tests for PDFReportGenerator
+# ===========================
+
 class TestPDFReportGenerator(unittest.TestCase):
     def setUp(self):
         self.test_data = {
@@ -171,6 +198,6 @@ class TestPDFReportGenerator(unittest.TestCase):
             generate_pdf_report(self.test_data, "daily", self.output_file)
 
 
-# Run the tests
+# Run the tests if executed as a standalone script
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(verbosity=2)

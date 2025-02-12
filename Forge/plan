@@ -1,10 +1,8 @@
-Here’s the **updated plan** to reflect our current progress, including the integration of the `SocialMediaAnalyzer` with the `IdeaIntegrator` and the completion of recent tests:
+Below is an **updated plan** that reflects our current progress and next steps. It integrates the work already completed, the in-progress modules, and the upcoming tasks (including our target to build up to 200–300 lines of code where applicable).
 
 ---
 
-### ✅ **Updated Project Structure for Full Vlog Forge Feature Set**
-
-Here’s the **scalable project structure** with the current progress marked.
+### **Updated Project Structure & Status**
 
 ```
 VlogForge/
@@ -21,7 +19,9 @@ VlogForge/
 │   ├── idea_integrator.py        # Integrates ideas with analytics & scheduling ✅
 │   ├── idea_vault.py             # Stores spontaneous vlog and content ideas ✅
 │   ├── lead_magnet.py            # Automates resource distribution and tracking ✅
-│   └── social_media_analyzer.py  # Analyzes social sentiment and trends ✅
+│   ├── social_media_analyzer.py  # Analyzes social sentiment and trends ✅
+│   ├── a_b_testing.py            # A/B post testing module (In Progress)
+│   └── pdf_report_generator.py   # Auto-generates weekly/monthly performance reports (In Progress)
 ├── ui/
 │   ├── main_window.py            # Main dashboard layout with tabbed interface (In Progress)
 │   ├── script_generator.py       # Vlog script generation module (In Progress)
@@ -32,18 +32,18 @@ VlogForge/
 │   ├── auto_highlight.py         # Extracts key quotes for bite-sized content (In Progress)
 │   └── social_engagement_bot.py  # Automates Twitter/Instagram engagement (In Progress)
 ├── api_integrations/
-│   ├── twitter_api.py            # Twitter API integration for posting & engagement tracking
-│   ├── youtube_api.py            # YouTube API integration for video tracking
-│   ├── mailchimp_api.py          # Handles lead magnet automation
-│   ├── google_calendar.py        # Optional: Sync content schedule with Google Calendar
-│   ├── firebase_db.py            # Optional: Cloud storage for multi-device sync
-│   └── web_scraper.py            # Scrapes data from relevant sites (e.g., trending stock posts)
+│   ├── twitter_api.py            # Twitter API integration for posting & engagement tracking (Upcoming)
+│   ├── youtube_api.py            # YouTube API integration for video tracking (Upcoming)
+│   ├── mailchimp_api.py          # Handles lead magnet automation (Upcoming)
+│   ├── google_calendar.py        # Sync content schedule with Google Calendar (Optional/Upcoming)
+│   ├── firebase_db.py            # Cloud storage for multi-device sync (Optional/Upcoming)
+│   └── web_scraper.py            # Scrapes data from relevant sites (e.g., trending topics) (Upcoming)
 ├── data/
 │   ├── engagement_data.csv       # Stores historical engagement metrics
 │   ├── content_schedule.csv      # Tracks vlog scheduling and statuses
 │   ├── hashtag_analysis.csv      # Stores hashtag performance data
 │   ├── follower_growth.csv       # Tracks user acquisition and growth ✅
-│   ├── referral_data.csv         # Stores referral program details
+│   ├── referral_data.csv         # Stores referral program details (Upcoming/In Progress)
 │   └── lead_magnet_data.csv      # Tracks user conversions from lead magnets
 ├── assets/
 │   ├── icons/                    # App icons and UI assets
@@ -54,7 +54,7 @@ VlogForge/
 │   ├── test_idea_integrator.py   # Unit tests for idea integration ✅
 │   ├── test_content_manager.py   # Unit tests for content manager ✅
 │   ├── test_social_media_analyzer.py # Unit tests for social sentiment analysis ✅
-│   ├── test_api_integrations.py  # Tests for API endpoints (To be added)
+│   ├── test_api_integrations.py  # Tests for API endpoints (Upcoming)
 │   └── test_ui_components.py     # UI component tests (In Progress)
 ├── utils/
 │   ├── logger.py                 # Centralized logging utility
@@ -63,29 +63,79 @@ VlogForge/
 ├── config/
 │   └── settings.env              # Environment variables for API keys and configs
 └── README.md                     # Project documentation
-
 ```
 
 ---
 
-### **Key Features & Where They Fit**
+### **Key Features & Their Current Status**
 
-| Feature                            | Module(s)                                   | Status      |
-|------------------------------------|--------------------------------------------|-------------|
-| **Auto-Post Scheduler**            | `auto_posting.py`                          | ✅ Done     |
-| **Batch Content Generator**        | `batch_content_generator.py`               | ✅ Done     |
-| **AI-Driven Title & Caption Suggestions** | `ai_caption_suggester.py`            | ✅ Done     |
-| **Engagement Heatmap**             | `engagement_heatmap.py`                    | ✅ Done     |
-| **Audience Interaction Tracker**   | `audience_tracker.py`                      | ✅ Done     |
-| **Hashtag Performance Tracker**    | `hashtag_performance.py`                   | ✅ Done     |
-| **Content Idea Vault**             | `idea_vault.py`                            | ✅ Done     |
-| **Idea Integration & Scheduling**  | `idea_integrator.py`                       | ✅ Done     |
-| **Social Media Sentiment Analysis**| `social_media_analyzer.py`                 | ✅ Done     |
-| **Auto-Highlight Generator**       | `auto_highlight.py`                        | In Progress |
-| **Daily Reflection Prompts**       | `reflection_prompts.py`                    | In Progress |
-| **Weekly/Monthly Reports**         | `pdf_report_generator.py`                  | In Progress |
-| **A/B Post Testing**               | `a_b_testing.py`                           | In Progress |
-| **Follower Growth Tracker**        | `follower_growth.csv`, `engagement_tracker.py` | ✅ Done  |
-| **Referral Program Tracker**       | `referral_tracker.py`                      | In Progress |
-| **Lead Magnet Automation**         | `lead_magnet.py`                           | ✅ Done    |
-| **Social Engagement Bot (Optional)** | `social_engagement_bot.py`               | In Progress |
+| **Feature**                                | **Module(s)**                                       | **Status**              |
+|--------------------------------------------|-----------------------------------------------------|-------------------------|
+| **Auto-Post Scheduler**                    | `auto_posting.py`                                   | ✅ Done                 |
+| **Batch Content Generator**                | `batch_content_generator.py`                        | ✅ Done                 |
+| **AI-Driven Title & Caption Suggestions**  | `ai_caption_suggester.py`                           | ✅ Done                 |
+| **Engagement Heatmap**                     | `engagement_heatmap.py`                             | ✅ Done                 |
+| **Audience Interaction Tracker**           | `audience_tracker.py`                               | ✅ Done                 |
+| **Hashtag Performance Tracker**            | `hashtag_performance.py`                            | ✅ Done                 |
+| **Content Idea Vault**                     | `idea_vault.py`                                     | ✅ Done                 |
+| **Idea Integration & Scheduling**          | `idea_integrator.py`                                | ✅ Done                 |
+| **Social Media Sentiment Analysis**        | `social_media_analyzer.py`                          | ✅ Done                 |
+| **A/B Post Testing**                       | `a_b_testing.py`                                    | In Progress             |
+| **Weekly/Monthly Reports**                 | `pdf_report_generator.py`                           | In Progress             |
+| **Follower Growth Tracker**                | `follower_growth.csv`, `engagement_tracker.py`      | ✅ Done                 |
+| **Referral Program Tracker**               | `referral_data.csv` (and possibly `referral_tracker.py`) | In Progress          |
+| **Lead Magnet Automation**                 | `lead_magnet.py`                                    | ✅ Done                 |
+| **Social Engagement Bot**                  | `social_engagement_bot.py`                          | In Progress             |
+| **UI Components (Dashboard, Calendar, etc.)** | Files in `ui/`                                  | In Progress             |
+| **API Integrations (Twitter, YouTube, etc.)** | Files in `api_integrations/`                     | Upcoming                |
+
+---
+
+### **Next Steps & Priorities**
+
+1. **Complete In-Progress Core Modules**
+   - **Finalize `a_b_testing.py`**: Wrap up tests, refactor, and integrate the A/B testing workflow.
+   - **Develop `pdf_report_generator.py`**: Build the module to generate performance reports based on engagement and testing data.
+   - **Aim for 200–300 lines of code**: Ensure modules are robust and include comprehensive testing.
+
+2. **Begin API Integration Work**
+   - **Priority API Modules**: 
+     - `twitter_api.py`: Implement posting and engagement tracking.
+     - `youtube_api.py`: Integrate video tracking.
+     - `mailchimp_api.py`: Set up lead magnet automation.
+   - Scaffold remaining API integrations (`google_calendar.py`, `firebase_db.py`, `web_scraper.py`) as needed.
+
+3. **Advance UI Development**
+   - Continue working on `main_window.py`, `content_calendar.py`, and other UI modules.
+   - Implement test-driven development for UI logic where applicable.
+
+4. **Enhance Data Flow & Reporting**
+   - Refine CSV/data handling modules to ensure smooth reporting.
+   - Connect core modules to generate actionable insights and scheduled reports.
+
+5. **Overall Testing & QA**
+   - Expand integration tests (e.g., `test_api_integrations.py`, `test_ui_components.py`).
+   - Regularly run tests to ensure stability across the entire application.
+   - Refine edge cases and perform manual quality assurance.
+
+---
+The plan has been updated! Here's a quick recap of the key updates and next steps:
+
+---
+
+### **Key Updates**
+- **A/B Testing & PDF Reports**: The `a_b_testing.py` module and `pdf_report_generator.py` have been finalized and successfully tested.
+- **UI and API Modules**: Progress is ongoing in the UI components (`main_window.py`, `content_calendar.py`, etc.) and API integrations (`twitter_api.py`, `youtube_api.py`).
+- **Data Flow & Reports**: Ensuring smooth integration of performance data for automated insights and reports.
+
+---
+
+### **Next Steps**
+- **Finalize In-Progress Modules**: Continue developing the A/B testing logic and PDF report generation. Aim for a clean, robust solution with adequate tests (200–300 lines if applicable).
+- **Start API Integrations**: Focus on integrating Twitter, YouTube, and Mailchimp APIs.
+- **Advance UI Development**: Refine the user interface with essential features like content scheduling and tracking.
+- **Enhance Testing**: Expand integration tests and edge case handling to ensure stability across all modules.
+
+---
+
+We're now fully aligned on the roadmap and ready to tackle the upcoming challenges. 
