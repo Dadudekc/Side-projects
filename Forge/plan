@@ -8,52 +8,62 @@ Here’s the **scalable project structure** with the current progress marked.
 
 ```
 VlogForge/
-├── main.py                      # Entry point of the app
+├── main.py                       # Entry point of the app
 ├── core/
-│   ├── content_manager.py       # Handles content scheduling, auto-updates, and reminders # ✅ Done
-│   ├── engagement_tracker.py    # Engagement tracking, audience insights, and heatmaps # ✅ Done
-│   ├── auto_posting.py          # Auto-posting scheduler for optimal timing # ✅ Done
-│   ├── ai_caption_suggester.py  # AI-based title and caption generation # ✅ Done
-│   ├── batch_content_generator.py # Generate multiple vlog scripts at once # ✅ Done
-│   ├── referral_tracker.py      # Tracks referrals for user acquisition # In Progress
-│   ├── lead_magnet.py           # Automates resource distribution and conversion tracking # ✅ Done
-│   ├── a_b_testing.py           # A/B testing logic for content optimization # In Progress
-│   ├── hashtag_performance.py   # Tracks hashtag effectiveness across platforms # ✅ Done
-│   ├── audience_tracker.py      # Tracks top engaged users & super fans # ✅ Done
-│   ├── engagement_heatmap.py    # Analyzes best posting times & trends # ✅ Done
-│   ├── pdf_report_generator.py  # Creates weekly/monthly performance reports # In Progress
-│   ├── idea_vault.py            # Store spontaneous vlog and content ideas # ✅ Done
-│   ├── idea_integrator.py       # Integrates ideas with scheduling, analytics, and posting # ✅ Done
-│   └── social_media_analyzer.py # Scrapes social platforms & analyzes sentiment # ✅ Done
+│   ├── ai_caption_suggester.py   # AI-based title and caption generation ✅
+│   ├── audience_tracker.py       # Tracks audience engagement and insights ✅
+│   ├── auto_posting.py           # Auto-posting scheduler for optimal timing ✅
+│   ├── batch_content_generator.py# Generate multiple vlog scripts at once ✅
+│   ├── content_manager.py        # Handles content scheduling, updates, and reminders ✅
+│   ├── engagement_heatmap.py     # Analyzes best posting times and trends ✅
+│   ├── engagement_tracker.py     # Engagement tracking and growth analysis ✅
+│   ├── hashtag_performance.py    # Tracks hashtag effectiveness ✅
+│   ├── idea_integrator.py        # Integrates ideas with analytics & scheduling ✅
+│   ├── idea_vault.py             # Stores spontaneous vlog and content ideas ✅
+│   ├── lead_magnet.py            # Automates resource distribution and tracking ✅
+│   └── social_media_analyzer.py  # Analyzes social sentiment and trends ✅
 ├── ui/
-│   ├── main_window.py           # Main dashboard layout with tabbed interface # In Progress
-│   ├── script_generator.py      # Vlog script generation module # In Progress
-│   ├── content_calendar.py      # Content planning, scheduling, and automation # In Progress
-│   ├── engagement_tracker.py    # Engagement analytics and growth tracking # In Progress
-│   ├── reflection_prompts.py    # Journal-based reflection prompts for vlog ideas # In Progress
-│   ├── auto_highlight.py        # Extract key quotes from vlogs for tweet-sized content # In Progress
-│   └── social_engagement_bot.py # Optional: Automate Twitter likes/comments # In Progress
-├── data/
-│   ├── engagement_data.csv      # Stores historical engagement metrics
-│   ├── content_schedule.csv     # Tracks vlog scheduling and statuses
-│   ├── hashtag_analysis.csv     # Stores hashtag performance data
-│   ├── follower_growth.csv      # Tracks user acquisition and growth trends # ✅ Done
-│   ├── referral_data.csv        # Stores referral program details
-│   ├── lead_magnet_data.csv     # Tracks user conversions from free resources
-│   └── idea_vault.json          # Stores idea data for Vlog Forge # ✅ Done
-├── assets/
-│   ├── icons/                   # App icons and UI assets
-│   ├── styles.qss               # Custom UI styling
-│   ├── templates/               # Email templates for lead magnet automation
-│   └── pdf_reports/             # Auto-generated weekly/monthly reports
+│   ├── main_window.py            # Main dashboard layout with tabbed interface (In Progress)
+│   ├── script_generator.py       # Vlog script generation module (In Progress)
+│   ├── content_calendar.py       # Content planning, scheduling, and automation (In Progress)
+│   ├── engagement_tracker.py     # Engagement analytics and growth tracking (In Progress)
+│   ├── reflection_prompts.py     # Journal-based reflection prompts for vlog ideas (In Progress)
+│   ├── idea_vault.py             # UI for managing content ideas (In Progress)
+│   ├── auto_highlight.py         # Extracts key quotes for bite-sized content (In Progress)
+│   └── social_engagement_bot.py  # Automates Twitter/Instagram engagement (In Progress)
 ├── api_integrations/
-│   ├── twitter_api.py           # Twitter API integration for posting & engagement tracking
-│   ├── youtube_api.py           # YouTube API integration for video tracking
-│   ├── mailchimp_api.py         # Handles lead magnet automation
-│   ├── google_calendar.py       # Optional: Sync content schedule with Google Calendar
-│   ├── firebase_db.py           # Optional: Cloud storage for multi-device sync
-│   └── web_scraper.py           # Scrapes data from relevant sites (e.g., trending stock posts)
-└── README.md                    # Project documentation
+│   ├── twitter_api.py            # Twitter API integration for posting & engagement tracking
+│   ├── youtube_api.py            # YouTube API integration for video tracking
+│   ├── mailchimp_api.py          # Handles lead magnet automation
+│   ├── google_calendar.py        # Optional: Sync content schedule with Google Calendar
+│   ├── firebase_db.py            # Optional: Cloud storage for multi-device sync
+│   └── web_scraper.py            # Scrapes data from relevant sites (e.g., trending stock posts)
+├── data/
+│   ├── engagement_data.csv       # Stores historical engagement metrics
+│   ├── content_schedule.csv      # Tracks vlog scheduling and statuses
+│   ├── hashtag_analysis.csv      # Stores hashtag performance data
+│   ├── follower_growth.csv       # Tracks user acquisition and growth ✅
+│   ├── referral_data.csv         # Stores referral program details
+│   └── lead_magnet_data.csv      # Tracks user conversions from lead magnets
+├── assets/
+│   ├── icons/                    # App icons and UI assets
+│   ├── styles.qss                # Custom UI styling
+│   ├── templates/                # Email templates for lead magnet automation
+│   └── pdf_reports/              # Auto-generated weekly/monthly performance reports
+├── tests/
+│   ├── test_idea_integrator.py   # Unit tests for idea integration ✅
+│   ├── test_content_manager.py   # Unit tests for content manager ✅
+│   ├── test_social_media_analyzer.py # Unit tests for social sentiment analysis ✅
+│   ├── test_api_integrations.py  # Tests for API endpoints (To be added)
+│   └── test_ui_components.py     # UI component tests (In Progress)
+├── utils/
+│   ├── logger.py                 # Centralized logging utility
+│   ├── data_formatter.py         # Handles common data transformations
+│   └── error_handler.py          # Custom exception handling
+├── config/
+│   └── settings.env              # Environment variables for API keys and configs
+└── README.md                     # Project documentation
+
 ```
 
 ---
