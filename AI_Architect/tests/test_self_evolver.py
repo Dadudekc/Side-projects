@@ -1,5 +1,6 @@
 import os
 import unittest
+from unittest.mock import patch
 from app.core.self_evolver import SelfEvolver
 
 class TestSelfEvolver(unittest.TestCase):
@@ -9,7 +10,7 @@ class TestSelfEvolver(unittest.TestCase):
         self.test_file_path = "./tests/test_code.py"
         os.makedirs(os.path.dirname(self.test_file_path), exist_ok=True)
 
-        # Making 'long_function' exceed 20 lines
+        # Test file with both long functions and inefficient code
         with open(self.test_file_path, "w") as file:
             file.write("""
 def long_function():
@@ -37,6 +38,13 @@ def long_function():
 
 def no_docstring():
     pass
+
+def inefficient_function():
+    a = 10
+    b = 20
+    c = a + b
+    unused_var = 100
+    return c
             """)
 
     def tearDown(self):
@@ -63,6 +71,30 @@ def no_docstring():
         
         self.assertIn('"""TODO: Add docstring for no_docstring."""', content)
         self.assertIn('"""TODO: Add docstring for long_function."""', content)
+
+    @staticmethod
+    def get_ai_suggestions(code: str):
+        """
+        Sends code to Mistral via ollama for AI-driven code analysis.
+        """
+        prompt = f"Analyze this Python code and suggest improvements. Focus on detecting unused variables, inefficient logic, and possible optimizations:\n\n{code}"
+        
+        try:
+            # Run Mistral via Ollama with UTF-8 decoding
+            result = subprocess.run(
+                ["ollama", "run", "mistral", prompt],
+                capture_output=True,
+                text=True,
+                encoding='utf-8'  # Force UTF-8 to handle special characters
+            )
+            
+            # Process the AI suggestions
+            ai_response = result.stdout.strip()
+            return ai_response.split('\n')  # Assuming suggestions are separated by newlines
+        
+        except Exception as e:
+            return [f"Error running Mistral analysis: {e}"]
+
 
 if __name__ == "__main__":
     unittest.main()
