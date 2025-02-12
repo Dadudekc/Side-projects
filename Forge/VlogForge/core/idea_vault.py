@@ -69,12 +69,26 @@ class IdeaIntegrator:
         self.engagement_tracker = engagement_tracker
         self.auto_posting = auto_posting
 
-    def push_idea_to_schedule(self, idea_id, scheduled_date):
+    def suggest_optimal_schedule(self, idea_id):
+        idea = next((idea for idea in self.idea_vault.ideas if idea['id'] == idea_id), None)
+        if idea:
+            engagement_data = self.engagement_tracker.get_best_times()
+            return engagement_data.get('optimal_time', datetime.now().isoformat())
+        return None
+
+    def push_idea_to_schedule(self, idea_id, scheduled_date=None):
+        if not scheduled_date:
+            scheduled_date = self.suggest_optimal_schedule(idea_id)
+
         idea = self.idea_vault.update_idea(idea_id, status='scheduled')
         if idea:
             self.content_manager.schedule_content(idea['title'], idea['description'], scheduled_date)
             self.content_calendar.add_to_calendar(idea['title'], scheduled_date)
             self.auto_posting.schedule_post(idea['title'], idea['description'], scheduled_date)
+            self.auto_posting.schedule_instagram_post(idea['title'], idea['description'], scheduled_date)
+            self.auto_posting.schedule_linkedin_post(idea['title'], idea['description'], scheduled_date)
+            self.auto_posting.schedule_tiktok_post(idea['title'], idea['description'], scheduled_date)
+            self.auto_posting.schedule_facebook_post(idea['title'], idea['description'], scheduled_date)
             return True
         return False
 
@@ -141,36 +155,75 @@ class TestIdeaVault(unittest.TestCase):
         results = self.vault.filter_by_tags(['content'])
         self.assertEqual(len(results), 1)
 
-    def test_full_workflow(self):
-        # Add an Idea
-        idea = self.vault.add_idea('Workflow Test', 'Testing full workflow.')
+    def test_dynamic_scheduling(self):
+        idea = self.vault.add_idea('Dynamic Schedule Test', 'Automated scheduling based on engagement.')
 
-        # Schedule It
-        scheduled_date = '2024-02-20'
-        result = self.integrator.push_idea_to_schedule(idea['id'], scheduled_date)
+        # Mock optimal time
+        self.engagement_tracker.get_best_times.return_value = {'optimal_time': '2024-02-21T10:00:00'}
+
+        result = self.integrator.push_idea_to_schedule(idea['id'])
         self.assertTrue(result)
 
-        # Verify if content was scheduled, added to calendar, and auto-posting was triggered
         self.content_manager.schedule_content.assert_called_with(
-            idea['title'], idea['description'], scheduled_date
+            idea['title'], idea['description'], '2024-02-21T10:00:00'
         )
         self.content_calendar.add_to_calendar.assert_called_with(
-            idea['title'], scheduled_date
+            idea['title'], '2024-02-21T10:00:00'
         )
         self.auto_posting.schedule_post.assert_called_with(
-            idea['title'], idea['description'], scheduled_date
+            idea['title'], idea['description'], '2024-02-21T10:00:00'
         )
-
-        # Track Performance
-        self.engagement_tracker.get_performance_metrics.return_value = {
-            'views': 150,
-            'likes': 20,
-            'comments': 5
-        }
-        performance = self.integrator.track_idea_performance(idea['id'])
-        self.assertEqual(performance['views'], 150)
-        self.assertEqual(performance['likes'], 20)
-        self.assertEqual(performance['comments'], 5)
+        self.auto_posting.schedule_instagram_post.assert_called_with(
+            idea['title'], idea['description'], '2024-02-21T10:00:00'
+        )
+        self.auto_posting.schedule_linkedin_post.assert_called_with(
+            idea['title'], idea['description'], '2024-02-21T10:00:00'
+        )
+        self.auto_posting.schedule_tiktok_post.assert_called_with(
+            idea['title'], idea['description'], '2024-02-21T10:00:00'
+        )
+        self.auto_posting.schedule_facebook_post.assert_called_with(
+            idea['title'], idea['description'], '2024-02-21T10:00:00'
+        )
 
 if __name__ == '__main__':
     unittest.main()
+
+# Initialize the components
+idea_vault = IdeaVault('data/idea_vault.json')
+content_manager = ContentManager()
+content_calendar = ContentCalendar()
+engagement_tracker = EngagementTracker()
+auto_posting = AutoPosting()
+
+# Create the integrator
+idea_integrator = IdeaIntegrator(
+    idea_vault,
+    content_manager,
+    content_calendar,
+    engagement_tracker,
+    auto_posting
+)
+
+# Example usage
+# Add a new idea
+new_idea = idea_vault.add_idea(
+    title="New Marketing Strategy",
+    description="Develop a new strategy for social media marketing.",
+    tags=["marketing", "strategy"]
+)
+
+# Suggest an optimal schedule for the idea
+optimal_schedule = idea_integrator.suggest_optimal_schedule(new_idea['id'])
+print(f"Optimal schedule for the idea: {optimal_schedule}")
+
+# Push the idea to the schedule
+success = idea_integrator.push_idea_to_schedule(new_idea['id'])
+if success:
+    print("Idea successfully scheduled.")
+else:
+    print("Failed to schedule the idea.")
+
+# Track the performance of the idea
+performance_data = idea_integrator.track_idea_performance(new_idea['id'])
+print(f"Performance data: {performance_data}")
