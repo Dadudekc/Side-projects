@@ -3,6 +3,11 @@
 import json
 import os
 from datetime import datetime
+import requests
+from bs4 import BeautifulSoup
+from textblob import TextBlob
+import csv
+
 
 class IdeaVault:
     def __init__(self, storage_path='data/idea_vault.json'):
@@ -20,10 +25,12 @@ class IdeaVault:
             json.dump(self.ideas, file, indent=4)
 
     def add_idea(self, title, description, tags=None):
+        if not title or not description:
+            raise ValueError("Title and description are required.")
         idea = {
             'id': len(self.ideas) + 1,
-            'title': title,
-            'description': description,
+            'title': title.strip(),
+            'description': description.strip(),
             'tags': tags or [],
             'created_at': datetime.now().isoformat(),
             'status': 'new'
@@ -56,10 +63,10 @@ class IdeaVault:
         return [idea for idea in self.ideas if any(tag in idea['tags'] for tag in tags)]
 
 # Integration with other Vlog Forge modules
-from core.content_manager import ContentManager
-from ui.content_calendar import ContentCalendar
-from core.engagement_tracker import EngagementTracker
-from core.auto_posting import AutoPostScheduler
+from content_manager import ContentManager
+from content_calendar import ContentCalendar
+from engagement_tracker import EngagementTracker
+from auto_posting import AutoPostScheduler
 
 class IdeaIntegrator:
     def __init__(self, idea_vault, content_manager, content_calendar, engagement_tracker, auto_posting):
@@ -96,12 +103,94 @@ class IdeaIntegrator:
         idea = next((idea for idea in self.idea_vault.ideas if idea['id'] == idea_id), None)
         if idea:
             performance_data = self.engagement_tracker.get_performance_metrics(idea['title'])
-            return performance_data
+            if performance_data:
+                return performance_data
+            else:
+                return {"message": "No performance data available."}
         return None
+
+class StocktwitsAnalyzer:
+    def scrape_stocktwits_post(self, title, description):
+        url = f'https://stocktwits.com/symbol/{title}'
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        scraped_data = []  # To store data for reporting
+
+        def process_post(post):
+            post_text = post.text.strip()
+            sentiment = round(TextBlob(post_text).sentiment.polarity, 2)
+            print(f'Stocktwits Post: {post_text} | Sentiment: {sentiment}')
+            return {
+                'title': title,
+                'description': description,
+                'post': post_text,
+                'sentiment': sentiment
+            }
+
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            if hasattr(response, 'text') and response.text:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                posts = soup.find_all('p', class_='st_3rd_party_message_content')[:10]  # Limit to first 10 posts
+
+                # Use ThreadPoolExecutor for parallel processing
+                with ThreadPoolExecutor(max_workers=5) as executor:
+                    scraped_data = list(executor.map(process_post, posts))
+
+                # Save data to CSV for reporting
+                with open(f'{title}_stocktwits_report.csv', 'w', newline='') as file:
+                    writer = csv.DictWriter(file, fieldnames=['title', 'description', 'post', 'sentiment'])
+                    writer.writeheader()
+                    writer.writerows(scraped_data)
+
+                # Generate Sentiment Graph
+                self.generate_sentiment_graph(title, scraped_data)
+
+                # Generate Summary Report
+                self.generate_summary_report(title, scraped_data)
+
+            else:
+                print('No content available to parse.')
+        except (requests.exceptions.RequestException, ValueError, TypeError):
+            print('Failed to scrape Stocktwits.')
+
+    def generate_sentiment_graph(self, title, data):
+        sentiments = [item['sentiment'] for item in data]
+        posts = [f"Post {i+1}" for i in range(len(sentiments))]
+
+        plt.figure(figsize=(10, 6))
+        plt.bar(posts, sentiments, color='skyblue')
+        plt.title(f'Sentiment Analysis for {title}')
+        plt.xlabel('Posts')
+        plt.ylabel('Sentiment Score')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig(f'{title}_sentiment_graph.png')
+        plt.close()
+
+    def generate_summary_report(self, title, data):
+        avg_sentiment = round(sum(item['sentiment'] for item in data) / len(data), 2)
+        positive_posts = len([item for item in data if item['sentiment'] > 0])
+        negative_posts = len([item for item in data if item['sentiment'] < 0])
+        neutral_posts = len(data) - positive_posts - negative_posts
+
+        summary = (
+            f"Summary Report for {title}:\n"
+            f"Average Sentiment: {avg_sentiment}\n"
+            f"Positive Posts: {positive_posts}\n"
+            f"Negative Posts: {negative_posts}\n"
+            f"Neutral Posts: {neutral_posts}\n"
+        )
+
+        print(summary)
+
+        with open(f'{title}_summary_report.txt', 'w') as file:
+            file.write(summary)
+
 
 # Tests for IdeaVault
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch, Mock
 
 class TestIdeaVault(unittest.TestCase):
     def setUp(self):
@@ -186,11 +275,68 @@ class TestIdeaVault(unittest.TestCase):
             idea['title'], idea['description'], '2024-02-21T10:00:00'
         )
 
+class TestIdeaIntegrator(unittest.TestCase):
+    def setUp(self):
+        # Initialize IdeaIntegrator with mock dependencies
+        self.idea_vault = Mock()
+        self.content_manager = Mock()
+        self.content_calendar = Mock()
+        self.engagement_tracker = Mock()
+        self.auto_posting = Mock()
+        self.integrator = IdeaIntegrator(
+            self.idea_vault,
+            self.content_manager,
+            self.content_calendar,
+            self.engagement_tracker,
+            self.auto_posting
+        )
+
+@patch('requests.get')
+def test_scrape_stocktwits_post(mock_get):
+    analyzer = StocktwitsAnalyzer()
+    mock_response = Mock()
+    mock_response.status_code = 200
+    mock_response.text = '''
+    <html>
+        <body>
+            <p class="st_3rd_party_message_content">Post 1 content</p>
+            <p class="st_3rd_party_message_content">Post 2 content</p>
+            <p class="st_3rd_party_message_content">Post 3 content</p>
+            <p class="st_3rd_party_message_content">Post 4 content</p>
+        </body>
+    </html>
+    '''
+    mock_get.return_value = mock_response
+
+    with patch('builtins.print') as mock_print:
+        analyzer.scrape_stocktwits_post('AAPL', 'Description')
+
+        mock_print.assert_any_call('Stocktwits Post: Post 1 content | Sentiment: 0.0')
+        mock_print.assert_any_call('Stocktwits Post: Post 2 content | Sentiment: 0.0')
+        mock_print.assert_any_call('Stocktwits Post: Post 3 content | Sentiment: 0.0')
+        assert mock_print.call_count >= 3
+
+
+
+    @patch('requests.get')
+    def test_scrape_stocktwits_post_failure(self, mock_get):
+        # Mock a failed response
+        mock_response = Mock()
+        mock_response.status_code = 404
+        mock_get.return_value = mock_response
+
+        # Capture the output of the print statement
+        with patch('builtins.print') as mock_print:
+            self.integrator.scrape_stocktwits_post('AAPL', 'Description')
+
+            # Check that the failure message was printed
+            mock_print.assert_called_once_with('Failed to scrape Stocktwits.')
+
 if __name__ == '__main__':
     unittest.main()
 
 # Initialize the components
-idea_vault = IdeaVault('data/idea_vault.json')
+idea_vault = IdeaVault()
 content_manager = ContentManager()
 content_calendar = ContentCalendar()
 engagement_tracker = EngagementTracker()
@@ -208,7 +354,7 @@ idea_integrator = IdeaIntegrator(
 # Example usage
 # Add a new idea
 new_idea = idea_vault.add_idea(
-    title="New Marketing Strategy",
+    title="AAPL",  # Stock symbol for Apple
     description="Develop a new strategy for social media marketing.",
     tags=["marketing", "strategy"]
 )
@@ -227,3 +373,6 @@ else:
 # Track the performance of the idea
 performance_data = idea_integrator.track_idea_performance(new_idea['id'])
 print(f"Performance data: {performance_data}")
+
+# Scrape StockTwits posts
+idea_integrator.scrape_stocktwits_post(new_idea['title'], new_idea['description'])
