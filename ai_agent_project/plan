@@ -1,0 +1,84 @@
+### **Autonomous Test-Driven Development (TTDD) Guide for Modular AI Agent**  
+This structured guide ensures systematic development with a **Red-Green-Refactor** cycle, prioritizing a working product we can showcase before expanding features.
+
+---
+
+# **📂 Project Structure**
+This structure ensures modularity and scalability.
+
+```
+ai_agent_project/
+│── ai_agent/                 # Core AI agent package
+│   ├── __init__.py           # Init file
+│   ├── agent.py              # Core AI agent logic
+│   ├── task_router.py        # Routes requests to correct modules
+│   ├── plugins/              # Directory for all modular plugins
+│   │   ├── __init__.py
+│   │   ├── content_automation.py  # Vlog Forge integration
+│   │   ├── trading_bot.py         # Tbow Tactics generator
+│   │   ├── task_scheduler.py      # Smart reminders & task mgmt
+│   │   ├── promptsmith.py         # AI-assisted prompt optimization
+│── tests/                    # Unit tests directory
+│   ├── test_agent.py         # Tests for core agent functionality
+│   ├── test_content_auto.py  # Tests for content automation plugin
+│   ├── test_trading_bot.py   # Tests for trading bot plugin
+│   ├── test_task_scheduler.py# Tests for task scheduling plugin
+│── configs/                  # Configuration settings
+│   ├── settings.json         # Agent-wide settings
+│── utils/                    # Utility functions
+│   ├── logger.py             # Logging system
+│── scripts/                  # Execution scripts
+│   ├── run_agent.py          # Entry point for running the AI agent
+│── README.md                 # Documentation
+│── requirements.txt          # Dependencies
+│── setup.py                  # Setup file for packaging
+```
+
+---
+
+# **📌 Prioritized To-Do List**
+### **🔥 Phase 1: Core AI Agent Infrastructure (Current Focus)**
+✅ **Step 1: Define AI Agent Architecture**  
+✅ **Step 2: Implement the Plugin System** (register, execute, manage)  
+✅ **Step 3: Create Task Router** (distributes commands to plugins)  
+✅ **Step 4: Write Initial Unit Tests** (Red)  
+✅ **Step 5: Implement Core Logic** (Green)  
+✅ **Step 6: Refactor and Optimize Core Logic** (Refactor)  
+
+---
+
+### **🎯 Phase 2: Get a Working Product to Show**
+Goal: **Have at least ONE fully functional feature integrated into the AI Agent**
+**(Priority: Content Automation for Vlog Forge or Tbow Tactics Trading Bot)**
+
+🚀 **Step 7: Select a Feature Module to Implement First** (Vlog Forge or Trading Bot)  
+🚀 **Step 8: Write Failing Unit Tests** for the module  
+🚀 **Step 9: Implement the Feature Logic** until tests pass  
+🚀 **Step 10: Integrate Feature with Core AI Agent**  
+🚀 **Step 11: Final Test Run to Ensure Stability**  
+
+At this point, we will have a **product ready to showcase**, even if limited in features.
+
+---
+
+### **📈 Phase 3: Expand & Enhance**
+🔹 Add **more feature modules** (Task Scheduler, Promptsmith, etc.)  
+🔹 Implement **Smart AI Capabilities** (learning patterns, improving prompts)  
+🔹 Introduce **Live Market Analysis & Social Media Automation**  
+🔹 Add **User Interface / API for interaction**  
+
+---
+
+### **🚀 Phase 4: Deployment & Scaling**
+🔹 Perform **End-to-End Testing**  
+🔹 Optimize for **Performance & Stability**  
+🔹 **Package & Deploy** for real-world use  
+
+---
+
+### **✅ Next Steps**
+Now that **Phase 1 (Core AI Agent)** is done, we need to pick the **first feature to showcase.**  
+Should I start with **Vlog Forge (Content Automation)** or **Tbow Tactics (Trading Bot)**? 🚀
+
+what aria did 
+pulled the agent actor file oout of the test agents to begin adding functionality to the project ai going thoughts are flowing
