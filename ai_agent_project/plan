@@ -11,6 +11,7 @@ ai_agent_project/
 │── ai_agent/                 # Core AI agent package
 │   ├── __init__.py           # Init file
 │   ├── agent.py              # Core AI agent logic
+│   ├── agent_dispatcher.py   # Task management and agent routing
 │   ├── task_router.py        # Routes requests to correct modules
 │   ├── plugins/              # Directory for all modular plugins
 │   │   ├── __init__.py
@@ -48,7 +49,7 @@ ai_agent_project/
 ---
 
 ### **🎯 Phase 2: Get a Working Product to Show**
-Goal: **Have at least ONE fully functional feature integrated into the AI Agent**
+Goal: **Have at least ONE fully functional feature integrated into the AI Agent**  
 **(Priority: Content Automation for Vlog Forge or Tbow Tactics Trading Bot)**
 
 🚀 **Step 7: Select a Feature Module to Implement First** (Vlog Forge or Trading Bot)  
@@ -76,9 +77,73 @@ At this point, we will have a **product ready to showcase**, even if limited in 
 
 ---
 
-### **✅ Next Steps**
-Now that **Phase 1 (Core AI Agent)** is done, we need to pick the **first feature to showcase.**  
-Should I start with **Vlog Forge (Content Automation)** or **Tbow Tactics (Trading Bot)**? 🚀
+### **🚀 Using `AgentDispatcher` to Boost AI Agent Capabilities**
+The `AgentDispatcher` is a **task management system** that **routes tasks to different AI agents**, handles memory, and optimizes performance using rate limiting and caching.  
 
-what aria did 
-pulled the agent actor file oout of the test agents to begin adding functionality to the project ai going thoughts are flowing
+By integrating **our existing `AgentActor` and Content Automation System**, we can **scale up** the AI agent ecosystem and even build a **repository of specialized agents**.
+
+---
+
+## **🔹 How `AgentDispatcher` Can Enhance the AI Agent**
+### **1️⃣ Centralized Agent Management**
+- Instead of handling **one agent at a time**, we can **register multiple AI agents dynamically**.
+- Example:  
+  - A **Trading Agent** handles **MACD curl strategy trading**.  
+  - A **Content Agent** automates **blog posts, video descriptions**.  
+  - A **Code Debugging Agent** analyzes **code errors & performance**.
+
+✅ **How?** The dispatcher can **load, manage, and switch between agents seamlessly**.
+
+```python
+dispatcher = AgentDispatcher(agents_directory="plugins")
+asyncio.run(dispatcher.dispatch_task("Optimize blog post", agent_name="content_agent"))
+```
+
+---
+
+### **2️⃣ Repository of AI Agents**
+✅ **Why?** Instead of a **single AI model**, we can **modularize and separate** agent functionalities.
+
+- **Example Directory Structure** (`/plugins/` stores agent definitions):
+
+```
+ai_agent_project/
+│── src/
+│   ├── core/
+│   │   ├── agent_dispatcher.py
+│   │   ├── agent_registry.py
+│   ├── agents/
+│   │   ├── trading_agent.py
+│   │   ├── content_agent.py
+│   │   ├── debug_agent.py
+│   ├── plugins/
+│   │   ├── plugin_interface.py
+│   │   ├── plugin_loader.py
+│── utilities/
+│── db/
+```
+
+✅ **How?** Agents are dynamically loaded from the `/plugins/` folder:
+```python
+def load_agents(agents_directory: str) -> Dict[str, AgentPlugin]:
+    agents = {}
+    for plugin_file in Path(agents_directory).glob("*.py"):
+        module = import_module_from_file(plugin_file)
+        for attribute_name in dir(module):
+            attribute = getattr(module, attribute_name)
+            if isinstance(attribute, type) and issubclass(attribute, AgentPlugin):
+                agents[attribute_name] = attribute()
+    return agents
+```
+
+---
+
+### **🚀 Next Steps**
+Now that **Phase 1 (Core AI Agent)** is complete, we need to select the **first feature to showcase.**  
+
+🔹 Do we begin with **Vlog Forge Content Automation** or **Tbow Tactics Trading Bot?**  
+🔹 Should we refine **task prioritization in `AgentDispatcher`** before adding more agents?  
+
+📌 **Let me know your preference so we can move forward!** 🚀
+
+
