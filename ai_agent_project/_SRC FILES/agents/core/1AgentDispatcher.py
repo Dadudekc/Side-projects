@@ -39,7 +39,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from utilities.ai_agent_utils import PerformanceMonitor, MemoryManager
+from agents.core.utilities.ai_agent_utils import PerformanceMonitor, MemoryManager
 from utilities.ChainOfThoughtReasoner import ChainOfThoughtReasoner
 from plugins.plugin_interface import AgentPlugin
 from db.database import async_session

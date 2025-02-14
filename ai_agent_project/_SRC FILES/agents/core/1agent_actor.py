@@ -1,7 +1,7 @@
 import subprocess
 import logging
 from typing import List, Dict, Any, Optional
-from utilities.ai_agent_utils import PerformanceMonitor, MemoryManager
+from agents.core.utilities.ai_agent_utils import PerformanceMonitor, MemoryManager
 
 logger = logging.getLogger(__name__)
 

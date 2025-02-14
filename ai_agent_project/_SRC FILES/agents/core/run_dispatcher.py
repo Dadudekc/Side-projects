@@ -3,7 +3,7 @@
 import asyncio
 from AgentDispatcher import AgentDispatcher
 from utilities.memory_manager import MemoryManager
-from utilities.ai_agent_utils import PerformanceMonitor
+from agents.core.utilities.ai_agent_utils import PerformanceMonitor
 
 if __name__ == "__main__":
     # Initialize managers

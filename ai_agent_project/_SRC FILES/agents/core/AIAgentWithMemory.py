@@ -5,7 +5,7 @@
 import subprocess
 import logging
 from utilities.memory_manager import MemoryManager  # Adjust if path differs slightly
-from utilities.ai_agent_utils import PerformanceMonitor  # Adjust if path differs
+from agents.core.utilities.ai_agent_utils import PerformanceMonitor  # Adjust if path differs
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -43,7 +43,7 @@ class AIAgentWithMemory:
         """
         # Local import to prevent circular import issues
         if dispatcher is None:
-            from core.AgentDispatcher import AgentDispatcher  # Import only if needed, to avoid circular import
+            from agents.AgentDispatcher import AgentDispatcher  # Import only if needed, to avoid circular import
             dispatcher = AgentDispatcher()
 
         self.name = name

@@ -1,149 +1,68 @@
-### **Autonomous Test-Driven Development (TTDD) Guide for Modular AI Agent**  
-This structured guide ensures systematic development with a **Red-Green-Refactor** cycle, prioritizing a working product we can showcase before expanding features.
+Below is an **updated plan** that incorporates the goal of **refactoring old agent files** as a top priority. We maintain the **Autonomous Test-Driven Development (TTDD)** structure—ensuring each refactored agent is fully tested and integrated before moving on.
 
 ---
 
-# **📂 Project Structure**
-This structure ensures modularity and scalability.
+# **🚀 Updated Plan for AI Agent Project**
 
-```
-ai_agent_project/
-│── ai_agent/                 # Core AI agent package
-│   ├── __init__.py           # Init file
-│   ├── agent.py              # Core AI agent logic
-│   ├── agent_dispatcher.py   # Task management and agent routing
-│   ├── task_router.py        # Routes requests to correct modules
-│   ├── plugins/              # Directory for all modular plugins
-│   │   ├── __init__.py
-│   │   ├── content_automation.py  # Vlog Forge integration
-│   │   ├── trading_bot.py         # Tbow Tactics generator
-│   │   ├── task_scheduler.py      # Smart reminders & task mgmt
-│   │   ├── promptsmith.py         # AI-assisted prompt optimization
-│── tests/                    # Unit tests directory
-│   ├── test_agent.py         # Tests for core agent functionality
-│   ├── test_content_auto.py  # Tests for content automation plugin
-│   ├── test_trading_bot.py   # Tests for trading bot plugin
-│   ├── test_task_scheduler.py# Tests for task scheduling plugin
-│── configs/                  # Configuration settings
-│   ├── settings.json         # Agent-wide settings
-│── utils/                    # Utility functions
-│   ├── logger.py             # Logging system
-│── scripts/                  # Execution scripts
-│   ├── run_agent.py          # Entry point for running the AI agent
-│── README.md                 # Documentation
-│── requirements.txt          # Dependencies
-│── setup.py                  # Setup file for packaging
-```
+## **1. Refactor Old Agents & Integrate into New Structure**
+Since **migrating existing agents** is your top priority, we’ll focus on **refactoring** the old files into the new, modular design. Each agent will follow **TTDD**:
+
+1. **Red** – Write failing tests for the old agent file.
+2. **Green** – Implement or refactor the agent’s code until all tests pass.
+3. **Refactor** – Clean up and optimize the agent.
+
+**Agents to Migrate** (in suggested order):
+1. **DebuggerAgent** – Aids in debugging logs and issues.  
+2. **TradingAgent** – Implements trading logic (e.g., MACD strategies).  
+3. **AIAgentWithMemory** – Adds advanced memory recall.  
+4. **AgentPlanner** – Coordinates multi-step tasks.
+
+Each agent, once migrated, should have:
+- **Corresponding test files** (e.g., `test_debugger_agent.py`).
+- Clean, maintainable structure in the new `/agents/` folder.
+- Integration with the existing `AgentDispatcher` if it needs to receive tasks.
 
 ---
 
-# **📌 Prioritized To-Do List**
-### **🔥 Phase 1: Core AI Agent Infrastructure (Current Focus)**
-✅ **Step 1: Define AI Agent Architecture**  
-✅ **Step 2: Implement the Plugin System** (register, execute, manage)  
-✅ **Step 3: Create Task Router** (distributes commands to plugins)  
-✅ **Step 4: Write Initial Unit Tests** (Red)  
-✅ **Step 5: Implement Core Logic** (Green)  
-✅ **Step 6: Refactor and Optimize Core Logic** (Refactor)  
+## **2. Maintain & Enhance Core Infrastructure**
+After each agent is migrated and tested, revisit **`AgentDispatcher.py`** and **`AgentRegistry.py`** to ensure they support:
+- **Multi-agent workflows** (chaining tasks across different agents).
+- **Task prioritization** (if some tasks are urgent vs. background).
+- **Load/unload agents dynamically** if your use case demands it.
 
 ---
 
-### **🎯 Phase 2: Get a Working Product to Show**
-Goal: **Have at least ONE fully functional feature integrated into the AI Agent**  
-**(Priority: Content Automation for Vlog Forge or Tbow Tactics Trading Bot)**
+## **3. Provide a Showcase Feature**
+Once **at least one agent** (e.g., **TradingAgent** or **DebuggerAgent**) is fully functional, we can **showcase** how the system works end-to-end:
 
-🚀 **Step 7: Select a Feature Module to Implement First** (Vlog Forge or Trading Bot)  
-🚀 **Step 8: Write Failing Unit Tests** for the module  
-🚀 **Step 9: Implement the Feature Logic** until tests pass  
-🚀 **Step 10: Integrate Feature with Core AI Agent**  
-🚀 **Step 11: Final Test Run to Ensure Stability**  
+1. **Write a simple script or UI** that dispatches a real task (e.g., debugging logs or analyzing a trading strategy).
+2. **Demonstrate** how tasks are routed, executed, and how results are returned.
 
-At this point, we will have a **product ready to showcase**, even if limited in features.
+This ensures you have a **tangible, working product** to demonstrate or iterate on.
 
 ---
 
-### **📈 Phase 3: Expand & Enhance**
-🔹 Add **more feature modules** (Task Scheduler, Promptsmith, etc.)  
-🔹 Implement **Smart AI Capabilities** (learning patterns, improving prompts)  
-🔹 Introduce **Live Market Analysis & Social Media Automation**  
-🔹 Add **User Interface / API for interaction**  
+## **4. Expand Feature Set & Plugins**
+With the core system stable:
+1. **Add new plugins** (Task Scheduler, Promptsmith, etc.).
+2. **Incorporate advanced ML** (e.g., memory-based improvements).
+3. **Build out the REST API** in the `/api/` folder for external interactions.
+4. **Create a web-based dashboard** for real-time monitoring of agents if desired.
 
 ---
 
-### **🚀 Phase 4: Deployment & Scaling**
-🔹 Perform **End-to-End Testing**  
-🔹 Optimize for **Performance & Stability**  
-🔹 **Package & Deploy** for real-world use  
+## **5. Final Testing & Deployment**
+- **Integrate all features** for an end-to-end system.
+- **Run performance, load, and reliability tests**.
+- **Package and deploy** to your preferred environment (local server, cloud, etc.).
 
 ---
 
-### **🚀 Using `AgentDispatcher` to Boost AI Agent Capabilities**
-The `AgentDispatcher` is a **task management system** that **routes tasks to different AI agents**, handles memory, and optimizes performance using rate limiting and caching.  
+# **✅ Next Action Items**
+1. **Select the next old agent file** to migrate (`DebuggerAgent.py` or `TradingAgent.py`).  
+2. **Create a matching test file** (RED).  
+3. **Refactor the agent** until all tests pass (GREEN).  
+4. **Optimize code structure** (REFACTOR).  
+5. **Repeat** for each additional agent.
 
-By integrating **our existing `AgentActor` and Content Automation System**, we can **scale up** the AI agent ecosystem and even build a **repository of specialized agents**.
-
----
-
-## **🔹 How `AgentDispatcher` Can Enhance the AI Agent**
-### **1️⃣ Centralized Agent Management**
-- Instead of handling **one agent at a time**, we can **register multiple AI agents dynamically**.
-- Example:  
-  - A **Trading Agent** handles **MACD curl strategy trading**.  
-  - A **Content Agent** automates **blog posts, video descriptions**.  
-  - A **Code Debugging Agent** analyzes **code errors & performance**.
-
-✅ **How?** The dispatcher can **load, manage, and switch between agents seamlessly**.
-
-```python
-dispatcher = AgentDispatcher(agents_directory="plugins")
-asyncio.run(dispatcher.dispatch_task("Optimize blog post", agent_name="content_agent"))
-```
-
----
-
-### **2️⃣ Repository of AI Agents**
-✅ **Why?** Instead of a **single AI model**, we can **modularize and separate** agent functionalities.
-
-- **Example Directory Structure** (`/plugins/` stores agent definitions):
-
-```
-ai_agent_project/
-│── src/
-│   ├── core/
-│   │   ├── agent_dispatcher.py
-│   │   ├── agent_registry.py
-│   ├── agents/
-│   │   ├── trading_agent.py
-│   │   ├── content_agent.py
-│   │   ├── debug_agent.py
-│   ├── plugins/
-│   │   ├── plugin_interface.py
-│   │   ├── plugin_loader.py
-│── utilities/
-│── db/
-```
-
-✅ **How?** Agents are dynamically loaded from the `/plugins/` folder:
-```python
-def load_agents(agents_directory: str) -> Dict[str, AgentPlugin]:
-    agents = {}
-    for plugin_file in Path(agents_directory).glob("*.py"):
-        module = import_module_from_file(plugin_file)
-        for attribute_name in dir(module):
-            attribute = getattr(module, attribute_name)
-            if isinstance(attribute, type) and issubclass(attribute, AgentPlugin):
-                agents[attribute_name] = attribute()
-    return agents
-```
-
----
-
-### **🚀 Next Steps**
-Now that **Phase 1 (Core AI Agent)** is complete, we need to select the **first feature to showcase.**  
-
-🔹 Do we begin with **Vlog Forge Content Automation** or **Tbow Tactics Trading Bot?**  
-🔹 Should we refine **task prioritization in `AgentDispatcher`** before adding more agents?  
-
-📌 **Let me know your preference so we can move forward!** 🚀
-
-
+This approach keeps you **organized, test-focused, and delivering** working code at every step!
