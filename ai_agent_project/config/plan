@@ -1,0 +1,160 @@
+Below is an **updated plan** that incorporates the goal of **refactoring old agent files** as a top priority. We maintain the **Autonomous Test-Driven Development (TTDD)** structure—ensuring each refactored agent is fully tested and integrated before moving on.
+
+---
+
+# **🚀 Updated Plan for AI Agent Project**
+
+## **1. Refactor Old Agents & Integrate into New Structure**
+Since **migrating existing agents** is your top priority, we’ll focus on **refactoring** the old files into the new, modular design. Each agent will follow **TTDD**:
+
+1. **Red** – Write failing tests for the old agent file.
+2. **Green** – Implement or refactor the agent’s code until all tests pass.
+3. **Refactor** – Clean up and optimize the agent.
+
+**Agents to Migrate** (in suggested order):
+1. **DebuggerAgent** – Aids in debugging logs and issues.  
+2. **TradingAgent** – Implements trading logic (e.g., MACD strategies).  
+3. **AIAgentWithMemory** – Adds advanced memory recall.  
+4. **AgentPlanner** – Coordinates multi-step tasks.
+
+Each agent, once migrated, should have:
+- **Corresponding test files** (e.g., `test_debugger_agent.py`).
+- Clean, maintainable structure in the new `/agents/` folder.
+- Integration with the existing `AgentDispatcher` if it needs to receive tasks.
+
+---
+
+## **2. Maintain & Enhance Core Infrastructure**
+After each agent is migrated and tested, revisit **`AgentDispatcher.py`** and **`AgentRegistry.py`** to ensure they support:
+- **Multi-agent workflows** (chaining tasks across different agents).
+- **Task prioritization** (if some tasks are urgent vs. background).
+- **Load/unload agents dynamically** if your use case demands it.
+
+---
+
+## **3. Provide a Showcase Feature**
+Once **at least one agent** (e.g., **TradingAgent** or **DebuggerAgent**) is fully functional, we can **showcase** how the system works end-to-end:
+
+1. **Write a simple script or UI** that dispatches a real task (e.g., debugging logs or analyzing a trading strategy).
+2. **Demonstrate** how tasks are routed, executed, and how results are returned.
+
+This ensures you have a **tangible, working product** to demonstrate or iterate on.
+
+---
+
+## **4. Expand Feature Set & Plugins**
+With the core system stable:
+1. **Add new plugins** (Task Scheduler, Promptsmith, etc.).
+2. **Incorporate advanced ML** (e.g., memory-based improvements).
+3. **Build out the REST API** in the `/api/` folder for external interactions.
+4. **Create a web-based dashboard** for real-time monitoring of agents if desired.
+
+---
+
+## **5. Final Testing & Deployment**
+- **Integrate all features** for an end-to-end system.
+- **Run performance, load, and reliability tests**.
+- **Package and deploy** to your preferred environment (local server, cloud, etc.).
+
+---
+
+# **✅ Next Action Items**
+1. **Select the next old agent file** to migrate (`DebuggerAgent.py` or `TradingAgent.py`).  
+2. **Create a matching test file** (RED).  
+3. **Refactor the agent** until all tests pass (GREEN).  
+4. **Optimize code structure** (REFACTOR).  
+5. **Repeat** for each additional agent.
+
+This approach keeps you **organized, test-focused, and delivering** working code at every step!
+
+
+### 🔥 **Blueprint: AI-Powered Self-Healing Debugging System**
+---
+
+### **🚀 Overview**
+This project will build an **AI-powered automated debugging system** that follows **Test-Driven Development (TDD)** and **self-healing principles**. The debugger will automatically analyze failed tests, apply learned fixes, attempt AI-powered patches, and roll back changes when necessary.
+
+---
+
+## **🛠️ Key Features**
+1. **Automated Debugging Loop**  
+   - Runs tests automatically and detects failures.  
+   - Parses errors and determines failure reasons.  
+   - Attempts to fix issues using an adaptive **self-learning database**.  
+   - If no prior fix is found, it escalates to AI-based debugging.
+
+2. **Multi-Stage AI Debugging Pipeline**  
+   - **Stage 1**: Check **past fixes** in the local database (`learning_db.json`).  
+   - **Stage 2**: If no prior fix exists, attempt **LLM-powered debugging**:
+     - **Mistral / DeepSeek** for local inference.
+     - **Fallback to OpenAI** if local models fail.
+   - **Stage 3**: If AI patch fails, **roll back changes** and retry a different approach.
+
+3. **Test-Driven Development (TDD) Integration**  
+   - Ensures that **new code is tested before deployment**.
+   - Runs tests in **stages** to ensure incremental fixes.
+   - Uses AI to **refactor test cases** dynamically.
+
+4. **Self-Healing Mechanism**  
+   - Stores past fixes in a **database** (`learning_db.json`).  
+   - Automatically applies **known fixes** before escalating to AI.  
+   - **Tracks frequent errors** and improves over time.
+
+---
+
+## **🛠️ Project Structure**
+```
+ai_debugger_project/
+│── agents/
+│   │── core/
+│   │   │── DebuggerAgent.py          # Main AI Debugger Class
+│   │   │── LearningDB.py             # Handles self-healing database
+│   │   │── AIAnalyzer.py             # Manages AI-driven debugging
+│   │   │── PatchManager.py           # Handles patch application & rollback
+│   │   │── TestRunner.py             # Automates test execution & failure analysis
+│── models/
+│   │── mistral_model.py              # Wrapper for local Mistral inference
+│   │── deepseek_model.py             # Wrapper for local DeepSeek inference
+│   │── openai_model.py               # Fallback to OpenAI API
+│── scripts/
+│   │── run_debugger.py               # Entry point for AI Debugger
+│── tests/
+│   │── sample_test.py                # Example test case for testing debugging
+│── utils/
+│   │── logger.py                      # Custom logging utility
+│   │── config.py                      # Configuration & environment settings
+│── learning_db.json                   # Stores past fixes for self-healing
+│── requirements.txt                    # Dependencies
+│── README.md                           # Documentation
+```
+
+---
+
+## **📌 How It Works**
+### **🔹 Step 1: Detecting Errors**
+1️⃣ `TestRunner.py` **runs all tests**.  
+2️⃣ Captures **failing test cases** & extracts **error messages**.  
+3️⃣ Passes errors to `DebuggerAgent.py`.
+
+### **🔹 Step 2: Self-Healing Debugging**
+1️⃣ `DebuggerAgent.py` **searches** `learning_db.json` for a prior fix.  
+2️⃣ If a match is found ✅, it applies the fix.  
+3️⃣ If no match ❌, it escalates to **AI-based debugging**.
+
+### **🔹 Step 3: AI-Powered Fixing**
+1️⃣ `AIAnalyzer.py` sends the issue to **Mistral / DeepSeek**.  
+2️⃣ If local AI fails ❌, it falls back to **OpenAI GPT-4 Turbo**.  
+3️⃣ AI suggests **a patch in unified diff format**.  
+4️⃣ `PatchManager.py` applies the patch.
+
+### **🔹 Step 4: Validating & Rolling Back**
+1️⃣ `TestRunner.py` **re-runs the tests** after applying a fix.  
+2️⃣ If the fix fails ❌, `PatchManager.py` **rolls back the changes**.  
+3️⃣ If successful ✅, `DebuggerAgent.py` **saves the fix** to `learning_db.json` for future use.
+
+---
+
+## **🚀 First File: `run_debugger.py`**
+I'll now provide the **first script** that serves as the **entry point** for the AI-powered debugger.
+
+Stay tuned... ⏳👨‍💻

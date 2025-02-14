@@ -1,0 +1,146 @@
+import json
+import logging
+import os
+from typing import Dict, List, Tuple, Optional
+from ai_clients import AIClient  # AI model for ranking patches
+from patch_tracking_manager import PatchTrackingManager
+
+logger = logging.getLogger("AIPatchReviewManager")
+logger.setLevel(logging.DEBUG)
+
+HUMAN_REVIEW_FILE = "human_review.json"
+PATCH_HISTORY_FILE = "patch_history.json"
+AI_DECISIONS_LOG = "ai_decisions.json"
+PATCH_RANKINGS_FILE = "patch_rankings.json"
+DETAILED_ERROR_LOG_FILE = "detailed_patch_log.json"
+
+
+class AIPatchReviewManager:
+    """
+    AI-powered ranking for human-reviewed patches and detailed patch logging.
+    
+    Features:
+    - Uses AI to rank patches by effectiveness based on past success rates.
+    - Logs every patch attempt with AI reasoning and human feedback.
+    - Tracks which patches worked and refines AI decision-making over time.
+    """
+
+    def __init__(self):
+        self.patch_tracker = PatchTrackingManager()
+        self.ai_client = AIClient()
+        self.human_review = self._load_patch_data(HUMAN_REVIEW_FILE)
+        self.patch_history = self._load_patch_data(PATCH_HISTORY_FILE)
+        self.ai_decisions = self._load_patch_data(AI_DECISIONS_LOG)
+        self.patch_rankings = self._load_patch_data(PATCH_RANKINGS_FILE)
+        self.detailed_logs = self._load_patch_data(DETAILED_ERROR_LOG_FILE)
+
+    def _load_patch_data(self, file_path: str) -> Dict[str, List[Dict[str, str]]]:
+        """Loads patch tracking data from a JSON file."""
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception as e:
+                logger.error(f"❌ Failed to load {file_path}: {e}")
+        return {}
+
+    def _save_patch_data(self, file_path: str, data: Dict[str, List[Dict[str, str]]]):
+        """Saves patch tracking data to a JSON file."""
+        try:
+            with open(file_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4)
+        except Exception as e:
+            logger.error(f"❌ Failed to save {file_path}: {e}")
+
+    def rank_human_reviewed_patches(self):
+        """Ranks human-reviewed patches based on AI evaluation and past success rates."""
+        ranked_patches = {}
+        
+        for error_signature, patches in self.human_review.items():
+            patch_scores = []
+            
+            for patch in patches:
+                score_data = self.ai_client.evaluate_patch_with_reason(patch)
+                patch_score = score_data["score"]
+                decision_reason = score_data["reason"]
+
+                # Log AI decision reasoning
+                self.ai_decisions.setdefault(error_signature, []).append({
+                    "patch": patch,
+                    "score": patch_score,
+                    "reason": decision_reason
+                })
+
+                # Store score for ranking
+                patch_scores.append((patch_score, patch))
+
+            # Rank patches from highest to lowest score
+            patch_scores.sort(reverse=True, key=lambda x: x[0])
+            ranked_patches[error_signature] = [patch for _, patch in patch_scores]
+
+        # Save rankings
+        self.patch_rankings = ranked_patches
+        self._save_patch_data(PATCH_RANKINGS_FILE, self.patch_rankings)
+        logger.info(f"📊 AI-ranked human-reviewed patches saved.")
+
+    def log_patch_attempt(self, error_signature: str, patch: str, outcome: str, extra_info: Optional[str] = None):
+        """
+        Logs a detailed entry for each patch attempt.
+        Includes AI reasoning, human feedback, and test outcomes.
+        """
+        log_entry = {
+            "error_signature": error_signature,
+            "patch": patch,
+            "outcome": outcome,
+            "extra_info": extra_info
+        }
+
+        self.detailed_logs.setdefault(error_signature, []).append(log_entry)
+        self._save_patch_data(DETAILED_ERROR_LOG_FILE, self.detailed_logs)
+        logger.info(f"📝 Logged patch attempt for {error_signature}: {outcome}")
+
+    def get_best_patch(self, error_signature: str) -> Optional[str]:
+        """Retrieves the highest-ranked patch for a given error signature."""
+        return self.patch_rankings.get(error_signature, [None])[0]
+
+    def process_human_reviewed_patches(self):
+        """
+        Processes patches from human review, ranks them, logs them, and applies the best one.
+        """
+        self.rank_human_reviewed_patches()
+
+        for error_signature, patches in self.patch_rankings.items():
+            best_patch = patches[0] if patches else None
+
+            if best_patch:
+                # Attempt to apply the best-ranked patch
+                success = self.patch_tracker.apply_patch(best_patch)
+
+                if success:
+                    self.log_patch_attempt(error_signature, best_patch, "Applied Successfully")
+                else:
+                    self.log_patch_attempt(error_signature, best_patch, "Failed to Apply")
+
+    def analyze_patch_failures(self):
+        """Analyzes patterns in failed patches and logs common failure reasons."""
+        failure_patterns = {}
+
+        for error_signature, attempts in self.detailed_logs.items():
+            failure_counts = {}
+            
+            for attempt in attempts:
+                if attempt["outcome"] == "Failed to Apply":
+                    reason = attempt.get("extra_info", "Unknown Failure")
+                    failure_counts[reason] = failure_counts.get(reason, 0) + 1
+            
+            if failure_counts:
+                failure_patterns[error_signature] = failure_counts
+
+        logger.info(f"📉 Common Patch Failure Reasons: {failure_patterns}")
+        return failure_patterns
+
+
+if __name__ == "__main__":
+    review_manager = AIPatchReviewManager()
+    review_manager.process_human_reviewed_patches()
+    review_manager.analyze_patch_failures()

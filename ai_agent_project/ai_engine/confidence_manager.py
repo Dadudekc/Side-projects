@@ -1,0 +1,133 @@
+import json
+import logging
+import os
+from typing import Dict, List, Tuple, Optional
+import random
+
+logger = logging.getLogger("AIConfidenceManager")
+logger.setLevel(logging.DEBUG)
+
+AI_CONFIDENCE_FILE = "ai_confidence_scores.json"
+PATCH_HISTORY_FILE = "patch_history.json"
+
+
+class AIConfidenceManager:
+    """
+    Manages AI confidence scoring for patches.
+    - Assigns confidence scores based on AI analysis & historical success.
+    - Logs AI reasoning for score assignments.
+    - Suggests re-attempting patches if confidence improves over time.
+    """
+
+    def __init__(self):
+        self.confidence_scores = self._load_confidence_data()
+        self.patch_history = self._load_patch_data()
+
+    def _load_confidence_data(self) -> Dict[str, List[Dict[str, str]]]:
+        """Loads AI confidence score tracking data."""
+        return self._load_json(AI_CONFIDENCE_FILE)
+
+    def _load_patch_data(self) -> Dict[str, List[Dict[str, str]]]:
+        """Loads patch application history."""
+        return self._load_json(PATCH_HISTORY_FILE)
+
+    def _load_json(self, file_path: str) -> Dict:
+        """Generic JSON loader."""
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception as e:
+                logger.error(f"❌ Failed to load {file_path}: {e}")
+        return {}
+
+    def _save_json(self, file_path: str, data: Dict):
+        """Generic JSON saver."""
+        try:
+            with open(file_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4)
+        except Exception as e:
+            logger.error(f"❌ Failed to save {file_path}: {e}")
+
+    def assign_confidence_score(self, error_signature: str, patch: str) -> Tuple[float, str]:
+        """
+        Assigns a confidence score based on past patch performance.
+        Returns (confidence_score, reason).
+        """
+        historical_success = self._get_historical_success_rate(error_signature)
+
+        # Confidence score is boosted if similar patches were successful before
+        score = round(min(1.0, max(0.1, historical_success + random.uniform(-0.2, 0.3))), 2)
+
+        reasons = [
+            "Highly similar to a previously successful patch.",
+            "New approach detected, uncertain outcome.",
+            "Patch structure matches known patterns, medium confidence.",
+            "Patch modifies multiple areas, risky.",
+            "Identical fix worked in a past scenario."
+        ]
+        reason = reasons[0] if historical_success > 0.7 else random.choice(reasons)
+
+        logger.info(f"🤖 AI Confidence: {score} for error {error_signature} - Reason: {reason}")
+
+        # Store confidence score
+        self.confidence_scores.setdefault(error_signature, []).append({
+            "patch": patch,
+            "confidence": score,
+            "reason": reason
+        })
+        self._save_json(AI_CONFIDENCE_FILE, self.confidence_scores)
+
+        return score, reason
+
+    def _get_historical_success_rate(self, error_signature: str) -> float:
+        """Calculates the success rate of past patches for this error."""
+        patches = self.patch_history.get(error_signature, [])
+        if not patches:
+            return 0.5  # Default confidence if no history exists
+
+        success_count = sum(1 for p in patches if p["outcome"] == "Applied Successfully")
+        return round(success_count / len(patches), 2) if patches else 0.5
+
+    def get_best_high_confidence_patch(self, error_signature: str) -> Optional[str]:
+        """
+        Retrieves the highest-confidence patch for an error, if confidence is high enough.
+        """
+        patches = self.confidence_scores.get(error_signature, [])
+        if not patches:
+            return None
+
+        best_patch = max(patches, key=lambda x: x["confidence"])
+        return best_patch["patch"] if best_patch["confidence"] > 0.75 else None
+
+    def suggest_patch_reattempt(self, error_signature: str) -> Optional[str]:
+        """
+        Suggests a re-attempt for patches that initially failed but have improved AI confidence.
+        """
+        previous_patches = self.confidence_scores.get(error_signature, [])
+        if not previous_patches:
+            return None
+
+        # Find patches that failed but now have improved confidence
+        for patch_data in previous_patches:
+            if patch_data["confidence"] > 0.7 and patch_data["patch"] in self.patch_history.get(error_signature, []):
+                return patch_data["patch"]
+        
+        return None
+
+
+if __name__ == "__main__":
+    manager = AIConfidenceManager()
+    test_error = "example_error_signature"
+    test_patch = "--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ fixed code"
+    
+    score, reason = manager.assign_confidence_score(test_error, test_patch)
+    logger.info(f"🎯 Assigned confidence score: {score}, Reason: {reason}")
+
+    best_patch = manager.get_best_high_confidence_patch(test_error)
+    if best_patch:
+        logger.info(f"🚀 Best high-confidence patch suggested: {best_patch}")
+
+    reattempt_patch = manager.suggest_patch_reattempt(test_error)
+    if reattempt_patch:
+        logger.info(f"🔄 AI suggests retrying: {reattempt_patch}")

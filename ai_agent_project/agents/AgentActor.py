@@ -89,6 +89,29 @@ class AgentActor(AgentBase):
         except Exception as e:
             return f"Failed to execute operation '{operation}' on tool '{tool_name}': {str(e)}"
 
+
+    def perform_task(self, task: Dict[str, Any]) -> Any:
+        """
+        Executes a given task based on its type.
+
+        Args:
+            task (Dict[str, Any]): A dictionary containing task details.
+        
+        Returns:
+            Any: Result of task execution.
+        """
+        task_type = task.get('type')
+        if not task_type:
+            return "Error: Task type is missing."
+
+        if task_type == 'python':
+            return self._execute_python_task(task.get('content', ''))
+        elif task_type == 'shell':
+            return self._execute_shell_task(task.get('content', ''))
+        else:
+            return f"Error: Unsupported task type '{task_type}'"
+
+
     def shutdown(self) -> None:
         """Handles cleanup operations."""
         logger.info("AgentActor is shutting down.")

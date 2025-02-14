@@ -1,0 +1,16 @@
+{
+    "145d7c8b40e7ccc1343011bf82b6e821c45185e0ef4cbb8c17db6b0a559a9d89": {
+        "patch": "--- agents/core/AgentActor.py\n+++ agents/core/AgentActor.py\n@@ -94,0 +95,8 @@\n     def perform_task(self, task):\n         \"\"\"Auto-generated method to perform a task.\"\"\"\n         task_type = task.get('type')\n         if task_type == 'python':\n             return self.tool_server.python_notebook.execute_code(task.get('content'))\n         elif task_type == 'shell':\n             return self.tool_server.shell.execute(task.get('content'))\n         else:\n             raise ValueError(f\"Unknown task type: {task_type}\")\n",
+        "last_attempt": 1739519141.021905,
+        "attempts": 1,
+        "success": null,
+        "source_context": "No code context available",
+        "manual_fix": false
+    },
+    "7c6fcaf89db5b6283d3554a0685155b3172c9f5a5f78b15f2a892e28f661d250": {
+        "patch": "--- original.py\n+++ fixed.py\n@@ -1,4 +1,4 @@\n-# Generic fix placeholder\n+# Generic fix placeholder\n",
+        "attempts": 4,
+        "success": false,
+        "needs_manual_review": true
+    }
+}

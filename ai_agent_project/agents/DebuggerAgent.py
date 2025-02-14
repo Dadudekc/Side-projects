@@ -7,9 +7,14 @@ from typing import Any, Dict, Optional, List
 import shutil  # To create backups
 from agents.core.utilities.AgentBase import AgentBase
 from agents.core.utilities.debug_agent_utils import DebugAgentUtils
+from utils.file_manager import move_file, ensure_init_py, remove_empty_dirs
+
+
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
 
 class DebuggerAgent(AgentBase):
     """
@@ -53,7 +58,14 @@ class DebuggerAgent(AgentBase):
         else:
             logger.error(f"[{self.name}] Unknown debugging task: '{task}'")
             return {"status": "error", "message": f"Unknown debugging task '{task}'"}
+        
+    def reorganize_files(self):
+        """Example method for moving files if needed."""
+        move_file("debugger/old_file.py", "debugger/new_location/renamed_file.py")
+        ensure_init_py("debugger/new_location")
+        remove_empty_dirs("debugger")
 
+        print("✅ File operations completed.")
     # -------------------
     # HIGH LEVEL PROCESS
     # -------------------
@@ -128,37 +140,60 @@ class DebuggerAgent(AgentBase):
 
     def retry_tests(self, max_retries: int = 3):
         """
-        Runs tests, parses failures, attempts fixes, repeats until success or max tries.
+        Runs tests, parses failures, attempts fixes, and repeats until success or max retries.
+        If a fix is applied, it re-tests only the previously failing tests.
         """
-        modified_files = []
+        modified_files = set()  # Track which files were modified
+        remaining_failures = []  # Store failures for targeted re-runs
+
         for attempt in range(1, max_retries + 1):
             logger.info(f"[{self.name}] 🔁 Debugging attempt {attempt}/{max_retries}...")
-            test_output = self.run_tests()
-            failures = self.parse_test_failures(test_output)
 
-            logger.info(f"[{self.name}] Found {len(failures)} failing tests in attempt {attempt}.")
+            # If it's the first attempt, run all tests; otherwise, run only the failing ones
+            if attempt == 1 or not remaining_failures:
+                test_output = self.run_tests()
+            else:
+                failed_files = {failure["file"] for failure in remaining_failures}
+                test_output = self.run_tests_for_files(failed_files)
+
+            # Parse the test output
+            failures = self.parse_test_failures(test_output)
+            remaining_failures = failures  # Update remaining failures
+
+            logger.info(f"[{self.name}] 📉 Found {len(failures)} failing tests in attempt {attempt}.")
             if not failures:
                 logger.info(f"[{self.name}] ✅ All tests passed successfully on attempt {attempt}!")
-                # Optionally push to GitHub:
+                # Optionally push to GitHub if all tests pass
                 self.push_to_github("All tests passed! Automated fix commits.")
                 return {"status": "success", "message": "All tests passed!"}
 
             # Attempt to fix each failure
+            fixed_failures = []
             for failure in failures:
                 file_name = failure["file"]
-                logger.info(f"[{self.name}] Fixing test failure in {file_name} - test '{failure['test']}'.")
-                fix_ok = self.apply_fix(failure)
-                if fix_ok and file_name not in modified_files:
-                    modified_files.append(file_name)
-                    logger.info(f"[{self.name}] Fix applied successfully for {file_name}.")
-                else:
-                    logger.error(f"[{self.name}] Failed to fix {failure['file']} - {failure['test']}.")
-                    logger.info(f"[{self.name}] Performing rollback of changes to avoid breakage.")
-                    self.rollback_changes(modified_files)
-                    return {"status": "error", "message": f"Could not fix {file_name} automatically."}
+                logger.info(f"[{self.name}] 🔧 Attempting to fix failure in {file_name} - test '{failure['test']}'.")
 
+                fix_ok = self.apply_fix(failure)
+                if fix_ok:
+                    modified_files.add(file_name)
+                    fixed_failures.append(failure)
+                    logger.info(f"[{self.name}] ✅ Fix applied successfully for {file_name}.")
+                else:
+                    logger.error(f"[{self.name}] ❌ Failed to fix {file_name} - test '{failure['test']}'.")
+
+            # Remove successfully fixed failures from the next retry cycle
+            remaining_failures = [f for f in remaining_failures if f not in fixed_failures]
+
+            # If no fixes succeeded in this round, rollback changes to avoid breakage
+            if not fixed_failures:
+                logger.warning(f"[{self.name}] 🔄 No fixes worked. Rolling back changes to prevent corruption.")
+                self.rollback_changes(modified_files)
+                return {"status": "error", "message": "Could not fix any failures automatically."}
+
+        # If max retries are reached and tests are still failing
         logger.error(f"[{self.name}] 🛑 Max retries reached. Some issues remain unresolved.")
         return {"status": "error", "message": "Max retries reached. Unresolved issues remain."}
+
 
     def automate_debugging(self) -> Dict[str, str]:
         """
@@ -174,13 +209,23 @@ class DebuggerAgent(AgentBase):
     # ------------------------
     def _apply_known_pattern(self, failure: Dict[str, str]) -> bool:
         """
-        Basic attempt at recognized patterns (AttributeError, AssertionError, ImportError, 
-        TypeError, IndentationError, etc).
-        If a pattern is recognized AND we fix it, return True; else False.
+        Attempts to apply a quick-fix for common error patterns:
+        - AttributeError: Adds missing attribute stubs.
+        - AssertionError: Adjusts assertion mismatches.
+        - ImportError: Adds missing imports.
+        - TypeError: Fixes missing required arguments.
+        - IndentationError: Converts tabs to spaces.
+        - IndexError: Adds bounds checks.
+        - KeyError: Ensures key existence.
+        - NameError: Attempts to define missing variables.
+        - SyntaxError: Tries minor syntax corrections.
+
+        Returns True if a fix is successfully applied, False otherwise.
         """
         error_msg = failure["error"]
         file_name = failure["file"]
-        logger.debug(f"[{self.name}] Checking known pattern fixes for file={file_name}, error={error_msg[:80]}...")
+        logger.debug(f"[{self.name}] 🔍 Checking known pattern fixes for {file_name}, error={error_msg[:80]}...")
+
 
         # 1) Quick fix: Missing attribute → see _quick_fix_missing_attribute
         if "AttributeError" in error_msg:
@@ -421,125 +466,126 @@ class DebuggerAgent(AgentBase):
     # ADAPTIVE LEARNING (DB) LOGIC
     # ------------------------------
 
-
     def _apply_adaptive_learning_fix(self, failure: Dict[str, str]) -> bool:
         """
-        Looks up existing 'learned' fix patterns in a local DB. If found, tries to apply them.
-        If the stored fix is a code snippet, patch, or configuration update, we'll parse it 
-        and attempt to update the file. If not found or parsing fails, return False.
+        Attempts to apply a previously learned fix from the local database.
+        If the stored fix is a snippet, patch, or config update, it is parsed and applied.
+        Returns True if successful, False otherwise.
         """
-
         error_msg = failure["error"]
+        original_relative_path = failure["file"]
 
-        # --- Fix Path Handling ---
+        # 🔍 Step 1: Log and Normalize File Path
+        logger.debug(f"[{self.name}] 🔍 Original failure file path: {original_relative_path}")
 
-        # Normalize and correct path to avoid duplicate "tests/" prefix
-        relative_path = os.path.normpath(failure["file"])  # Normalize path slashes
+        # Convert to Path object and normalize
+        relative_path = Path(original_relative_path).as_posix()
+        logger.debug(f"[{self.name}] 🔹 Initial normalized path: {relative_path}")
 
-        # Check if "tests/" appears multiple times and remove the extra prefix
-        if "tests" in relative_path:
-            parts = relative_path.split(os.sep)
-            while parts and parts[0] == "tests":
-                parts.pop(0)  # Remove all redundant "tests/" prefixes
-            relative_path = os.path.join(*parts)
+        # Remove redundant "tests/" prefix
+        if relative_path.startswith("tests/tests/"):
+            relative_path = relative_path.replace("tests/tests/", "tests/", 1)
+        elif relative_path.startswith("tests/"):
+            relative_path = relative_path.replace("tests/", "", 1)
 
-        # Ensure the path is correctly structured
-        file_path = os.path.abspath(os.path.join("tests", relative_path))
+        logger.debug(f"[{self.name}] ✅ Cleaned relative path: {relative_path}")
 
-        logger.debug(f"[{self.name}] Corrected file path: {file_path}")
+        # Resolve final absolute path inside "tests"
+        file_path = Path("tests") / Path(relative_path)
+        file_path = file_path.resolve()
+        logger.debug(f"[{self.name}] 📂 Final resolved file path: {file_path}")
 
-
-
-        if not os.path.exists(file_path):
-            logger.error(f"[{self.name}] ❌ File {file_path} not found. Cannot apply known fix.")
+        # Step 2: Ensure the file exists
+        if not file_path.exists():
+            logger.error(f"[{self.name}] ❌ File not found: {file_path}. Cannot apply known fix.")
             return False
 
-        # --- Step 1: Check for a Learned Fix ---
+        # Step 3: Lookup Known Fix in Learning DB
         known_fix = self._search_learned_fix(error_msg)
         if not known_fix:
             logger.debug(f"[{self.name}] 🛑 No match in learning DB for error: {error_msg[:80]}")
             return False
 
-        logger.info(f"[{self.name}] ✅ Found a previously learned fix for this error. Attempting to apply it.")
+        logger.info(f"[{self.name}] ✅ Found a previously learned fix. Attempting to apply it.")
         logger.debug(f"[{self.name}] 🔎 Learned fix snippet: {known_fix!r}")
 
+        # Step 4: Create a Backup Before Modifying
+        backup_path = file_path.with_suffix(file_path.suffix + ".backup")
         try:
-            # --- Step 2: Backup the Original File Before Modifying ---
-            backup_path = f"{file_path}.backup"
             shutil.copy(file_path, backup_path)
-            logger.info(f"[{self.name}] 🛠️ Created a backup of {file_path} -> {backup_path}")
+            logger.info(f"[{self.name}] 🛠️ Created backup: {backup_path}")
+        except Exception as e:
+            logger.error(f"[{self.name}] ❌ Failed to create backup: {e}")
+            return False
 
-            # --- Step 3: Determine Fix Type (Snippet Injection, Unified Diff, Config Fix) ---
-
+        try:
+            # Step 5: Apply Fix Based on Type
             if known_fix.startswith("{") and "type" in known_fix:  # JSON-based fix
                 fix_data = json.loads(known_fix)
 
                 if fix_data.get("type") == "snippet_inject":
-                    with open(file_path, "r", encoding="utf-8") as f:
+                    with file_path.open("r", encoding="utf-8") as f:
                         file_lines = f.readlines()
 
-                    for patch_line in fix_data.get("target_lines", []):
-                        line_no = patch_line.get("line_no")
-                        snippet = patch_line.get("insert_after", "").strip()
-                        if 0 <= line_no < len(file_lines):  # Ensure index is valid
+                    for patch in fix_data.get("target_lines", []):
+                        line_no = patch.get("line_no", -1)
+                        snippet = patch.get("insert_after", "").strip()
+                        if 0 <= line_no < len(file_lines):
                             file_lines.insert(line_no + 1, snippet + "\n")
 
-                    with open(file_path, "w", encoding="utf-8") as f:
+                    with file_path.open("w", encoding="utf-8") as f:
                         f.writelines(file_lines)
 
-                    logger.info(f"[{self.name}] ✅ Successfully applied snippet_inject fix to {file_path}")
+                    logger.info(f"[{self.name}] ✅ Successfully applied snippet_inject fix.")
                     return True
 
                 elif fix_data.get("type") == "unified_diff":
                     diff_text = fix_data.get("diff_text", "")
                     patch_obj = DebugAgentUtils.parse_diff_suggestion(diff_text)
-                    if not patch_obj or len(patch_obj) == 0:
-                        logger.warning(f"[{self.name}] ❌ Learned fix: No valid patch data in 'diff_text'.")
-                        return False
-                    DebugAgentUtils.apply_diff_patch([file_path], patch_obj)
-                    logger.info(f"[{self.name}] ✅ Successfully applied learned unified diff patch to {file_path}")
-                    return True
+                    if patch_obj:
+                        DebugAgentUtils.apply_diff_patch([str(file_path)], patch_obj)
+                        logger.info(f"[{self.name}] ✅ Successfully applied learned unified diff patch.")
+                        return True
+                    logger.warning(f"[{self.name}] ❌ Invalid unified diff patch.")
 
                 elif fix_data.get("type") == "config_update":
-                    key_to_replace = fix_data.get("config_key")
-                    new_value = fix_data.get("new_value")
-                    success = self._update_config_key(file_path, key_to_replace, new_value)
-                    if success:
-                        logger.info(f"[{self.name}] ✅ Successfully updated config {key_to_replace} in {file_path}")
+                    key, new_value = fix_data.get("config_key"), fix_data.get("new_value")
+                    if self._update_config_key(str(file_path), key, new_value):
+                        logger.info(f"[{self.name}] ✅ Successfully updated config {key}.")
                         return True
-                    logger.warning(f"[{self.name}] ❌ Config update failed for {key_to_replace}.")
-                    return False
-
-                else:
-                    logger.warning(f"[{self.name}] ❌ Unknown fix_data type in learning DB: {fix_data.get('type')}")
-                    return False
+                    logger.warning(f"[{self.name}] ❌ Config update failed for {key}.")
 
             elif "diff --git" in known_fix:  # If the fix is a full diff patch
                 patch_obj = DebugAgentUtils.parse_diff_suggestion(known_fix)
-                if not patch_obj or len(patch_obj) == 0:
-                    logger.warning(f"[{self.name}] ❌ Learned fix: No valid patch data in diff text.")
-                    return False
-                DebugAgentUtils.apply_diff_patch([file_path], patch_obj)
-                logger.info(f"[{self.name}] ✅ Successfully applied learned diff patch to {file_path}")
-                return True
+                if patch_obj:
+                    DebugAgentUtils.apply_diff_patch([str(file_path)], patch_obj)
+                    logger.info(f"[{self.name}] ✅ Successfully applied learned diff patch.")
+                    return True
+                logger.warning(f"[{self.name}] ❌ Invalid patch data.")
 
             elif "def " in known_fix or "class " in known_fix:  # Assume it's a function/class injection
-                with open(file_path, "a", encoding="utf-8") as f:
+                with file_path.open("a", encoding="utf-8") as f:
                     f.write("\n" + known_fix + "\n")
-                logger.info(f"[{self.name}] ✅ Successfully appended missing function/class fix to {file_path}")
+                logger.info(f"[{self.name}] ✅ Successfully appended missing function/class fix.")
                 return True
 
-            else:
-                logger.warning(f"[{self.name}] ❌ Learned fix format not recognized. No changes applied.")
-                return False
+            logger.warning(f"[{self.name}] ❌ Learned fix format not recognized. No changes applied.")
+            return False
 
+        except json.JSONDecodeError:
+            logger.error(f"[{self.name}] ❌ Failed to parse JSON from known fix. Fix data might be corrupted.")
         except Exception as e:
             logger.error(f"[{self.name}] ❌ Could not parse/apply learned fix: {e}")
 
-            # If error occurs, restore from backup
+            # Restore Backup if Fix Fails
             shutil.copy(backup_path, file_path)
             logger.info(f"[{self.name}] 🔄 Restored {file_path} from backup due to failure.")
-            return False
+
+        return False
+
+
+
+
 
 
     def _search_learned_fix(self, error_msg: str) -> Optional[str]:
@@ -593,44 +639,80 @@ class DebuggerAgent(AgentBase):
     # -------------
     # LLM APPROACH
     # -------------
+
     def _apply_ollama_deepseek_fix(self, failure: Dict[str, str]) -> bool:
         """
         Uses chunked code + Ollama for advanced suggestions in unified diff form.
         Then applies patch line by line using unidiff.
         """
-        file_path = os.path.join("tests", failure["file"])
-        if not os.path.exists(file_path):
-            logger.error(f"[{self.name}] File {file_path} not found. Cannot apply fix.")
+
+        # 🔹 Step 1: Normalize and Resolve File Path Correctly
+        original_path = failure["file"].strip()
+        
+        # Ensure path uses correct separators and remove redundant "tests/"
+        relative_path = Path(original_path).as_posix()
+        if relative_path.startswith("tests/tests/"):
+            relative_path = relative_path.replace("tests/tests/", "tests/", 1)
+        elif relative_path.startswith("tests/"):
+            relative_path = relative_path[len("tests/"):]  # Remove leading "tests/"
+
+        # Construct the full absolute path
+        file_path = Path("tests") / Path(relative_path)
+        file_path = file_path.resolve()
+
+        logger.debug(f"[{self.name}] 🔍 Original failure file path: {original_path}")
+        logger.debug(f"[{self.name}] 📂 Resolved file path: {file_path}")
+
+        if not file_path.exists():
+            logger.error(f"[{self.name}] ❌ File not found: {file_path}. Cannot apply fix.")
             return False
 
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            # 🔹 Step 2: Read File Content
+            with file_path.open("r", encoding="utf-8") as f:
                 file_content = f.read()
 
-            logger.debug(f"[{self.name}] Chunking code for file '{file_path}' with length={len(file_content)}")
+            logger.debug(f"[{self.name}] 🔎 Chunking code for file '{file_path}' (size: {len(file_content)} bytes)")
             chunks = DebugAgentUtils.deepseek_chunk_code(file_content)
-            logger.info(f"[{self.name}] Created {len(chunks)} chunk(s) for LLM input.")
+            logger.info(f"[{self.name}] 📑 Created {len(chunks)} chunk(s) for LLM input.")
 
-            # feed to LLM for suggestions
+            # 🔹 Step 3: Query LLM for Fix
             suggestion = DebugAgentUtils.run_deepseek_ollama_analysis(chunks, failure["error"])
-            logger.info(f"[{self.name}] LLM suggestion (first 200 chars): {suggestion[:200]!r}...")
-
-            # parse as a patch
-            patch_obj = DebugAgentUtils.parse_diff_suggestion(suggestion)
-            logger.debug(f"[{self.name}] PatchSet has {len(patch_obj)} file(s) to patch.")
-
-            if not patch_obj or len(patch_obj) == 0:
-                logger.warning(f"[{self.name}] No valid patch data from LLM suggestion or empty PatchSet.")
+            if not suggestion.strip():
+                logger.warning(f"[{self.name}] ❌ LLM returned an empty suggestion. No fix applied.")
                 return False
 
-            # apply patch
-            logger.info(f"[{self.name}] Attempting to apply patch to file '{file_path}'")
-            DebugAgentUtils.apply_diff_patch([file_path], patch_obj)
+            logger.info(f"[{self.name}] 🤖 LLM suggestion (first 200 chars): {suggestion[:200]!r}")
+
+            # 🔹 Step 4: Parse as a Patch
+            patch_obj = DebugAgentUtils.parse_diff_suggestion(suggestion)
+            if not patch_obj or len(patch_obj) == 0:
+                logger.warning(f"[{self.name}] ❌ No valid patch data from LLM suggestion or empty PatchSet.")
+                return False
+
+            # 🔹 Step 5: Backup the Original File Before Applying Patch
+            backup_path = file_path.with_suffix(file_path.suffix + ".backup")
+            shutil.copy(file_path, backup_path)
+            logger.info(f"[{self.name}] 🛠️ Created a backup of {file_path} -> {backup_path}")
+
+            # 🔹 Step 6: Apply Patch
+            logger.info(f"[{self.name}] 🚀 Attempting to apply patch to file '{file_path}'")
+            DebugAgentUtils.apply_diff_patch([str(file_path)], patch_obj)
+
+            logger.info(f"[{self.name}] ✅ Successfully applied fix using LLM-generated patch.")
             return True
 
         except Exception as e:
-            logger.error(f"[{self.name}] Failed applying advanced fix for {failure['file']}: {e}")
+            logger.error(f"[{self.name}] ❌ Failed to apply LLM fix for {failure['file']}: {e}")
+
+            # 🔹 Step 7: Restore from Backup if Patch Fails
+            if backup_path.exists():
+                shutil.copy(backup_path, file_path)
+                logger.info(f"[{self.name}] 🔄 Restored {file_path} from backup due to failure.")
+
             return False
+
+
 
     # -------------
     # DIAGNOSTICS
