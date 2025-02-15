@@ -1,40 +1,84 @@
+import os
 import json
 import logging
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.util import ngrams
 from collections import deque
 from typing import Any, Dict, List, Optional
+from difflib import SequenceMatcher
+
+# Ensure necessary NLTK resources are downloaded
+nltk.download("punkt")
+nltk.download("stopwords")
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-
 class MemoryManager:
     """
-    Manages short-term memory for AI agents, tracking past interactions and task history.
+    Manages both short-term and long-term memory for AI agents.
+    - Short-term memory: Tracks recent interactions (volatile storage).
+    - Long-term memory: Persistent knowledge storage using text similarity retrieval.
     """
 
-    def __init__(self, memory_limit: int = 50):
+    def __init__(self, memory_limit: int = 50, storage_path: str = "memory_store.json", ngram_size: int = 3):
         """
-        Initializes the Memory Manager.
+        Initializes the MemoryManager.
 
         Args:
-            memory_limit (int): Maximum number of memory entries to store.
+            memory_limit (int): Max number of short-term memory entries.
+            storage_path (str): File path for long-term memory storage.
+            ngram_size (int): Size of n-grams for text similarity retrieval.
         """
-        self.memory = deque(maxlen=memory_limit)
+        self.memory = deque(maxlen=memory_limit)  # Short-term memory
+        self.storage_path = storage_path          # Long-term memory file
+        self.ngram_size = ngram_size
+        self.long_term_memory = self.load_memory()
+        self.stop_words = set(stopwords.words("english"))
 
-    def store_memory(self, key: str, value: Any) -> None:
+    def load_memory(self) -> Dict[str, Any]:
+        """Loads stored long-term memory from a JSON file."""
+        if os.path.exists(self.storage_path):
+            with open(self.storage_path, "r", encoding="utf-8") as file:
+                return json.load(file)
+        return {}
+
+    def save_memory(self) -> None:
+        """Saves long-term memory data to a JSON file."""
+        with open(self.storage_path, "w", encoding="utf-8") as file:
+            json.dump(self.long_term_memory, file, indent=4)
+
+    def preprocess_text(self, text: str) -> List[tuple]:
         """
-        Stores a key-value pair in memory.
+        Tokenizes and removes stopwords from text, converting it into n-grams.
+
+        Args:
+            text (str): Input text.
+
+        Returns:
+            List[tuple]: List of n-grams for similarity matching.
+        """
+        tokens = word_tokenize(text.lower())
+        filtered_tokens = [word for word in tokens if word.isalnum() and word not in self.stop_words]
+        return list(ngrams(filtered_tokens, self.ngram_size)) if len(filtered_tokens) >= self.ngram_size else [tuple(filtered_tokens)]
+
+    # Short-term memory operations
+    def store_short_term_memory(self, key: str, value: Any) -> None:
+        """
+        Stores a key-value pair in short-term memory.
 
         Args:
             key (str): Identifier for the memory entry.
             value (Any): Data to store.
         """
         self.memory.append({key: value})
-        logger.debug(f"Stored memory: {key} -> {value}")
+        logger.debug(f"Stored in short-term memory: {key} -> {value}")
 
-    def retrieve_memory(self, key: str) -> Optional[Any]:
+    def retrieve_short_term_memory(self, key: str) -> Optional[Any]:
         """
-        Retrieves stored memory based on a key.
+        Retrieves stored memory from short-term memory.
 
         Args:
             key (str): Identifier for the memory entry.
@@ -44,27 +88,89 @@ class MemoryManager:
         """
         for entry in reversed(self.memory):
             if key in entry:
-                logger.debug(f"Retrieved memory for {key}: {entry[key]}")
+                logger.debug(f"Retrieved from short-term memory: {key} -> {entry[key]}")
                 return entry[key]
-        logger.warning(f"No memory found for key: {key}")
+        logger.warning(f"No short-term memory found for key: {key}")
         return None
 
-    def clear_memory(self) -> None:
-        """
-        Clears all stored memory.
-        """
+    def clear_short_term_memory(self) -> None:
+        """Clears all short-term memory."""
         self.memory.clear()
-        logger.info("Memory cleared.")
+        logger.info("Short-term memory cleared.")
 
+    # Long-term memory operations
+    def store_long_term_memory(self, key: str, value: Any) -> None:
+        """
+        Stores a key-value pair in long-term memory with NLP processing.
+
+        Args:
+            key (str): The key to associate with the memory.
+            value (Any): The information to store.
+        """
+        processed_key = str(self.preprocess_text(key))
+        self.long_term_memory[processed_key] = value
+        self.save_memory()
+        logger.debug(f"Stored in long-term memory: {key} -> {value}")
+
+    def retrieve_long_term_memory(self, query: str) -> Optional[Any]:
+        """
+        Retrieves the most relevant long-term memory using text similarity.
+
+        Args:
+            query (str): The user input to find the most relevant stored memory.
+
+        Returns:
+            Optional[Any]: The best matching memory value, or None if no close match is found.
+        """
+        processed_query = str(self.preprocess_text(query))
+        best_match = None
+        highest_score = 0.0
+
+        for stored_key, stored_value in self.long_term_memory.items():
+            similarity = SequenceMatcher(None, processed_query, stored_key).ratio()
+            if similarity > highest_score:
+                highest_score = similarity
+                best_match = stored_value
+
+        if highest_score > 0.6:  # Threshold for relevance
+            logger.debug(f"Retrieved from long-term memory: {best_match} (similarity: {highest_score:.2f})")
+            return best_match
+        logger.warning("No relevant long-term memory found.")
+        return None
+
+    def remove_long_term_memory(self, key: str) -> bool:
+        """
+        Deletes a memory from long-term storage.
+
+        Args:
+            key (str): The key of the memory to remove.
+
+        Returns:
+            bool: True if memory was removed, False otherwise.
+        """
+        processed_key = str(self.preprocess_text(key))
+        if processed_key in self.long_term_memory:
+            del self.long_term_memory[processed_key]
+            self.save_memory()
+            logger.info(f"Removed memory for key: {key}")
+            return True
+        logger.warning(f"Memory key not found: {key}")
+        return False
+
+    # Memory persistence operations
     def export_memory(self, filepath: str) -> None:
         """
-        Exports stored memory to a JSON file.
+        Exports stored short-term and long-term memory to a JSON file.
 
         Args:
             filepath (str): File path to save memory data.
         """
+        data = {
+            "short_term_memory": list(self.memory),
+            "long_term_memory": self.long_term_memory
+        }
         with open(filepath, "w", encoding="utf-8") as f:
-            json.dump(list(self.memory), f, indent=4)
+            json.dump(data, f, indent=4)
         logger.info(f"Memory exported to {filepath}")
 
     def import_memory(self, filepath: str) -> None:
@@ -76,9 +182,23 @@ class MemoryManager:
         """
         try:
             with open(filepath, "r", encoding="utf-8") as f:
-                items = json.load(f)
-            for entry in items:
-                self.memory.append(entry)
+                data = json.load(f)
+
+            self.memory.extend(data.get("short_term_memory", []))
+            self.long_term_memory = data.get("long_term_memory", {})
+            self.save_memory()
             logger.info(f"Memory imported from {filepath}")
         except (FileNotFoundError, json.JSONDecodeError) as e:
             logger.error(f"Error importing memory: {e}")
+
+# Example usage
+if __name__ == "__main__":
+    memory = MemoryManager()
+
+    # Short-term memory operations
+    memory.store_short_term_memory("Last conversation", "Discussing AI agents.")
+    print(memory.retrieve_short_term_memory("Last conversation"))  # Expected: "Discussing AI agents."
+
+    # Long-term memory operations
+    memory.store_long_term_memory("What is my preferred programming language?", "Python")
+    print(memory.retrieve_long_term_memory("What do I use for coding?"))  # Expected: "Python"
