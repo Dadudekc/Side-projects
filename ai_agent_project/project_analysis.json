@@ -1,0 +1,1611 @@
+{
+    "modules": {
+        "auto_fixer.py": {
+            "dependencies": [
+                "os",
+                "json",
+                "re",
+                "subprocess",
+                "sys"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "fix_imports.py": {
+            "dependencies": [
+                "os",
+                "re"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "fix_test_issues.py": {
+            "dependencies": [
+                "os",
+                "re",
+                "json",
+                "shutil",
+                "sys",
+                "logging"
+            ],
+            "purpose": "auto_fix.py\n\nThis script automates common fixes in the project to help resolve issues\nsuch as missing modules, broken imports, unterminated string literals, and\nsyntax errors before running tests.\n\nIt performs the following tasks:\n  - Ensures required modules exist in the agents/core folder.\n  - Fixes import statements in test files (in the tests folder).\n  - Scans test files for unterminated string literals and closes them.\n  - Checks for syntax errors in test files and logs them."
+        },
+        "project_context_analyzer.py": {
+            "dependencies": [
+                "os",
+                "json",
+                "ast",
+                "re",
+                "logging",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "run_tests.py": {
+            "dependencies": [
+                "os",
+                "sys",
+                "subprocess",
+                "glob"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "setup.py": {
+            "dependencies": [
+                "setuptools"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\AgentActor.py": {
+            "dependencies": [
+                "typing",
+                "typing",
+                "logging",
+                "typing",
+                "agents.utilities.AgentBase",
+                "agents.core.utilities.ai_agent_utils"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\AgentDispatcher.py": {
+            "dependencies": [
+                "typing",
+                "typing",
+                "logging",
+                "json",
+                "agents.AgentRegistry",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\AgentRegistry.py": {
+            "dependencies": [
+                "typing",
+                "typing",
+                "os",
+                "logging",
+                "importlib",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\CustomAgent.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\DebuggerAgent.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\JournalAgent.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\TradingAgent.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\__init__.py": {
+            "dependencies": [
+                "typing",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\AgentBase.py": {
+            "dependencies": [
+                "typing",
+                "typing",
+                "logging",
+                "abc"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\AIConfidenceManager.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\AIModelManager.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\AIPatchOptimizer.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\AIPatchRetryManager.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\AIPatchReviewManager.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\AIRollbackAnalysis.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\AutoFixer.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\CustomAgent.py": {
+            "dependencies": [
+                "typing",
+                "typing",
+                "logging",
+                "typing",
+                "agents.core.core"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\DebuggerAgent.py": {
+            "dependencies": [
+                "typing",
+                "typing",
+                "logging",
+                "subprocess",
+                "re",
+                "json",
+                "os",
+                "typing",
+                "shutil",
+                "agents.core.core",
+                "agents.core.utilities.debug_agent_utils",
+                "utils.file_manager",
+                "pathlib"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\DebuggerCLI.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\DebuggerCore.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\debugger_reporter.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\debugger_runner.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\debugging_strategy.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\DeepSeekModel.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\JournalAgent.py": {
+            "dependencies": [
+                "typing",
+                "typing",
+                "os",
+                "json",
+                "logging",
+                "datetime",
+                "typing",
+                "agents.core.core"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\MistralModel.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\OpenAIModel.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\TestRetryManager.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\TradingAgent.py": {
+            "dependencies": [
+                "typing",
+                "typing",
+                "os",
+                "logging",
+                "alpaca_trade_api",
+                "agents.core.core"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\__init__.py": {
+            "dependencies": [
+                "typing",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\utilities\\ai_agent_utils.py": {
+            "dependencies": [
+                "typing",
+                "typing",
+                "time",
+                "logging",
+                "json",
+                "typing",
+                "collections",
+                "psutil"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\utilities\\debug_agent_utils.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\core\\utilities\\__init__.py": {
+            "dependencies": [
+                "typing",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\utilities\\AgentBase.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\utilities\\ai_agent_utils.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "agents\\utilities\\ai_patch_utils.py": {
+            "dependencies": [
+                "typing",
+                "typing",
+                "os",
+                "subprocess",
+                "logging",
+                "openai",
+                "tqdm",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\utilities\\debug_agent_utils.py": {
+            "dependencies": [
+                "typing",
+                "typing",
+                "logging",
+                "subprocess",
+                "re",
+                "os",
+                "typing",
+                "unidiff",
+                "tqdm",
+                "openai",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "agents\\utilities\\__init__.py": {
+            "dependencies": [
+                "typing",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "ai_engine\\confidence_manager.py": {
+            "dependencies": [
+                "json",
+                "logging",
+                "os",
+                "typing",
+                "random"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "ai_engine\\patch_analyzer.py": {
+            "dependencies": [
+                "logging",
+                "typing",
+                "test_retry_manager",
+                "ai_patch_analyzer",
+                "ai_confidence_manager"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "ai_engine\\patch_optimizer.py": {
+            "dependencies": [
+                "os",
+                "json",
+                "logging",
+                "random",
+                "subprocess",
+                "typing",
+                "debugger.patch_tracking_manager",
+                "confidence_manager",
+                "models.ai_model_manager"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "ai_engine\\patch_review_manager.py": {
+            "dependencies": [
+                "json",
+                "logging",
+                "os",
+                "typing",
+                "ai_clients",
+                "patch_tracking_manager"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "ai_engine\\rollback_analysis.py": {
+            "dependencies": [
+                "json",
+                "logging",
+                "os",
+                "typing",
+                "pandas",
+                "matplotlib.pyplot",
+                "PyQt5.QtWidgets",
+                "ai_clients",
+                "patch_tracking_manager"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "ai_engine\\__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "ai_engine\\models\\ai_model_manager.py": {
+            "dependencies": [
+                "os",
+                "subprocess",
+                "logging",
+                "openai",
+                "typing",
+                "patch_tracking_manager",
+                "ai_confidence_manager",
+                "hashlib"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "ai_engine\\models\\deepseek_model.py": {
+            "dependencies": [
+                "os",
+                "subprocess",
+                "logging",
+                "openai",
+                "random",
+                "json",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "ai_engine\\models\\mistral_model.py": {
+            "dependencies": [
+                "os",
+                "subprocess",
+                "logging",
+                "openai",
+                "random",
+                "json",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "ai_engine\\models\\openai_model.py": {
+            "dependencies": [
+                "os",
+                "openai",
+                "logging",
+                "json",
+                "random",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "ai_engine\\models\\__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\auto_fixer.py": {
+            "dependencies": [
+                "logging",
+                "os",
+                "re",
+                "shutil",
+                "typing",
+                "debugger.learning_db",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\debugger_cli.py": {
+            "dependencies": [
+                "argparse",
+                "logging",
+                "json",
+                "os",
+                "debugger_core",
+                "patch_tracking_manager"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\debugger_core.py": {
+            "dependencies": [
+                "debugging_strategy",
+                "os",
+                "sys",
+                "json",
+                "logging",
+                "subprocess",
+                "shutil",
+                "re",
+                "hashlib",
+                "datetime",
+                "typing",
+                "debugger_logger",
+                "apply_fix",
+                "debugging_strategy"
+            ],
+            "purpose": "Unified debugger_core.py\n\nThis module provides a unified debugging system with two modes:\n\n\u2022 Simple Mode:\n  - Runs tests with plain pytest output.\n  - Parses failures.\n  - Uses ApplyFix to attempt automatic fixes.\n  - Logs attempts via DebuggerLogger.\n  - Retries fixes and rolls back if necessary.\n\n\u2022 Advanced Mode:\n  - Runs tests using pytest-json-report.\n  - Archives JSON reports.\n  - Extracts detailed failure info (including code context).\n  - Uses a DebuggingStrategy to generate and apply patches.\n  - Maintains a learning DB (JSON file) of error signatures.\n  - Re-runs tests to validate fixes.\n  \nUsage:\n    # For simple mode:\n    debugger = DebuggerCore()\n    debugger.debug(max_retries=3)\n    \n    # For advanced mode:\n    from debugging_strategy import DebuggingStrategy\n    strategy = DebuggingStrategy()  # Your implementation here\n    debugger = DebuggerCore(debug_strategy=strategy)\n    debugger.debug()"
+        },
+        "debugger\\debugger_logger.py": {
+            "dependencies": [
+                "os",
+                "json",
+                "logging",
+                "datetime",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\debugger_reporter.py": {
+            "dependencies": [
+                "logging",
+                "json",
+                "os",
+                "typing",
+                "collections",
+                "email_reporter"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\debugger_runner.py": {
+            "dependencies": [
+                "logging",
+                "subprocess",
+                "os",
+                "debugger.error_parser",
+                "debugger.auto_fixer"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\debugging_strategy.py": {
+            "dependencies": [
+                "ast",
+                "re",
+                "logging",
+                "os",
+                "subprocess",
+                "json",
+                "hashlib",
+                "tempfile",
+                "typing",
+                "models.ai_model_manager",
+                "debugger_logger",
+                "debugger.project_context_analyzer"
+            ],
+            "purpose": "debugging_strategy.py\n\nHandles automated debugging using a mix of:\n- AST-based patching (for structured fixes like missing methods).\n- AI-generated patches (fallback via AIModelManager).\n- Learning DB for storing known fixes.\n- Patch validation and application.\n- Detecting import errors.\n\nFeatures:\n  - Detects missing methods and auto-generates method stubs via AST.\n  - Uses AI to generate fixes when structured fixes don't apply.\n  - Saves successful patches for future reuse.\n  - Validates patches before applying.\n  - Supports rollback if a fix makes things worse.\n  - Detects import errors and extracts details to help with resolution."
+        },
+        "debugger\\debug_agent_auto_fixer.py": {
+            "dependencies": [
+                "os",
+                "re",
+                "json",
+                "shutil",
+                "logging",
+                "typing",
+                "debugging_strategy",
+                "patch_tracking_manager"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\error_parser.py": {
+            "dependencies": [
+                "re",
+                "logging",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\learning_db.py": {
+            "dependencies": [
+                "re",
+                "logging",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\moved_test_retry_manager.py": {
+            "dependencies": [
+                "os",
+                "shutil",
+                "subprocess",
+                "logging",
+                "typing",
+                "debugging_strategy",
+                "debugger_logger",
+                "patch_tracking_manager"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\patch_tracking_manager.py": {
+            "dependencies": [
+                "os",
+                "json",
+                "logging",
+                "datetime",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\project_context_analyzer.py": {
+            "dependencies": [
+                "os",
+                "json",
+                "ast",
+                "re",
+                "logging",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\rollback_manager.py": {
+            "dependencies": [
+                "os",
+                "json",
+                "logging",
+                "shutil",
+                "typing",
+                "patch_tracking_manager",
+                "debugging_strategy"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "debugger\\temp_test_folder\\__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "reports_archive\\__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "scripts\\main.py": {
+            "dependencies": [
+                "logging",
+                "schedule",
+                "time",
+                "debugger_core",
+                "debugging_strategy"
+            ],
+            "purpose": "Main module for the Overnight AI Debugger.\nRuns an immediate debugging cycle, then schedules future cycles.\n\nUsage:\n  python main.py"
+        },
+        "scripts\\run_debugger.py": {
+            "dependencies": [
+                "agents.utilities.AgentBase",
+                "agents.utilities.AgentBase",
+                "utils.logger",
+                "utils.config"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "scripts\\run_debugger_agent.py": {
+            "dependencies": [
+                "logging",
+                "test_retry_manager",
+                "ai_confidence_manager"
+            ],
+            "purpose": "run_debugger_agent.py\n\nThis script runs the AI-powered debugging system:\n- Detects test failures.\n- Attempts to fix errors using AI-assisted patching.\n- Uses confidence-based retry logic.\n- Rolls back changes if all fixes fail.\n- Logs debugging session results."
+        },
+        "scripts\\__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_AgentActor.py": {
+            "dependencies": [
+                "unittest",
+                "unittest.mock",
+                "agents.AgentActor",
+                "agents.core.utilities.ai_agent_utils"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_agent_base.py": {
+            "dependencies": [
+                "unittest",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_agent_dispatcher.py": {
+            "dependencies": [
+                "unittest",
+                "unittest.mock",
+                "agents.AgentDispatcher",
+                "agents.AgentRegistry",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_agent_registry.py": {
+            "dependencies": [
+                "unittest",
+                "unittest.mock",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_ai_agent_utils.py": {
+            "dependencies": [
+                "unittest",
+                "time",
+                "json",
+                "os",
+                "agents.core.utilities.ai_agent_utils"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_ai_confidence_manager.py": {
+            "dependencies": [
+                "unittest",
+                "os",
+                "json",
+                "unittest.mock",
+                "agents.core.AIConfidenceManager"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_ai_model_manager.py": {
+            "dependencies": [
+                "unittest",
+                "unittest.mock",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_ai_patch_optimizer.py": {
+            "dependencies": [
+                "unittest",
+                "unittest.mock",
+                "agents.core.AIPatchOptimizer"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_ai_patch_retry_manager.py": {
+            "dependencies": [
+                "unittest",
+                "unittest.mock",
+                "agents.core.AIPatchRetryManager"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_ai_patch_review_manager.py": {
+            "dependencies": [
+                "unittest",
+                "os",
+                "json",
+                "unittest.mock",
+                "agents.core.AIPatchReviewManager"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_ai_patch_utils.py": {
+            "dependencies": [
+                "unittest",
+                "unittest.mock",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_ai_rollback_analysis.py": {
+            "dependencies": [
+                "unittest",
+                "os",
+                "json",
+                "unittest.mock",
+                "agents.core.AIRollbackAnalysis"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_auto_fixer.py": {
+            "dependencies": [
+                "unittest",
+                "os",
+                "shutil",
+                "unittest.mock",
+                "agents.core.AutoFixer"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_custom_agent.py": {
+            "dependencies": [
+                "unittest",
+                "logging",
+                "unittest.mock",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_debugger_agent.py": {
+            "dependencies": [
+                "unittest",
+                "unittest.mock",
+                "agents.utilities.AgentBase",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_debugger_cli.py": {
+            "dependencies": [
+                "unittest",
+                "os",
+                "json",
+                "unittest.mock",
+                "agents.core.DebuggerCLI"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_debugger_core.py": {
+            "dependencies": [
+                "unittest",
+                "os",
+                "json",
+                "subprocess",
+                "unittest.mock",
+                "agents.core.debugger_core"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_debugger_reporter.py": {
+            "dependencies": [
+                "json",
+                "os",
+                "pytest",
+                "unittest.mock",
+                "debugger_reporter"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_debugger_runner.py": {
+            "dependencies": [
+                "pytest",
+                "logging",
+                "unittest.mock",
+                "debugger_runner"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_debugging_strategy.py": {
+            "dependencies": [
+                "pytest",
+                "logging",
+                "os",
+                "json",
+                "unittest.mock",
+                "debugging_strategy"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_debug_agent_auto_fixer.py": {
+            "dependencies": [
+                "os",
+                "shutil",
+                "pytest",
+                "json",
+                "debugger.debug_agent_auto_fixer",
+                "patch_tracking_manager"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_debug_agent_utils.py": {
+            "dependencies": [
+                "unittest",
+                "os",
+                "unittest.mock",
+                "agents.utilities.AgentBase",
+                "unidiff"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_deepseek_model.py": {
+            "dependencies": [
+                "unittest",
+                "unittest.mock",
+                "os",
+                "json",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_dispatcher.py": {
+            "dependencies": [
+                "unittest",
+                "json",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_error_parser.py": {
+            "dependencies": [
+                "pytest",
+                "logging",
+                "debugger.error_parser"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_file_manager.py": {
+            "dependencies": [
+                "utils.file_manager",
+                "os"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_journal_agent.py": {
+            "dependencies": [
+                "unittest",
+                "os",
+                "json",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_mistral_model.py": {
+            "dependencies": [
+                "unittest",
+                "os",
+                "json",
+                "unittest.mock",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_openai_model.py": {
+            "dependencies": [
+                "unittest",
+                "os",
+                "json",
+                "unittest.mock",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_patch_tracking_manager.py": {
+            "dependencies": [
+                "pytest",
+                "json",
+                "os",
+                "unittest.mock",
+                "debugger.patch_tracking_manager"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_project_context_analyzer.py": {
+            "dependencies": [
+                "os",
+                "json",
+                "pytest",
+                "shutil",
+                "debugger.project_context_analyzer"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_registry.py": {
+            "dependencies": [
+                "unittest",
+                "agents.AgentRegistry"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_rollback_manager.py": {
+            "dependencies": [
+                "os",
+                "shutil",
+                "pytest",
+                "unittest.mock",
+                "debugger.rollback_manager"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_test_retry_manager.py": {
+            "dependencies": [
+                "pytest",
+                "logging",
+                "unittest.mock",
+                "debugger.moved_test_retry_manager"
+            ],
+            "purpose": "Unknown"
+        },
+        "tests\\test_trading_agent.py": {
+            "dependencies": [
+                "unittest",
+                "os",
+                "unittest.mock",
+                "agents.utilities.AgentBase"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "tests\\__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_agents\\__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "tests\\test_debugger\\__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "ui\\debugger_dashboard.py": {
+            "dependencies": [
+                "sys",
+                "json",
+                "os",
+                "subprocess",
+                "PyQt5.QtWidgets",
+                "PyQt5.QtCore"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "ui\\__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        },
+        "utils\\config.py": {
+            "dependencies": [
+                "json",
+                "os"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "utils\\file_manager.py": {
+            "dependencies": [
+                "os",
+                "shutil",
+                "logging"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "utils\\logger.py": {
+            "dependencies": [
+                "logging",
+                "sys"
+            ],
+            "purpose": "No docstring provided"
+        },
+        "utils\\__init__.py": {
+            "dependencies": [],
+            "purpose": "No docstring provided"
+        }
+    },
+    "dependencies": {
+        "os": [
+            "auto_fixer.py",
+            "fix_imports.py",
+            "fix_test_issues.py",
+            "project_context_analyzer.py",
+            "run_tests.py",
+            "agents\\AgentRegistry.py",
+            "agents\\core\\DebuggerAgent.py",
+            "agents\\core\\JournalAgent.py",
+            "agents\\core\\TradingAgent.py",
+            "agents\\utilities\\ai_patch_utils.py",
+            "agents\\utilities\\debug_agent_utils.py",
+            "ai_engine\\confidence_manager.py",
+            "ai_engine\\patch_optimizer.py",
+            "ai_engine\\patch_review_manager.py",
+            "ai_engine\\rollback_analysis.py",
+            "ai_engine\\models\\ai_model_manager.py",
+            "ai_engine\\models\\deepseek_model.py",
+            "ai_engine\\models\\mistral_model.py",
+            "ai_engine\\models\\openai_model.py",
+            "debugger\\auto_fixer.py",
+            "debugger\\debugger_cli.py",
+            "debugger\\debugger_core.py",
+            "debugger\\debugger_logger.py",
+            "debugger\\debugger_reporter.py",
+            "debugger\\debugger_runner.py",
+            "debugger\\debugging_strategy.py",
+            "debugger\\debug_agent_auto_fixer.py",
+            "debugger\\moved_test_retry_manager.py",
+            "debugger\\patch_tracking_manager.py",
+            "debugger\\project_context_analyzer.py",
+            "debugger\\rollback_manager.py",
+            "tests\\test_ai_agent_utils.py",
+            "tests\\test_ai_confidence_manager.py",
+            "tests\\test_ai_patch_review_manager.py",
+            "tests\\test_ai_rollback_analysis.py",
+            "tests\\test_auto_fixer.py",
+            "tests\\test_debugger_cli.py",
+            "tests\\test_debugger_core.py",
+            "tests\\test_debugger_reporter.py",
+            "tests\\test_debugging_strategy.py",
+            "tests\\test_debug_agent_auto_fixer.py",
+            "tests\\test_debug_agent_utils.py",
+            "tests\\test_deepseek_model.py",
+            "tests\\test_file_manager.py",
+            "tests\\test_journal_agent.py",
+            "tests\\test_mistral_model.py",
+            "tests\\test_openai_model.py",
+            "tests\\test_patch_tracking_manager.py",
+            "tests\\test_project_context_analyzer.py",
+            "tests\\test_rollback_manager.py",
+            "tests\\test_trading_agent.py",
+            "ui\\debugger_dashboard.py",
+            "utils\\config.py",
+            "utils\\file_manager.py"
+        ],
+        "json": [
+            "auto_fixer.py",
+            "fix_test_issues.py",
+            "project_context_analyzer.py",
+            "agents\\AgentDispatcher.py",
+            "agents\\core\\DebuggerAgent.py",
+            "agents\\core\\JournalAgent.py",
+            "agents\\core\\utilities\\ai_agent_utils.py",
+            "ai_engine\\confidence_manager.py",
+            "ai_engine\\patch_optimizer.py",
+            "ai_engine\\patch_review_manager.py",
+            "ai_engine\\rollback_analysis.py",
+            "ai_engine\\models\\deepseek_model.py",
+            "ai_engine\\models\\mistral_model.py",
+            "ai_engine\\models\\openai_model.py",
+            "debugger\\debugger_cli.py",
+            "debugger\\debugger_core.py",
+            "debugger\\debugger_logger.py",
+            "debugger\\debugger_reporter.py",
+            "debugger\\debugging_strategy.py",
+            "debugger\\debug_agent_auto_fixer.py",
+            "debugger\\patch_tracking_manager.py",
+            "debugger\\project_context_analyzer.py",
+            "debugger\\rollback_manager.py",
+            "tests\\test_ai_agent_utils.py",
+            "tests\\test_ai_confidence_manager.py",
+            "tests\\test_ai_patch_review_manager.py",
+            "tests\\test_ai_rollback_analysis.py",
+            "tests\\test_debugger_cli.py",
+            "tests\\test_debugger_core.py",
+            "tests\\test_debugger_reporter.py",
+            "tests\\test_debugging_strategy.py",
+            "tests\\test_debug_agent_auto_fixer.py",
+            "tests\\test_deepseek_model.py",
+            "tests\\test_dispatcher.py",
+            "tests\\test_journal_agent.py",
+            "tests\\test_mistral_model.py",
+            "tests\\test_openai_model.py",
+            "tests\\test_patch_tracking_manager.py",
+            "tests\\test_project_context_analyzer.py",
+            "ui\\debugger_dashboard.py",
+            "utils\\config.py"
+        ],
+        "re": [
+            "auto_fixer.py",
+            "fix_imports.py",
+            "fix_test_issues.py",
+            "project_context_analyzer.py",
+            "agents\\core\\DebuggerAgent.py",
+            "agents\\utilities\\debug_agent_utils.py",
+            "debugger\\auto_fixer.py",
+            "debugger\\debugger_core.py",
+            "debugger\\debugging_strategy.py",
+            "debugger\\debug_agent_auto_fixer.py",
+            "debugger\\error_parser.py",
+            "debugger\\learning_db.py",
+            "debugger\\project_context_analyzer.py"
+        ],
+        "subprocess": [
+            "auto_fixer.py",
+            "run_tests.py",
+            "agents\\core\\DebuggerAgent.py",
+            "agents\\utilities\\ai_patch_utils.py",
+            "agents\\utilities\\debug_agent_utils.py",
+            "ai_engine\\patch_optimizer.py",
+            "ai_engine\\models\\ai_model_manager.py",
+            "ai_engine\\models\\deepseek_model.py",
+            "ai_engine\\models\\mistral_model.py",
+            "debugger\\debugger_core.py",
+            "debugger\\debugger_runner.py",
+            "debugger\\debugging_strategy.py",
+            "debugger\\moved_test_retry_manager.py",
+            "tests\\test_debugger_core.py",
+            "ui\\debugger_dashboard.py"
+        ],
+        "sys": [
+            "auto_fixer.py",
+            "fix_test_issues.py",
+            "run_tests.py",
+            "debugger\\debugger_core.py",
+            "ui\\debugger_dashboard.py",
+            "utils\\logger.py"
+        ],
+        "shutil": [
+            "fix_test_issues.py",
+            "agents\\core\\DebuggerAgent.py",
+            "debugger\\auto_fixer.py",
+            "debugger\\debugger_core.py",
+            "debugger\\debug_agent_auto_fixer.py",
+            "debugger\\moved_test_retry_manager.py",
+            "debugger\\rollback_manager.py",
+            "tests\\test_auto_fixer.py",
+            "tests\\test_debug_agent_auto_fixer.py",
+            "tests\\test_project_context_analyzer.py",
+            "tests\\test_rollback_manager.py",
+            "utils\\file_manager.py"
+        ],
+        "logging": [
+            "fix_test_issues.py",
+            "project_context_analyzer.py",
+            "agents\\AgentActor.py",
+            "agents\\AgentDispatcher.py",
+            "agents\\AgentRegistry.py",
+            "agents\\core\\AgentBase.py",
+            "agents\\core\\CustomAgent.py",
+            "agents\\core\\DebuggerAgent.py",
+            "agents\\core\\JournalAgent.py",
+            "agents\\core\\TradingAgent.py",
+            "agents\\core\\utilities\\ai_agent_utils.py",
+            "agents\\utilities\\ai_patch_utils.py",
+            "agents\\utilities\\debug_agent_utils.py",
+            "ai_engine\\confidence_manager.py",
+            "ai_engine\\patch_analyzer.py",
+            "ai_engine\\patch_optimizer.py",
+            "ai_engine\\patch_review_manager.py",
+            "ai_engine\\rollback_analysis.py",
+            "ai_engine\\models\\ai_model_manager.py",
+            "ai_engine\\models\\deepseek_model.py",
+            "ai_engine\\models\\mistral_model.py",
+            "ai_engine\\models\\openai_model.py",
+            "debugger\\auto_fixer.py",
+            "debugger\\debugger_cli.py",
+            "debugger\\debugger_core.py",
+            "debugger\\debugger_logger.py",
+            "debugger\\debugger_reporter.py",
+            "debugger\\debugger_runner.py",
+            "debugger\\debugging_strategy.py",
+            "debugger\\debug_agent_auto_fixer.py",
+            "debugger\\error_parser.py",
+            "debugger\\learning_db.py",
+            "debugger\\moved_test_retry_manager.py",
+            "debugger\\patch_tracking_manager.py",
+            "debugger\\project_context_analyzer.py",
+            "debugger\\rollback_manager.py",
+            "scripts\\main.py",
+            "scripts\\run_debugger_agent.py",
+            "tests\\test_custom_agent.py",
+            "tests\\test_debugger_runner.py",
+            "tests\\test_debugging_strategy.py",
+            "tests\\test_error_parser.py",
+            "tests\\test_test_retry_manager.py",
+            "utils\\file_manager.py",
+            "utils\\logger.py"
+        ],
+        "ast": [
+            "project_context_analyzer.py",
+            "debugger\\debugging_strategy.py",
+            "debugger\\project_context_analyzer.py"
+        ],
+        "typing": [
+            "project_context_analyzer.py",
+            "agents\\AgentActor.py",
+            "agents\\AgentActor.py",
+            "agents\\AgentActor.py",
+            "agents\\AgentDispatcher.py",
+            "agents\\AgentDispatcher.py",
+            "agents\\AgentRegistry.py",
+            "agents\\AgentRegistry.py",
+            "agents\\__init__.py",
+            "agents\\__init__.py",
+            "agents\\core\\AgentBase.py",
+            "agents\\core\\AgentBase.py",
+            "agents\\core\\CustomAgent.py",
+            "agents\\core\\CustomAgent.py",
+            "agents\\core\\CustomAgent.py",
+            "agents\\core\\DebuggerAgent.py",
+            "agents\\core\\DebuggerAgent.py",
+            "agents\\core\\DebuggerAgent.py",
+            "agents\\core\\JournalAgent.py",
+            "agents\\core\\JournalAgent.py",
+            "agents\\core\\JournalAgent.py",
+            "agents\\core\\TradingAgent.py",
+            "agents\\core\\TradingAgent.py",
+            "agents\\core\\__init__.py",
+            "agents\\core\\__init__.py",
+            "agents\\core\\utilities\\ai_agent_utils.py",
+            "agents\\core\\utilities\\ai_agent_utils.py",
+            "agents\\core\\utilities\\ai_agent_utils.py",
+            "agents\\core\\utilities\\__init__.py",
+            "agents\\core\\utilities\\__init__.py",
+            "agents\\utilities\\ai_patch_utils.py",
+            "agents\\utilities\\ai_patch_utils.py",
+            "agents\\utilities\\ai_patch_utils.py",
+            "agents\\utilities\\debug_agent_utils.py",
+            "agents\\utilities\\debug_agent_utils.py",
+            "agents\\utilities\\debug_agent_utils.py",
+            "agents\\utilities\\debug_agent_utils.py",
+            "agents\\utilities\\__init__.py",
+            "agents\\utilities\\__init__.py",
+            "ai_engine\\confidence_manager.py",
+            "ai_engine\\patch_analyzer.py",
+            "ai_engine\\patch_optimizer.py",
+            "ai_engine\\patch_review_manager.py",
+            "ai_engine\\rollback_analysis.py",
+            "ai_engine\\models\\ai_model_manager.py",
+            "ai_engine\\models\\deepseek_model.py",
+            "ai_engine\\models\\mistral_model.py",
+            "ai_engine\\models\\openai_model.py",
+            "debugger\\auto_fixer.py",
+            "debugger\\debugger_core.py",
+            "debugger\\debugger_logger.py",
+            "debugger\\debugger_reporter.py",
+            "debugger\\debugging_strategy.py",
+            "debugger\\debug_agent_auto_fixer.py",
+            "debugger\\error_parser.py",
+            "debugger\\learning_db.py",
+            "debugger\\moved_test_retry_manager.py",
+            "debugger\\patch_tracking_manager.py",
+            "debugger\\project_context_analyzer.py",
+            "debugger\\rollback_manager.py"
+        ],
+        "glob": [
+            "run_tests.py"
+        ],
+        "setuptools": [
+            "setup.py"
+        ],
+        "agents.utilities.AgentBase": [
+            "agents\\AgentActor.py",
+            "agents\\AgentDispatcher.py",
+            "agents\\AgentRegistry.py",
+            "debugger\\auto_fixer.py",
+            "scripts\\run_debugger.py",
+            "scripts\\run_debugger.py",
+            "tests\\test_agent_base.py",
+            "tests\\test_agent_dispatcher.py",
+            "tests\\test_agent_registry.py",
+            "tests\\test_ai_model_manager.py",
+            "tests\\test_ai_patch_utils.py",
+            "tests\\test_custom_agent.py",
+            "tests\\test_debugger_agent.py",
+            "tests\\test_debugger_agent.py",
+            "tests\\test_debug_agent_utils.py",
+            "tests\\test_deepseek_model.py",
+            "tests\\test_dispatcher.py",
+            "tests\\test_journal_agent.py",
+            "tests\\test_mistral_model.py",
+            "tests\\test_openai_model.py",
+            "tests\\test_trading_agent.py"
+        ],
+        "agents.core.utilities.ai_agent_utils": [
+            "agents\\AgentActor.py",
+            "tests\\test_AgentActor.py",
+            "tests\\test_ai_agent_utils.py"
+        ],
+        "agents.AgentRegistry": [
+            "agents\\AgentDispatcher.py",
+            "tests\\test_agent_dispatcher.py",
+            "tests\\test_registry.py"
+        ],
+        "importlib": [
+            "agents\\AgentRegistry.py"
+        ],
+        "abc": [
+            "agents\\core\\AgentBase.py"
+        ],
+        "agents.core.core": [
+            "agents\\core\\CustomAgent.py",
+            "agents\\core\\DebuggerAgent.py",
+            "agents\\core\\JournalAgent.py",
+            "agents\\core\\TradingAgent.py"
+        ],
+        "agents.core.utilities.debug_agent_utils": [
+            "agents\\core\\DebuggerAgent.py"
+        ],
+        "utils.file_manager": [
+            "agents\\core\\DebuggerAgent.py",
+            "tests\\test_file_manager.py"
+        ],
+        "pathlib": [
+            "agents\\core\\DebuggerAgent.py"
+        ],
+        "datetime": [
+            "agents\\core\\JournalAgent.py",
+            "debugger\\debugger_core.py",
+            "debugger\\debugger_logger.py",
+            "debugger\\patch_tracking_manager.py"
+        ],
+        "alpaca_trade_api": [
+            "agents\\core\\TradingAgent.py"
+        ],
+        "time": [
+            "agents\\core\\utilities\\ai_agent_utils.py",
+            "scripts\\main.py",
+            "tests\\test_ai_agent_utils.py"
+        ],
+        "collections": [
+            "agents\\core\\utilities\\ai_agent_utils.py",
+            "debugger\\debugger_reporter.py"
+        ],
+        "psutil": [
+            "agents\\core\\utilities\\ai_agent_utils.py"
+        ],
+        "openai": [
+            "agents\\utilities\\ai_patch_utils.py",
+            "agents\\utilities\\debug_agent_utils.py",
+            "ai_engine\\models\\ai_model_manager.py",
+            "ai_engine\\models\\deepseek_model.py",
+            "ai_engine\\models\\mistral_model.py",
+            "ai_engine\\models\\openai_model.py"
+        ],
+        "tqdm": [
+            "agents\\utilities\\ai_patch_utils.py",
+            "agents\\utilities\\debug_agent_utils.py"
+        ],
+        "unidiff": [
+            "agents\\utilities\\debug_agent_utils.py",
+            "tests\\test_debug_agent_utils.py"
+        ],
+        "random": [
+            "ai_engine\\confidence_manager.py",
+            "ai_engine\\patch_optimizer.py",
+            "ai_engine\\models\\deepseek_model.py",
+            "ai_engine\\models\\mistral_model.py",
+            "ai_engine\\models\\openai_model.py"
+        ],
+        "test_retry_manager": [
+            "ai_engine\\patch_analyzer.py",
+            "scripts\\run_debugger_agent.py"
+        ],
+        "ai_patch_analyzer": [
+            "ai_engine\\patch_analyzer.py"
+        ],
+        "ai_confidence_manager": [
+            "ai_engine\\patch_analyzer.py",
+            "ai_engine\\models\\ai_model_manager.py",
+            "scripts\\run_debugger_agent.py"
+        ],
+        "debugger.patch_tracking_manager": [
+            "ai_engine\\patch_optimizer.py",
+            "tests\\test_patch_tracking_manager.py"
+        ],
+        "confidence_manager": [
+            "ai_engine\\patch_optimizer.py"
+        ],
+        "models.ai_model_manager": [
+            "ai_engine\\patch_optimizer.py",
+            "debugger\\debugging_strategy.py"
+        ],
+        "ai_clients": [
+            "ai_engine\\patch_review_manager.py",
+            "ai_engine\\rollback_analysis.py"
+        ],
+        "patch_tracking_manager": [
+            "ai_engine\\patch_review_manager.py",
+            "ai_engine\\rollback_analysis.py",
+            "ai_engine\\models\\ai_model_manager.py",
+            "debugger\\debugger_cli.py",
+            "debugger\\debug_agent_auto_fixer.py",
+            "debugger\\moved_test_retry_manager.py",
+            "debugger\\rollback_manager.py",
+            "tests\\test_debug_agent_auto_fixer.py"
+        ],
+        "pandas": [
+            "ai_engine\\rollback_analysis.py"
+        ],
+        "matplotlib.pyplot": [
+            "ai_engine\\rollback_analysis.py"
+        ],
+        "PyQt5.QtWidgets": [
+            "ai_engine\\rollback_analysis.py",
+            "ui\\debugger_dashboard.py"
+        ],
+        "hashlib": [
+            "ai_engine\\models\\ai_model_manager.py",
+            "debugger\\debugger_core.py",
+            "debugger\\debugging_strategy.py"
+        ],
+        "debugger.learning_db": [
+            "debugger\\auto_fixer.py"
+        ],
+        "argparse": [
+            "debugger\\debugger_cli.py"
+        ],
+        "debugger_core": [
+            "debugger\\debugger_cli.py",
+            "scripts\\main.py"
+        ],
+        "debugging_strategy": [
+            "debugger\\debugger_core.py",
+            "debugger\\debugger_core.py",
+            "debugger\\debug_agent_auto_fixer.py",
+            "debugger\\moved_test_retry_manager.py",
+            "debugger\\rollback_manager.py",
+            "scripts\\main.py",
+            "tests\\test_debugging_strategy.py"
+        ],
+        "debugger_logger": [
+            "debugger\\debugger_core.py",
+            "debugger\\debugging_strategy.py",
+            "debugger\\moved_test_retry_manager.py"
+        ],
+        "apply_fix": [
+            "debugger\\debugger_core.py"
+        ],
+        "email_reporter": [
+            "debugger\\debugger_reporter.py"
+        ],
+        "debugger.error_parser": [
+            "debugger\\debugger_runner.py",
+            "tests\\test_error_parser.py"
+        ],
+        "debugger.auto_fixer": [
+            "debugger\\debugger_runner.py"
+        ],
+        "tempfile": [
+            "debugger\\debugging_strategy.py"
+        ],
+        "debugger.project_context_analyzer": [
+            "debugger\\debugging_strategy.py",
+            "tests\\test_project_context_analyzer.py"
+        ],
+        "schedule": [
+            "scripts\\main.py"
+        ],
+        "utils.logger": [
+            "scripts\\run_debugger.py"
+        ],
+        "utils.config": [
+            "scripts\\run_debugger.py"
+        ],
+        "unittest": [
+            "tests\\test_AgentActor.py",
+            "tests\\test_agent_base.py",
+            "tests\\test_agent_dispatcher.py",
+            "tests\\test_agent_registry.py",
+            "tests\\test_ai_agent_utils.py",
+            "tests\\test_ai_confidence_manager.py",
+            "tests\\test_ai_model_manager.py",
+            "tests\\test_ai_patch_optimizer.py",
+            "tests\\test_ai_patch_retry_manager.py",
+            "tests\\test_ai_patch_review_manager.py",
+            "tests\\test_ai_patch_utils.py",
+            "tests\\test_ai_rollback_analysis.py",
+            "tests\\test_auto_fixer.py",
+            "tests\\test_custom_agent.py",
+            "tests\\test_debugger_agent.py",
+            "tests\\test_debugger_cli.py",
+            "tests\\test_debugger_core.py",
+            "tests\\test_debug_agent_utils.py",
+            "tests\\test_deepseek_model.py",
+            "tests\\test_dispatcher.py",
+            "tests\\test_journal_agent.py",
+            "tests\\test_mistral_model.py",
+            "tests\\test_openai_model.py",
+            "tests\\test_registry.py",
+            "tests\\test_trading_agent.py"
+        ],
+        "unittest.mock": [
+            "tests\\test_AgentActor.py",
+            "tests\\test_agent_dispatcher.py",
+            "tests\\test_agent_registry.py",
+            "tests\\test_ai_confidence_manager.py",
+            "tests\\test_ai_model_manager.py",
+            "tests\\test_ai_patch_optimizer.py",
+            "tests\\test_ai_patch_retry_manager.py",
+            "tests\\test_ai_patch_review_manager.py",
+            "tests\\test_ai_patch_utils.py",
+            "tests\\test_ai_rollback_analysis.py",
+            "tests\\test_auto_fixer.py",
+            "tests\\test_custom_agent.py",
+            "tests\\test_debugger_agent.py",
+            "tests\\test_debugger_cli.py",
+            "tests\\test_debugger_core.py",
+            "tests\\test_debugger_reporter.py",
+            "tests\\test_debugger_runner.py",
+            "tests\\test_debugging_strategy.py",
+            "tests\\test_debug_agent_utils.py",
+            "tests\\test_deepseek_model.py",
+            "tests\\test_mistral_model.py",
+            "tests\\test_openai_model.py",
+            "tests\\test_patch_tracking_manager.py",
+            "tests\\test_rollback_manager.py",
+            "tests\\test_test_retry_manager.py",
+            "tests\\test_trading_agent.py"
+        ],
+        "agents.AgentActor": [
+            "tests\\test_AgentActor.py"
+        ],
+        "agents.AgentDispatcher": [
+            "tests\\test_agent_dispatcher.py"
+        ],
+        "agents.core.AIConfidenceManager": [
+            "tests\\test_ai_confidence_manager.py"
+        ],
+        "agents.core.AIPatchOptimizer": [
+            "tests\\test_ai_patch_optimizer.py"
+        ],
+        "agents.core.AIPatchRetryManager": [
+            "tests\\test_ai_patch_retry_manager.py"
+        ],
+        "agents.core.AIPatchReviewManager": [
+            "tests\\test_ai_patch_review_manager.py"
+        ],
+        "agents.core.AIRollbackAnalysis": [
+            "tests\\test_ai_rollback_analysis.py"
+        ],
+        "agents.core.AutoFixer": [
+            "tests\\test_auto_fixer.py"
+        ],
+        "agents.core.DebuggerCLI": [
+            "tests\\test_debugger_cli.py"
+        ],
+        "agents.core.debugger_core": [
+            "tests\\test_debugger_core.py"
+        ],
+        "pytest": [
+            "tests\\test_debugger_reporter.py",
+            "tests\\test_debugger_runner.py",
+            "tests\\test_debugging_strategy.py",
+            "tests\\test_debug_agent_auto_fixer.py",
+            "tests\\test_error_parser.py",
+            "tests\\test_patch_tracking_manager.py",
+            "tests\\test_project_context_analyzer.py",
+            "tests\\test_rollback_manager.py",
+            "tests\\test_test_retry_manager.py"
+        ],
+        "debugger_reporter": [
+            "tests\\test_debugger_reporter.py"
+        ],
+        "debugger_runner": [
+            "tests\\test_debugger_runner.py"
+        ],
+        "debugger.debug_agent_auto_fixer": [
+            "tests\\test_debug_agent_auto_fixer.py"
+        ],
+        "debugger.rollback_manager": [
+            "tests\\test_rollback_manager.py"
+        ],
+        "debugger.moved_test_retry_manager": [
+            "tests\\test_test_retry_manager.py"
+        ],
+        "PyQt5.QtCore": [
+            "ui\\debugger_dashboard.py"
+        ]
+    },
+    "summary": {}
+}

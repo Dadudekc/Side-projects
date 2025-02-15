@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=58.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "debugagent"
+version = "0.1.0"
+description = "AI-powered automated debugging for Python projects."
+authors = [{ name = "Your Name", email = "your@email.com" }]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.8"
+
+dependencies = [
+    "openai",
+    "tqdm",
+    "unidiff",
+    "pytest",
+    "PyQt5",
+    "alpaca-trade-api",
+    "matplotlib",
+    "pandas",
+    "psutil"
+]
+
+[tool.setuptools]
+packages = ["debugger", "agents", "ai_engine", "utils", "scripts"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+debugger = ["*.json", "*.md"]
+agents = ["*.json", "*.md"]
+ai_engine = ["*.json", "*.md"]
+utils = ["*.json", "*.md"]
+scripts = ["*.json", "*.md"]
+
+[project.scripts]
+debugagent-run = "debugger.debugger_runner:main"
+
+[tool.setuptools_scm]
+write_to = "debugger/_version.py"

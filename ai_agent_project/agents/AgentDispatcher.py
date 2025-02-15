@@ -1,7 +1,9 @@
+from typing import Dict, Any, List
+from typing import Dict, List
 import logging
 import json
 from agents.AgentRegistry import AgentRegistry
-from agents.core.utilities.AgentBase import AgentBase
+from agents.core.core import AgentBase
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

@@ -1,7 +1,9 @@
+from typing import Dict, Any, List
+from typing import Dict, List
 import os
 import logging
 import importlib
-from agents.core.utilities.AgentBase import AgentBase  # ✅ Use AgentBase instead of IAgent
+from agents.core.core import AgentBase  # ✅ Use AgentBase instead of IAgent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

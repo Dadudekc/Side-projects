@@ -1,6 +1,15 @@
 import unittest
 import json
-from agents.core.AgentDispatcher import AgentDispatcher
+from agents.core.core import (
+    AgentBase,
+    AIModelManager,
+    AIPatchUtils,
+    CustomAgent,
+    DeepSeekModel,
+    MistralModel,
+    OpenAIModel,
+)
+
 
 class TestAgentDispatcher(unittest.TestCase):
     """Unit tests for AgentDispatcher."""
@@ -14,7 +23,7 @@ class TestAgentDispatcher(unittest.TestCase):
         task_data = {
             "action": "create",
             "title": "Test Journal",
-            "content": "Test content"
+            "content": "Test content",
         }
 
         # Get the response from the dispatcher
@@ -30,7 +39,12 @@ class TestAgentDispatcher(unittest.TestCase):
             self.fail("AgentDispatcher did not return a valid JSON string.")
 
         # Ensure status is "success"
-        self.assertEqual(result_data.get("status"), "success", "JournalAgent did not process the task correctly.")
+        self.assertEqual(
+            result_data.get("status"),
+            "success",
+            "JournalAgent did not process the task correctly.",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

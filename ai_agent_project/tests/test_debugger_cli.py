@@ -1,68 +1,105 @@
 import unittest
-import subprocess
-import json
 import os
+import json
+from unittest.mock import patch, MagicMock
+from agents.core.core import DebuggerCLI import DebuggerCLI, AI_PERFORMANCE_FILE
 
-AI_PERFORMANCE_FILE = "ai_performance.json"
 
 class TestDebuggerCLI(unittest.TestCase):
-    """Unit tests for the Debugger CLI commands."""
-
-    def run_cli_command(self, command):
-        """Helper to run CLI commands and return output."""
-        result = subprocess.run(
-            ["python", "debugger_cli.py"] + command,
-            capture_output=True,
-            text=True
-        )
-        return result.stdout.strip(), result.returncode
-
-    def test_debug_command(self):
-        """Test running the debugging process."""
-        output, return_code = self.run_cli_command(["--debug"])
-        self.assertIn("🚀 Starting Full Automated Debugging Process...", output)
-        self.assertEqual(return_code, 0)
-
-    def test_debug_specific_file(self):
-        """Test debugging a specific file."""
-        output, return_code = self.run_cli_command(["--debug", "--file", "sample_test.py"])
-        self.assertIn("🚀 Debugging Specific File: sample_test.py...", output)
-        self.assertEqual(return_code, 0)
-
-    def test_logs_command(self):
-        """Test retrieving previous debug logs."""
-        output, return_code = self.run_cli_command(["--logs"])
-        self.assertIn("📜 Retrieving Debug Logs...", output)
-        self.assertEqual(return_code, 0)
-
-    def test_rollback_command(self):
-        """Test rolling back last attempted fixes."""
-        output, return_code = self.run_cli_command(["--rollback"])
-        self.assertIn("🔄 Rolling Back Last Attempted Fixes...", output)
-        self.assertEqual(return_code, 0)
-
-    def test_performance_command(self):
-        """Test AI debugging performance report retrieval."""
-        if not os.path.exists(AI_PERFORMANCE_FILE):
-            # Create a dummy performance file for testing
-            with open(AI_PERFORMANCE_FILE, "w", encoding="utf-8") as f:
-                json.dump({"2025-02-14": {"total_fixes": 10, "success_rate": 90, "ai_feedback": [4.5, 4.7]}}, f)
-
-        output, return_code = self.run_cli_command(["--performance"])
-        self.assertIn("📈 **AI Debugging Performance Report** 📈", output)
-        self.assertEqual(return_code, 0)
-
-    def test_fix_imports_command(self):
-        """Test the import fix tracking feature."""
-        output, return_code = self.run_cli_command(["--fix-imports"])
-        self.assertIn("🔍 Scanning for Import Errors...", output)
-        self.assertEqual(return_code, 0)
+    """"
+"""    Unit tests for the DebuggerCLI class. """"    """ """"""
+"    def setUp(self):"
+"        """ """"""        Sets up an instance of DebuggerCLI for testing.
+"        """ """""        self.cli = DebuggerCLI()"
+"        self.test_file = "test_debug.py""
+"        self.test_ai_performance_data = {"            "2025-02-14": {
+                "total_fixes": 10,
+                "success_rate": 80,
+                "ai_feedback": {"quality": 4.5, "accuracy": 90}
+            }
+        }
 
     def tearDown(self):
-        """Clean up test-generated files."""
-        if os.path.exists(AI_PERFORMANCE_FILE):
-            os.remove(AI_PERFORMANCE_FILE)
+        """ """"""        Cleans up any temporary test files. """"        """
+""        if os.path.exists(AI_PERFORMANCE_FILE):
+"            os.remove(AI_PERFORMANCE_FILE)"
+""
+    @patch("agents.core.DebuggerCLI.json.load")
+    @patch("agents.core.DebuggerCLI.open", create=True)
+    def test_load_ai_performance(self, mock_open, mock_json_load):
+        """ """"""        Test loading AI performance data. """"        """ """""        mock_json_load.return_value = self.test_ai_performance_data""        mock_open.return_value.__enter__.return_value = MagicMock()"
+""        result = self.cli.load_ai_performance()
+        self.assertEqual(result, self.test_ai_performance_data)
 
+    @patch("agents.core.DebuggerCLI.json.load", return_value={})
+    @patch("agents.core.DebuggerCLI.open", create=True)
+    def test_load_ai_performance_empty(self, mock_open, mock_json_load):
+        """"
+"""        Test loading AI performance when no data exists. """"        """ """""        result = self.cli.load_ai_performance()"
+"        self.assertEqual(result, {})"""
+    @patch("agents.core.DebuggerCLI.DebuggerCore.debug_file", return_value="Debugging Successful")
+    def test_run_debugger_specific_file(self, mock_debug_file):
+        """ """"""        Test debugging a specific file."
+"        """ """""        self.cli.run_debugger(self.test_file)"
+"        mock_debug_file.assert_called_with(self.test_file)"
+""    @patch("agents.core.DebuggerCLI.DebuggerCore.debug", return_value="Full Debugging Successful")
+    def test_run_debugger_full(self, mock_debug):
+        """ """"""        Test running the full debugging process. """"        """
+""        self.cli.run_debugger()
+"        mock_debug.assert_called()"
+""
+    @patch("agents.core.DebuggerCLI.DebuggerCore.show_logs")
+    def test_show_logs(self, mock_show_logs):
+        """ """"""        Test displaying debugging logs. """"        """ """""        self.cli.show_logs()""        mock_show_logs.assert_called()"
+""    @patch("agents.core.DebuggerCLI.DebuggerCore.get_last_modified_files", return_value=["file1.py", "file2.py"])
+    @patch("agents.core.DebuggerCLI.DebuggerCore.rollback_changes")
+    def test_rollback_fixes(self, mock_rollback_changes, mock_get_last_modified_files):
+        """"
+"""        Test rolling back fixes. """"        """ """""        self.cli.rollback_fixes()"
+"        mock_get_last_modified_files.assert_called()""        mock_rollback_changes.assert_called_with(["file1.py", "file2.py"])"
 
+    @patch("agents.core.DebuggerCLI.DebuggerCore.get_last_modified_files", return_value=[])
+    def test_rollback_fixes_no_changes(self, mock_get_last_modified_files):
+        """ """"""        Test rolling back fixes when no modifications exist."
+"        """ """""        self.cli.rollback_fixes()"
+"        mock_get_last_modified_files.assert_called()"
+""    @patch("agents.core.DebuggerCLI.PatchTrackingManager.import_fixes", return_value={})
+    def test_fix_imports_no_errors(self, mock_import_fixes):
+        """ """"""        Test checking for import errors when none exist. """"        """
+""        self.cli.fix_imports()
+"        mock_import_fixes.assert_called()"
+""
+    @patch("agents.core.DebuggerCLI.PatchTrackingManager.import_fixes", return_value={"numpy": {"fixed": 1, "failed": 0}})
+    def test_fix_imports_with_errors(self, mock_import_fixes):
+        """ """"""        Test checking for and fixing missing imports. """"        """ """""        self.cli.fix_imports()""        mock_import_fixes.assert_called()"
+""    @patch("agents.core.DebuggerCLI.DebuggerCLI.run_debugger")
+    @patch("agents.core.DebuggerCLI.argparse.ArgumentParser.parse_args", return_value=argparse.Namespace(debug=True, file="test_debug.py"))
+    def test_parse_arguments_debug_file(self, mock_parse_args, mock_run_debugger):
+        """"
+"""        Test CLI argument parsing for debugging a specific file. """"        """ """""        self.cli.parse_arguments()"
+"        mock_run_debugger.assert_called_with("test_debug.py")"""
+    @patch("agents.core.DebuggerCLI.DebuggerCLI.show_logs")
+    @patch("agents.core.DebuggerCLI.argparse.ArgumentParser.parse_args", return_value=argparse.Namespace(logs=True))
+    def test_parse_arguments_logs(self, mock_parse_args, mock_show_logs):
+        """ """"""        Test CLI argument parsing for displaying logs."
+"        """ """""        self.cli.parse_arguments()"
+"        mock_show_logs.assert_called()"
+""    @patch("agents.core.DebuggerCLI.DebuggerCLI.rollback_fixes")
+    @patch("agents.core.DebuggerCLI.argparse.ArgumentParser.parse_args", return_value=argparse.Namespace(rollback=True))
+    def test_parse_arguments_rollback(self, mock_parse_args, mock_rollback_fixes):
+        """ """"""        Test CLI argument parsing for rollback fixes. """"        """
+""        self.cli.parse_arguments()
+"        mock_rollback_fixes.assert_called()"
+""
+    @patch("agents.core.DebuggerCLI.DebuggerCLI.show_ai_performance")
+    @patch("agents.core.DebuggerCLI.argparse.ArgumentParser.parse_args", return_value=argparse.Namespace(performance=True))
+    def test_parse_arguments_performance(self, mock_parse_args, mock_show_ai_performance):
+        """ """"""        Test CLI argument parsing for viewing AI performance. """"        """ """""        self.cli.parse_arguments()""        mock_show_ai_performance.assert_called()"
+""    @patch("agents.core.DebuggerCLI.DebuggerCLI.fix_imports")
+    @patch("agents.core.DebuggerCLI.argparse.ArgumentParser.parse_args", return_value=argparse.Namespace(fix_imports=True))
+    def test_parse_arguments_fix_imports(self, mock_parse_args, mock_fix_imports):
+        """"
+"""        Test CLI argument parsing for fixing import errors. """"        """ """""        self.cli.parse_arguments()"
+"        mock_fix_imports.assert_called()"""
 if __name__ == "__main__":
     unittest.main()

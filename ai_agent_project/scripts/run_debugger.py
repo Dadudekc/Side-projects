@@ -1,11 +1,11 @@
-from agents.core.DebuggerAgent import DebuggerAgent
+from agents.core.core import DebuggerAgent
 
 if __name__ == "__main__":
     debug_agent = DebuggerAgent()
     debug_agent.automate_debugging()  # 🚀 Fixes failing tests!
 # scripts/run_debugger.py
 
-from agents.core.DebuggerAgent import DebuggerAgent
+from agents.core.core import DebuggerAgent
 from utils.logger import setup_logger
 from utils.config import load_config
 

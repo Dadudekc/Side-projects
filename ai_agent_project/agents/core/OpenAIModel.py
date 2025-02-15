@@ -1,0 +1,2 @@
+class OpenAIModel:
+    pass

@@ -1,12 +1,13 @@
 import unittest
 from agents.AgentRegistry import AgentRegistry
 
+
 class TestAgentRegistry(unittest.TestCase):
     """Unit tests for AgentRegistry."""
 
     def setUp(self):
         """Initialize the agent registry before each test."""
-        self.registry = AgentRegistry()  # Removed 'agents_dir' argument
+        self.registry = AgentRegistry()  # Removed 'agents_dir' argument''
 
     def test_get_invalid_agent(self):
         """Test retrieving a non-existent agent."""
@@ -22,6 +23,7 @@ class TestAgentRegistry(unittest.TestCase):
         """Test that agents are loaded correctly."""
         agents = self.registry.list_agents()
         self.assertIn("JournalAgent", agents, "JournalAgent should be in the registry.")
+
 
 if __name__ == "__main__":
     unittest.main()

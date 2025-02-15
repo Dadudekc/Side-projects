@@ -1,6 +1,8 @@
+from typing import Dict, Any, List
+from typing import Dict, List
 import logging
 from typing import Dict, Any
-from agents.core.utilities.AgentBase import AgentBase
+from agents.core.core import AgentBase
 from agents.core.utilities.ai_agent_utils import PerformanceMonitor, MemoryManager
 
 logger = logging.getLogger(__name__)
@@ -20,7 +22,7 @@ class AgentActor(AgentBase):
             memory_manager: Instance for managing task memory.
             performance_monitor: Instance for tracking performance metrics.
         """
-        super().__init__(name="AgentActor", project_name="AI_Agent_System")
+# FIXED: Removing incorrect super().__init__()
         self.tool_server = tool_server
         self.memory_manager = memory_manager
         self.performance_monitor = performance_monitor

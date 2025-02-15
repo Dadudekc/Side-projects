@@ -1,44 +1,64 @@
 import unittest
-from unittest.mock import MagicMock, patch
-from agents.core.AgentActor import AgentActor
+from unittest.mock import MagicMock
+from agents.AgentActor import AgentActor
+from agents.core.utilities.ai_agent_utils import PerformanceMonitor, MemoryManager
 
 class TestAgentActor(unittest.TestCase):
-    """Unit tests for AgentActor class."""
-
     def setUp(self):
-        """Set up mock dependencies before each test."""
-        self.mock_tool_server = MagicMock()
-        self.mock_memory_manager = MagicMock()
-        self.mock_performance_monitor = MagicMock()
-        self.agent = AgentActor(self.mock_tool_server, self.mock_memory_manager, self.mock_performance_monitor)
+        self.tool_server = MagicMock()
+        self.memory_manager = MemoryManager()
+        self.performance_monitor = PerformanceMonitor()
+        self.agent = AgentActor(self.tool_server, self.memory_manager, self.performance_monitor)
 
-    def test_perform_task_python_execution(self):
-        """Test Python task execution via ToolServer."""
-        self.mock_tool_server.python_notebook.execute_code.return_value = "Python execution success."
-        task_data = {"type": "python", "content": "print('Hello')"}
-        result = self.agent.perform_task(task_data)
-        self.assertEqual(result, "Python execution success.")
+    def test_describe_capabilities(self):
+        self.assertEqual(self.agent.describe_capabilities(), "I execute Python scripts, shell commands, and interact with tools.")
 
-    def test_perform_task_python_execution_error(self):
-        """Test handling of Python execution errors."""
-        self.mock_tool_server.python_notebook.execute_code.side_effect = Exception("Python error")
-        task_data = {"type": "python", "content": "print('Hello')"}
-        result = self.agent.perform_task(task_data)
-        self.assertIn("Python execution failed", result)
+    def test_solve_task_execute_python(self):
+        self.tool_server.python_notebook.execute_code.return_value = "Python Execution Successful"
+        result = self.agent.solve_task("execute_python", python_code="print('Hello')")''
+        self.assertEqual(result, "Python Execution Successful")
 
-    def test_perform_task_shell_execution(self):
-        """Test shell command execution via ToolServer."""
-        self.mock_tool_server.shell.execute_command.return_value = "Shell execution success."
-        task_data = {"type": "shell", "content": "echo Hello"}
-        result = self.agent.perform_task(task_data)
-        self.assertEqual(result, "Shell execution success.")
+    def test_solve_task_execute_shell(self):
+        self.tool_server.shell.execute_command.return_value = "Shell Execution Successful"
+        result = self.agent.solve_task("execute_shell", command="ls")
+        self.assertEqual(result, "Shell Execution Successful")
 
-    def test_perform_task_shell_execution_error(self):
-        """Test handling of shell execution errors."""
-        self.mock_tool_server.shell.execute_command.side_effect = Exception("Shell error")
-        task_data = {"type": "shell", "content": "echo Hello"}
-        result = self.agent.perform_task(task_data)
-        self.assertIn("Shell execution failed", result)
+    def test_solve_task_invalid(self):
+        result = self.agent.solve_task("invalid_task")
+        self.assertEqual(result, "Error: Unsupported task type 'invalid_task'")''
+    def test_utilize_tool_valid(self):
+        mock_tool = MagicMock()
+        mock_tool.some_operation.return_value = "Operation Successful"
+        setattr(self.tool_server, "mock_tool", mock_tool)
+
+        result = self.agent.utilize_tool("mock_tool", "some_operation", {})
+        self.assertEqual(result, "Operation Successful")
+
+    def test_utilize_tool_invalid_tool(self):
+        result = self.agent.utilize_tool("unknown_tool", "operation", {})
+        self.assertEqual(result, "Tool 'unknown_tool' not found")''
+    def test_utilize_tool_invalid_operation(self):
+        mock_tool = MagicMock()
+        setattr(self.tool_server, "mock_tool", mock_tool)
+
+        result = self.agent.utilize_tool("mock_tool", "unknown_operation", {})
+        self.assertEqual(result, "Operation 'unknown_operation' not found in tool 'mock_tool'")''
+    def test_perform_task_python(self):
+        self.tool_server.python_notebook.execute_code.return_value = "Python Execution Successful"
+        result = self.agent.perform_task({"type": "python", "content": "print('Hello')"})''
+        self.assertEqual(result, "Python Execution Successful")
+
+    def test_perform_task_shell(self):
+        self.tool_server.shell.execute_command.return_value = "Shell Execution Successful"
+        result = self.agent.perform_task({"type": "shell", "content": "ls"})
+        self.assertEqual(result, "Shell Execution Successful")
+
+    def test_perform_task_invalid_type(self):
+        result = self.agent.perform_task({"type": "invalid"})
+        self.assertEqual(result, "Error: Unsupported task type 'invalid'")''
+    def test_shutdown(self):
+        with self.assertLogs(level='INFO') as log:''            self.agent.shutdown()
+        self.assertIn("AgentActor is shutting down.", log.output[0])
 
 if __name__ == "__main__":
     unittest.main()
