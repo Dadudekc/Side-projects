@@ -1,19 +1,11 @@
-from typing import Dict, Any, List
-from typing import Dict, List
 import logging
-from typing import Dict, Any
-from agents.core.core import AgentBase
-from agents.core.utilities.ai_agent_utils import PerformanceMonitor, MemoryManager
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-class AgentActor(AgentBase):
+class AgentActor:
     """
     Executes tasks and manages tool operations via ToolServer.
     """
 
-    def __init__(self, tool_server, memory_manager: MemoryManager, performance_monitor: PerformanceMonitor):
+    def __init__(self, tool_server, memory_manager, performance_monitor):
         """
         Initializes AgentActor with tool server, memory, and performance monitoring.
 
@@ -22,19 +14,18 @@ class AgentActor(AgentBase):
             memory_manager: Instance for managing task memory.
             performance_monitor: Instance for tracking performance metrics.
         """
-# FIXED: Removing incorrect super().__init__()
         self.tool_server = tool_server
         self.memory_manager = memory_manager
         self.performance_monitor = performance_monitor
-        logger.info("AgentActor initialized.")
+        logging.info("AgentActor initialized.")
 
-    def describe_capabilities(self) -> str:
+    def describe_capabilities(self):
         """
         Returns a description of the agent's capabilities.
         """
         return "I execute Python scripts, shell commands, and interact with tools."
 
-    def solve_task(self, task: str, **kwargs) -> Any:
+    def solve_task(self, task, **kwargs):
         """
         Executes a given task (Python script, shell command, or tool operation).
 
@@ -45,8 +36,6 @@ class AgentActor(AgentBase):
         Returns:
             Any: Result of the task execution.
         """
-        logger.info(f"Executing task: {task} with parameters: {kwargs}")
-
         task_methods = {
             "execute_python": self._execute_python_task,
             "execute_shell": self._execute_shell_task,
@@ -54,29 +43,25 @@ class AgentActor(AgentBase):
         }
 
         if task not in task_methods:
-            error_msg = f"Error: Unsupported task type '{task}'"
-            logger.error(error_msg)
-            return error_msg
+            return f"Error: Unsupported task type '{task}'"
 
         return task_methods[task](**kwargs)
 
-    def _execute_python_task(self, python_code: str) -> str:
+    def _execute_python_task(self, python_code):
         """Executes Python code."""
         try:
-            result = self.tool_server.python_notebook.execute_code(python_code)
-            return result
+            return self.tool_server.python_notebook.execute_code(python_code)
         except Exception as e:
             return f"Python execution failed: {str(e)}"
 
-    def _execute_shell_task(self, command: str) -> str:
+    def _execute_shell_task(self, command):
         """Executes shell command."""
         try:
-            result = self.tool_server.shell.execute_command(command)
-            return result
+            return self.tool_server.shell.execute_command(command)
         except Exception as e:
             return f"Shell execution failed: {str(e)}"
 
-    def utilize_tool(self, tool_name: str, operation: str, parameters: Dict[str, Any]) -> Any:
+    def utilize_tool(self, tool_name, operation, parameters):
         """Uses a tool with specified parameters."""
         try:
             tool = getattr(self.tool_server, tool_name, None)
@@ -91,8 +76,7 @@ class AgentActor(AgentBase):
         except Exception as e:
             return f"Failed to execute operation '{operation}' on tool '{tool_name}': {str(e)}"
 
-
-    def perform_task(self, task: Dict[str, Any]) -> Any:
+    def perform_task(self, task):
         """
         Executes a given task based on its type.
 
@@ -102,18 +86,17 @@ class AgentActor(AgentBase):
         Returns:
             Any: Result of task execution.
         """
-        task_type = task.get('type')
+        task_type = task.get("type")
         if not task_type:
             return "Error: Task type is missing."
 
-        if task_type == 'python':
-            return self._execute_python_task(task.get('content', ''))
-        elif task_type == 'shell':
-            return self._execute_shell_task(task.get('content', ''))
+        if task_type == "python":
+            return self._execute_python_task(task.get("content", ""))
+        elif task_type == "shell":
+            return self._execute_shell_task(task.get("content", ""))
         else:
             return f"Error: Unsupported task type '{task_type}'"
 
-
-    def shutdown(self) -> None:
+    def shutdown(self):
         """Handles cleanup operations."""
-        logger.info("AgentActor is shutting down.")
+        logging.info("AgentActor is shutting down.")
