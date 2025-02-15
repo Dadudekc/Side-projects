@@ -1,4 +1,4 @@
-from context_manager import global_context
+from memory.context_manager import global_context
 
 class CustomAgent:
     """
