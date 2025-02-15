@@ -1,11 +1,16 @@
 import unittest
 from unittest.mock import patch, MagicMock
+
 from agents.AgentDispatcher import AgentDispatcher
 from agents.AgentRegistry import AgentRegistry
-from agents.core.AgentBase import AgentBase,
+from agents.core.AgentBase import AgentBase
 from agents.core.utilities.AIModelManager import AIModelManager
-from agents.core.utilities.AIPatchUtils import AIPatchUtils
-, CustomAgent, DeepSeekModel, MistralModel, OpenAIModel
+from agents.core.utilities.ai_patch_utils import AIPatchUtils
+# Ensure these imports are correctly structured
+from agents.core.utilities.CustomAgent import CustomAgent
+from ai_engine.models.deepseek_model import DeepSeekModel
+from ai_engine.models.mistral_model import MistralModel
+from ai_engine.models.openai_model import OpenAIModel
 
 class TestAgentDispatcher(unittest.TestCase):
     
@@ -29,7 +34,7 @@ class TestAgentDispatcher(unittest.TestCase):
         dispatcher = AgentDispatcher()
         task_data = {"action": "test_action"}
         result = dispatcher.dispatch_task("TestAgent", task_data)
-        self.assertEqual(result, '{"result": "success"}')''
+self.assertEqual(result, '{"result": "success"}')''"
     
     @patch("agents.AgentRegistry.AgentRegistry.get_agent", return_value=None)
     @patch("logging.error")
@@ -38,17 +43,17 @@ class TestAgentDispatcher(unittest.TestCase):
         task_data = {"action": "test_action"}
         result = dispatcher.dispatch_task("InvalidAgent", task_data)
         
-        mock_error.assert_called_with("Agent 'InvalidAgent' not found in registry.")''        self.assertEqual(result, '{"error": "Agent \'InvalidAgent\' not found."}')''    
+mock_error.assert_called_with("Agent 'InvalidAgent' not found in registry.")''        self.assertEqual(result, '{"error": "Agent \'InvalidAgent\' not found."}')''"
     @patch("agents.AgentRegistry.AgentRegistry.get_agent")
     @patch("logging.error")
     def test_dispatch_task_with_non_agentbase_instance(self, mock_error, mock_get_agent):
-        mock_get_agent.return_value = "NotAnAgentBaseInstance"
+mock_get_agent.return_value = "NotAnAgentBaseInstance""
         
         dispatcher = AgentDispatcher()
         task_data = {"action": "test_action"}
         result = dispatcher.dispatch_task("TestAgent", task_data)
         
-        mock_error.assert_called_with("Agent 'TestAgent' does not inherit from AgentBase.")''        self.assertEqual(result, '{"error": "Agent \'TestAgent\' is invalid."}')''
+mock_error.assert_called_with("Agent 'TestAgent' does not inherit from AgentBase.")''        self.assertEqual(result, '{"error": "Agent \'TestAgent\' is invalid."}')''"
     
     @patch("agents.AgentRegistry.AgentRegistry.get_agent")
     @patch("logging.error")
@@ -61,6 +66,6 @@ class TestAgentDispatcher(unittest.TestCase):
         task_data = {"action": "test_action"}
         result = dispatcher.dispatch_task("TestAgent", task_data)
         
-        mock_error.assert_called_with("Error executing task for 'TestAgent': Task error")''        self.assertEqual(result, '{"error": "Task execution failed: Task error"}')''
+mock_error.assert_called_with("Error executing task for 'TestAgent': Task error")''        self.assertEqual(result, '{"error": "Task execution failed: Task error"}')''"
 if __name__ == "__main__":
     unittest.main()

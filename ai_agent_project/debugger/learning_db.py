@@ -1,57 +1,38 @@
-import re
+import json
+import os
 import logging
-from typing import List, Dict
+from typing import Dict, Any
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger("LearningDB")
 
-class ErrorParser:
+
+class LearningDB:
     """
-    Parses pytest output to extract test failure details.
+    Stores previously encountered errors and fixes.
     """
+
+    DB_FILE = "learning_db.json"
 
     def __init__(self):
-        """
-        Initializes the ErrorParser with a compiled regex pattern for efficiency.
-        """
-        self.failure_pattern = re.compile(
-            r"FAILED\s+([^\s:]+)::([^\s:]+)\s*-\s*(.+)", re.MULTILINE
-        )
+        self.data = self.load_db()
 
-    def parse_test_failures(self, test_output: str) -> List[Dict[str, str]]:
-        """
-        Parses pytest output and extracts structured failure details.
+    def load_db(self) -> Dict[str, Any]:
+        """Loads the learning database."""
+        if os.path.exists(self.DB_FILE):
+            with open(self.DB_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {}
 
-        Args:
-            test_output (str): The raw pytest output.
+    def get_signature(self, error: Dict[str, str]) -> str:
+        """Creates a hash signature for the error."""
+        return hash(error["error_message"])
 
-        Returns:
-            List[Dict[str, str]]: A list of failure details, each containing:
-                - "file": Test file where the failure occurred.
-                - "test": Name of the failing test function.
-                - "error": The error message or reason for failure.
-        """
-        if not test_output or not isinstance(test_output, str):
-            logger.warning("⚠️ Invalid or empty test output received for parsing.")
-            return []
+    def get_known_fix(self, error_sig: str) -> Optional[str]:
+        """Returns a known fix for an error signature if available."""
+        return self.data.get(error_sig, {}).get("patch")
 
-        logger.info("🔍 Parsing test failures from output...")
-        failures = []
-
-        for match in self.failure_pattern.finditer(test_output):
-            file_name = match.group(1).strip()
-            test_name = match.group(2).strip()
-            error_msg = match.group(3).strip()
-
-            failure = {"file": file_name, "test": test_name, "error": error_msg}
-            logger.debug(f"✅ Detected failure: {failure}")
-
-            failures.append(failure)
-
-        total_failures = len(failures)
-        if total_failures > 0:
-            logger.info(f"📉 Found {total_failures} test failure(s).")
-        else:
-            logger.info("✅ No test failures detected.")
-
-        return failures
+    def update(self, error_sig: str, patch: str, success: bool):
+        """Updates the learning database."""
+        self.data[error_sig] = {"patch": patch, "success": success}
+        with open(self.DB_FILE, "w", encoding="utf-8") as f:
+            json.dump(self.data, f, indent=4)

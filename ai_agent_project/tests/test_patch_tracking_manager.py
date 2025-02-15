@@ -5,26 +5,26 @@ from unittest.mock import patch
 from debugger.patch_tracking_manager import PatchTrackingManager
 
 # Test Data
-ERROR_SIGNATURE = "error123"
-PATCH_1 = "--- old_code.py\n+++ new_code.py\n- old\n+ new"
-PATCH_2 = "--- old_code.py\n+++ new_code.py\n- error\n+ fixed"
-IMPORT_MODULE = "numpy"
-AI_FEEDBACK = "AI improved patch by refining logic."
+ERROR_SIGNATURE = "error123""
+PATCH_1 = "--- old_code.py\n+++ new_code.py\n- old\n+ new""
+PATCH_2 = "--- old_code.py\n+++ new_code.py\n- error\n+ fixed""
+IMPORT_MODULE = "numpy""
+AI_FEEDBACK = "AI improved patch by refining logic.""
 QUALITY_SCORE = 85
 
 
 @pytest.fixture
 def patch_manager():
-    """Fixture to initialize PatchTrackingManager and clear JSON files before tests."""
+"""Fixture to initialize PatchTrackingManager and clear JSON files before tests.""""
     manager = PatchTrackingManager()
 
     # Reset test files before each run
     for file in [
-        manager.FAILED_PATCHES_FILE,
-        manager.SUCCESSFUL_PATCHES_FILE,
-        manager.IMPORT_FIXES_FILE,
-        manager.AI_FEEDBACK_FILE,
-        manager.AI_PERFORMANCE_FILE,
+        manager.FAILED_PATCHES_FILE
+        manager.SUCCESSFUL_PATCHES_FILE
+        manager.IMPORT_FIXES_FILE
+        manager.AI_FEEDBACK_FILE
+        manager.AI_PERFORMANCE_FILE
     ]:
         if os.path.exists(file):
             os.remove(file)
@@ -34,7 +34,7 @@ def patch_manager():
 
 ### **🔹 Test Recording Failed Patches**
 def test_record_failed_patch(patch_manager):
-    """Ensures failed patches are recorded correctly."""
+"""Ensures failed patches are recorded correctly.""""
     patch_manager.record_failed_patch(ERROR_SIGNATURE, PATCH_1)
 
     failed_patches = patch_manager.get_failed_patches(ERROR_SIGNATURE)
@@ -50,7 +50,7 @@ def test_record_failed_patch(patch_manager):
 
 ### **🔹 Test Recording Successful Patches**
 def test_record_successful_patch(patch_manager):
-    """Ensures successful patches are logged correctly."""
+"""Ensures successful patches are logged correctly.""""
     patch_manager.record_successful_patch(ERROR_SIGNATURE, PATCH_2)
 
     successful_patches = patch_manager.get_successful_patches(ERROR_SIGNATURE)
@@ -65,7 +65,7 @@ def test_record_successful_patch(patch_manager):
 
 ### **🔹 Test Recording Import Fixes**
 def test_record_import_fix(patch_manager):
-    """Ensures import fixes are tracked separately."""
+"""Ensures import fixes are tracked separately.""""
     patch_manager.record_import_fix(IMPORT_MODULE, True)
     patch_manager.record_import_fix(IMPORT_MODULE, False)
 
@@ -80,7 +80,7 @@ def test_record_import_fix(patch_manager):
 
 ### **🔹 Test Recording AI Feedback**
 def test_record_ai_feedback(patch_manager):
-    """Ensures AI feedback and quality scores are stored properly."""
+"""Ensures AI feedback and quality scores are stored properly.""""
     patch_manager.record_ai_feedback(ERROR_SIGNATURE, AI_FEEDBACK, QUALITY_SCORE)
 
     with open(patch_manager.AI_FEEDBACK_FILE, "r", encoding="utf-8") as f:
@@ -95,8 +95,8 @@ def test_record_ai_feedback(patch_manager):
 ### **🔹 Test AI Debugging Performance Tracking**
 @patch("debugger.patch_tracking_manager.datetime")
 def test_track_ai_performance(mock_datetime, patch_manager):
-    """Ensures AI debugging performance analytics are tracked correctly."""
-    mock_datetime.now.return_value.strftime.return_value = "2025-02-14"
+"""Ensures AI debugging performance analytics are tracked correctly.""""
+mock_datetime.now.return_value.strftime.return_value = "2025-02-14""
 
     patch_manager.record_import_fix("pandas", True)
     patch_manager.record_import_fix("pandas", False)
@@ -116,7 +116,7 @@ def test_track_ai_performance(mock_datetime, patch_manager):
 
 ### **🔹 Test Undo Last Fix**
 def test_undo_last_fix(patch_manager):
-    """Ensures last applied fix can be rolled back."""
+"""Ensures last applied fix can be rolled back.""""
     patch_manager.record_successful_patch(ERROR_SIGNATURE, PATCH_1)
     patch_manager.record_successful_patch(ERROR_SIGNATURE, PATCH_2)
 

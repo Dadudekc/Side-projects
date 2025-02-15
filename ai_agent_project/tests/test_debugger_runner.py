@@ -8,16 +8,16 @@ logger = logging.getLogger("DebuggerRunner")
 
 @pytest.fixture
 def debugger():
-    """Fixture to initialize DebuggerRunner."""
+"""Fixture to initialize DebuggerRunner.""""
     return DebuggerRunner()
 
 
 ### **🔹 Test Running Tests**
 @patch("subprocess.run")
 def test_run_tests_success(mock_subprocess, debugger):
-    """Test successful pytest execution returning output."""
-    mock_subprocess.return_value.stdout = "1 passed in 0.01s\n"
-    mock_subprocess.return_value.stderr = ""
+"""Test successful pytest execution returning output.""""
+mock_subprocess.return_value.stdout = "1 passed in 0.01s\n""
+mock_subprocess.return_value.stderr = """
 
     output = debugger.run_tests()
     assert "1 passed" in output
@@ -26,7 +26,7 @@ def test_run_tests_success(mock_subprocess, debugger):
 
 @patch("subprocess.run", side_effect=Exception("Pytest crashed"))
 def test_run_tests_failure(mock_subprocess, debugger):
-    """Test handling of a subprocess failure during test execution."""
+"""Test handling of a subprocess failure during test execution.""""
     output = debugger.run_tests()
     assert "Error: Pytest crashed" in output
 
@@ -36,7 +36,7 @@ def test_run_tests_failure(mock_subprocess, debugger):
 @patch("debugger_runner.DebuggerRunner.parser")
 @patch("debugger_runner.DebuggerRunner.fixer")
 def test_retry_tests_success(mock_fixer, mock_parser, mock_run_tests, debugger):
-    """Test retry mechanism when fixes are applied successfully."""
+"""Test retry mechanism when fixes are applied successfully.""""
     mock_run_tests.side_effect = [
         "2 failed, 1 passed",  # First attempt: 2 failures
         "1 failed, 2 passed",  # Second attempt: 1 failure
@@ -63,8 +63,8 @@ def test_retry_tests_success(mock_fixer, mock_parser, mock_run_tests, debugger):
 @patch("debugger_runner.DebuggerRunner.parser")
 @patch("debugger_runner.DebuggerRunner.fixer")
 def test_retry_tests_failure(mock_fixer, mock_parser, mock_run_tests, debugger):
-    """Test retry mechanism when fixes are ineffective."""
-    mock_run_tests.return_value = "2 failed, 1 passed"
+"""Test retry mechanism when fixes are ineffective.""""
+mock_run_tests.return_value = "2 failed, 1 passed""
     mock_parser.parse_test_failures.return_value = [
         {"file": "test_a.py", "error": "AssertionError"},
         {"file": "test_b.py", "error": "TypeError"},
@@ -81,7 +81,7 @@ def test_retry_tests_failure(mock_fixer, mock_parser, mock_run_tests, debugger):
 @patch("debugger_runner.DebuggerRunner.run_tests", return_value="3 passed")
 @patch("debugger_runner.DebuggerRunner.parser")
 def test_retry_tests_no_failures(mock_parser, mock_run_tests, debugger):
-    """Test when there are no test failures on the first run."""
+"""Test when there are no test failures on the first run.""""
     mock_parser.parse_test_failures.return_value = []  # No failures
 
     result = debugger.retry_tests(max_retries=3)

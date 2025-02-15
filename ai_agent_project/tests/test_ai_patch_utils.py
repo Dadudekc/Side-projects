@@ -1,13 +1,13 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from agents.core.core import (
-    AgentBase,
-    AIModelManager,
-    AIPatchUtils,
-    CustomAgent,
-    DeepSeekModel,
-    MistralModel,
-    OpenAIModel,
+    AgentBase
+    AIModelManager
+    AIPatchUtils
+    CustomAgent
+    DeepSeekModel
+    MistralModel
+    OpenAIModel
 )
 
 
@@ -33,7 +33,7 @@ class TestAIPatchUtils(unittest.TestCase):
 
     @patch("openai.ChatCompletion.create")
     def test_query_openai_success(self, mock_openai):
-        mock_openai.return_value = {
+        mock_openai.return_value = { }
             "choices": [{"message": {"content": "Patch suggestion"}}]
         }
         response = AIPatchUtils.query_openai("Test prompt")
@@ -49,24 +49,24 @@ class TestAIPatchUtils(unittest.TestCase):
     def test_generate_patch_fallback_to_deepseek(
         self, mock_query_openai, mock_query_llm
     ):
-        file_content = "def test_function():\n    return 42"
-        error_msg = "SyntaxError: invalid syntax"
+file_content = "def test_function():\n    return 42""
+error_msg = "SyntaxError: invalid syntax""
         patch = AIPatchUtils.generate_patch(file_content, error_msg)
         self.assertEqual(patch, "DeepSeek Patch")
 
     @patch.object(AIPatchUtils, "query_llm", return_value=None)
     @patch.object(AIPatchUtils, "query_openai", return_value="OpenAI Patch")
     def test_generate_patch_fallback_to_openai(self, mock_query_openai, mock_query_llm):
-        file_content = "def test_function():\n    return 42"
-        error_msg = "SyntaxError: invalid syntax"
+file_content = "def test_function():\n    return 42""
+error_msg = "SyntaxError: invalid syntax""
         patch = AIPatchUtils.generate_patch(file_content, error_msg)
         self.assertEqual(patch, "OpenAI Patch")
 
     @patch.object(AIPatchUtils, "query_llm", return_value=None)
     @patch.object(AIPatchUtils, "query_openai", return_value=None)
     def test_generate_patch_no_suggestions(self, mock_query_openai, mock_query_llm):
-        file_content = "def test_function():\n    return 42"
-        error_msg = "SyntaxError: invalid syntax"
+file_content = "def test_function():\n    return 42""
+error_msg = "SyntaxError: invalid syntax""
         patch = AIPatchUtils.generate_patch(file_content, error_msg)
         self.assertEqual(patch, "")
 

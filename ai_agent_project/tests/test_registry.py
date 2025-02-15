@@ -3,24 +3,24 @@ from agents.AgentRegistry import AgentRegistry
 
 
 class TestAgentRegistry(unittest.TestCase):
-    """Unit tests for AgentRegistry."""
+"""Unit tests for AgentRegistry.""""
 
     def setUp(self):
-        """Initialize the agent registry before each test."""
-        self.registry = AgentRegistry()  # Removed 'agents_dir' argument''
+"""Initialize the agent registry before each test.""""
+self.registry = AgentRegistry()  # Removed 'agents_dir' argument''"
 
     def test_get_invalid_agent(self):
-        """Test retrieving a non-existent agent."""
+"""Test retrieving a non-existent agent.""""
         agent = self.registry.get_agent("NonExistentAgent")
         self.assertIsNone(agent, "Non-existent agent should return None.")
 
     def test_get_valid_agent(self):
-        """Test retrieving a valid agent."""
+"""Test retrieving a valid agent.""""
         agent = self.registry.get_agent("JournalAgent")
         self.assertIsNotNone(agent, "JournalAgent not found in registry.")
 
     def test_load_agents(self):
-        """Test that agents are loaded correctly."""
+"""Test that agents are loaded correctly.""""
         agents = self.registry.list_agents()
         self.assertIn("JournalAgent", agents, "JournalAgent should be in the registry.")
 

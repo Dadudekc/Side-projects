@@ -1,32 +1,32 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from agents.core.utilities.AgentBase import (
-    AgentBase,
-    AIModelManager,
-    AIPatchUtils,
-    CustomAgent,
-    DeepSeekModel,
-    MistralModel,
-    OpenAIModel,
+    AgentBase
+    AIModelManager
+    AIPatchUtils
+    CustomAgent
+    DeepSeekModel
+    MistralModel
+    OpenAIModel
 )
 
 
 class MockAgent(AgentBase):
-    """Mock implementation of AgentBase for testing purposes."""
+"""Mock implementation of AgentBase for testing purposes.""""
 
     def solve_task(self, task: str, **kwargs):
-        return f"Task '{task}' solved."
+return f"Task '{task}' solved.""
 
     def describe_capabilities(self) -> str:
-        return "Mock agent capabilities."
+return "Mock agent capabilities.""
 
 
 class TestAgentRegistry(unittest.TestCase):
-    """Unit tests for the AgentRegistry class."""
+"""Unit tests for the AgentRegistry class.""""
 
     @patch("agents.core.AgentRegistry.importlib.import_module")
     def setUp(self, mock_import_module):
-        """Setup method to mock agent loading."""
+"""Setup method to mock agent loading.""""
         mock_module = MagicMock()
         mock_module.JournalAgent = MockAgent
         mock_module.TradingAgent = MockAgent
@@ -37,18 +37,18 @@ class TestAgentRegistry(unittest.TestCase):
         self.registry = AgentRegistry()
 
     def test_load_agents(self):
-        """Test if agents are correctly loaded into the registry."""
+"""Test if agents are correctly loaded into the registry.""""
         self.assertIn("JournalAgent", self.registry.agents)
         self.assertIn("TradingAgent", self.registry.agents)
         self.assertIn("DebuggerAgent", self.registry.agents)
 
     def test_get_agent(self):
-        """Test retrieving an agent by name."""
+"""Test retrieving an agent by name.""""
         agent = self.registry.get_agent("JournalAgent")
         self.assertIsInstance(agent, MockAgent)
 
     def test_list_agents(self):
-        """Test listing registered agents."""
+"""Test listing registered agents.""""
         agents_list = self.registry.list_agents()
         self.assertEqual(
             set(agents_list), {"JournalAgent", "TradingAgent", "DebuggerAgent"}

@@ -3,10 +3,10 @@ import time
 import json
 import os
 from agents.core.utilities.ai_agent_utils import (
-    PerformanceMonitor,
-    MemoryManager,
-    StructuredMemorySegment,
-    VectorMemoryManager,
+    PerformanceMonitor
+    MemoryManager
+    StructuredMemorySegment
+    VectorMemoryManager
 )
 
 
@@ -18,7 +18,7 @@ class TestPerformanceMonitor(unittest.TestCase):
         @self.monitor.track_execution
         def sample_function():
             time.sleep(0.1)
-            return "done"
+return "done""
 
         result = sample_function()
         logs = self.monitor.get_performance_log()
@@ -47,7 +47,7 @@ class TestMemoryManager(unittest.TestCase):
         self.assertIsNone(self.memory_manager.retrieve_memory("key"))
 
     def test_export_and_import_memory(self):
-        filepath = "test_memory.json"
+filepath = "test_memory.json""
         self.memory_manager.store_memory("test_key", "test_value")
         self.memory_manager.export_memory(filepath)
 
@@ -79,7 +79,7 @@ class TestVectorMemoryManager(unittest.TestCase):
         self.vector_manager.store_segment(segment)
         self.assertEqual(len(self.vector_manager.vector_memory), 1)
         self.assertEqual(
-            self.vector_manager.vector_memory[0]["segment"].text, "Test segment"
+self.vector_manager.vector_memory[0]["segment"].text, "Test segment""
         )
 
     def test_search_by_text_without_model(self):
