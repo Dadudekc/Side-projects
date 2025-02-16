@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from ai_engine.models.debugger.debugger_reporter import REPORT_FILE, DebuggerReporter
+from ai_engine.models.debugger.email_reporter import EmailReporter
 
 
 @pytest.fixture
@@ -27,7 +28,8 @@ def test_initialize_report():
     if os.path.exists(REPORT_FILE):
         os.remove(REPORT_FILE)  # Ensure the report does not exist before the test
 
-    reporter = DebuggerReporter()
+    reporter = DebuggerReporter()  # Initialize AFTER deleting report file
+
     assert isinstance(reporter.report_data, dict)
     assert "failed_patches" in reporter.report_data
     assert "ai_explanations" in reporter.report_data
@@ -75,7 +77,7 @@ def test_save_report(mock_open, reporter):
 
 
 # ** Test Email Reporting with Mocks **
-@patch("email_reporter.EmailReporter.send_debugging_report")
+@patch("ai_engine.models.debugger.email_reporter.EmailReporter.send_debugging_report")
 def test_send_email_report(mock_send_email, reporter):
     """Test sending an email report with a valid email."""
     mock_send_email.return_value = True  # Simulate successful email sending
@@ -86,11 +88,14 @@ def test_send_email_report(mock_send_email, reporter):
     )
 
 
-@patch("email_reporter.EmailReporter.send_debugging_report")
-def test_send_email_invalid_email(mock_send_email, reporter):
-    """Test that an invalid email prevents sending a report."""
+@patch("ai_engine.models.debugger.email_reporter.EmailReporter.send_debugging_report")
+@patch("ai_engine.models.debugger.debugger_reporter.logger.error")
+def test_send_email_invalid_email(mock_logger_error, mock_send_email, reporter):
+    """Test that an invalid email prevents sending a report and logs an error."""
     reporter.send_email_report("invalid-email")
+
     mock_send_email.assert_not_called()
+    mock_logger_error.assert_called_with("Invalid email address provided: invalid-email")
 
 
 # ** Run All Tests with: **
