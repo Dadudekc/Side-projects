@@ -1,15 +1,11 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from agents.core.core import (
-    AgentBase,
-    AIModelManager,
-    AIPatchUtils,
-    CustomAgent,
-    DeepSeekModel,
-    MistralModel,
-    OpenAIModel,
-)
+from agents.core.AgentBase import AgentBase
+from agents.core.utilities.ai_model_manager import AIModelManager
+from agents.core.utilities.ai_patch_utils import AIPatchUtils
+from agents.core.utilities.CustomAgent import CustomAgent
+from agents.core.trading_agent import TradingAgent
 
 
 class TestAIPatchUtils(unittest.TestCase):
