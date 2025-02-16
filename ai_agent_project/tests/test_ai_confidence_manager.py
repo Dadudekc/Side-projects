@@ -1,32 +1,31 @@
-import unittest
-import os
 import json
-from unittest.mock import patch, MagicMock
-from agents.core.AIConfidenceManager import AIConfidenceManager import (
-    AIConfidenceManager
-    AI_CONFIDENCE_FILE
-    PATCH_HISTORY_FILE
+import os
+import unittest
+from unittest.mock import MagicMock, patch
+
+from agents.core.AIConfidenceManager import (
+    AI_CONFIDENCE_FILE, PATCH_HISTORY_FILE, AIConfidenceManager
 )
 
 
 class TestAIConfidenceManager(unittest.TestCase):
-"""Unit tests for the AIConfidenceManager class.""""
+    """Unit tests for the AIConfidenceManager class."""
 
     def setUp(self):
-"""Sets up an instance of AIConfidenceManager for testing.""""
+        """Sets up an instance of AIConfidenceManager for testing."""
         self.manager = AIConfidenceManager()
-self.error_signature = "example_error_signature""
-self.test_patch = "--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ fixed code""
+        self.error_signature = "example_error_signature"
+        self.test_patch = "--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ fixed code"
 
     def tearDown(self):
-"""Cleanup after tests by removing AI confidence and patch history files if created.""""
+        """Cleanup after tests by removing AI confidence and patch history files if created."""
         for file in [AI_CONFIDENCE_FILE, PATCH_HISTORY_FILE]:
             if os.path.exists(file):
                 os.remove(file)
 
     @patch("random.uniform", return_value=0.8)
     def test_assign_confidence_score(self, mock_random):
-"""Test assigning confidence scores and storing them.""""
+        """Test assigning confidence scores and storing them."""
         score, reason = self.manager.assign_confidence_score(self.error_signature, self.test_patch)
         self.assertGreaterEqual(score, 0.1)
         self.assertLessEqual(score, 1.0)
@@ -39,12 +38,12 @@ self.test_patch = "--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ fixe
 
     @patch("agents.core.AIConfidenceManager.AIConfidenceManager._get_historical_success_rate", return_value=0.9)
     def test_assign_confidence_high_success(self, mock_success_rate):
-"""Test that a high historical success rate results in high confidence scores.""""
+        """Test that a high historical success rate results in high confidence scores."""
         score, _ = self.manager.assign_confidence_score(self.error_signature, self.test_patch)
         self.assertGreater(score, 0.7)
 
     def test_get_best_high_confidence_patch(self):
-"""Test retrieving the best high-confidence patch.""""
+        """Test retrieving the best high-confidence patch."""
         self.manager.confidence_scores[self.error_signature] = [
             {"patch": "patch1", "confidence": 0.6, "reason": "Medium confidence"},
             {"patch": "patch2", "confidence": 0.9, "reason": "Highly similar to past fix"},
@@ -53,7 +52,7 @@ self.test_patch = "--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ fixe
         self.assertEqual(best_patch, "patch2")
 
     def test_get_best_high_confidence_patch_none(self):
-"""Test that no patch is returned if all confidence scores are too low.""""
+        """Test that no patch is returned if all confidence scores are too low."""
         self.manager.confidence_scores[self.error_signature] = [
             {"patch": "patch1", "confidence": 0.6, "reason": "Low confidence"},
         ]
@@ -61,7 +60,7 @@ self.test_patch = "--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ fixe
         self.assertIsNone(best_patch)
 
     def test_suggest_patch_reattempt(self):
-"""Test suggesting a reattempt for patches that initially failed but now have improved confidence.""""
+        """Test suggesting a reattempt for patches that initially failed but now have improved confidence."""
         self.manager.confidence_scores[self.error_signature] = [
             {"patch": "patch1", "confidence": 0.8, "reason": "Confidence improved"},
             {"patch": "patch2", "confidence": 0.5, "reason": "Low confidence"},
@@ -72,7 +71,7 @@ self.test_patch = "--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ fixe
         self.assertEqual(suggested_patch, "patch1")
 
     def test_suggest_patch_reattempt_none(self):
-"""Test that no reattempt is suggested if confidence is still too low.""""
+        """Test that no reattempt is suggested if confidence is still too low."""
         self.manager.confidence_scores[self.error_signature] = [
             {"patch": "patch1", "confidence": 0.6, "reason": "Confidence still low"},
         ]

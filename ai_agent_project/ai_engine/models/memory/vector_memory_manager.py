@@ -1,0 +1,130 @@
+import logging
+from collections import deque
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+
+from .memory_manager import MemoryManager
+from .structured_memory_segment import StructuredMemorySegment
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+
+def cosine_similarity(vec_a: np.ndarray, vec_b: np.ndarray) -> float:
+    """Compute cosine similarity between two vectors."""
+    if np.linalg.norm(vec_a) == 0 or np.linalg.norm(vec_b) == 0:
+        return 0.0
+    return float(np.dot(vec_a, vec_b) / (np.linalg.norm(vec_a) * np.linalg.norm(vec_b)))
+
+
+class VectorMemoryManager(MemoryManager):
+    """
+    An advanced MemoryManager that stores embeddings for semantic/long-term search.
+
+    This implementation computes and stores normalized embeddings using an embedding model.
+    It uses cosine similarity for search queries.
+    """
+
+    def __init__(self, memory_limit: int = 50, embedding_model: Optional[Any] = None):
+        """
+        Initializes the VectorMemoryManager with an optional embedding model.
+
+        Args:
+            memory_limit (int): Maximum number of memory entries.
+            embedding_model (Optional[Any]): A model with an `encode()` method that computes embeddings.
+        """
+        super().__init__(memory_limit=memory_limit)
+        self.embedding_model = embedding_model
+        self.vector_memory: deque[Dict[str, Any]] = deque(maxlen=memory_limit)
+
+    def store_segment(self, segment: StructuredMemorySegment) -> None:
+        """
+        Stores a structured memory segment along with its embedding.
+
+        Args:
+            segment (StructuredMemorySegment): The memory segment to store.
+        """
+        embedding = self._compute_embedding(segment.text)
+        if embedding is not None:
+            # Normalize the embedding for consistent cosine similarity calculations
+            embedding = self._normalize_vector(embedding)
+        else:
+            logger.warning("Embedding computation failed; storing None as embedding.")
+
+        self.vector_memory.append({"segment": segment, "embedding": embedding})
+        logger.debug(f"Stored segment: {segment} with embedding: {embedding}")
+
+    def search_by_text(self, query_text: str, top_k: int = 3) -> List[StructuredMemorySegment]:
+        """
+        Searches stored memory segments for the best semantic matches to the query text.
+
+        Args:
+            query_text (str): The query text to embed and compare.
+            top_k (int): Number of top matching segments to return.
+
+        Returns:
+            List[StructuredMemorySegment]: Best matching segments.
+        """
+        if not self.embedding_model:
+            logger.warning("No embedding model provided; returning empty result.")
+            return []
+
+        query_embedding = self._compute_embedding(query_text)
+        if query_embedding is None:
+            logger.error("Failed to compute query embedding.")
+            return []
+
+        query_embedding = self._normalize_vector(query_embedding)
+        scores: List[Tuple[float, StructuredMemorySegment]] = []
+
+        for item in self.vector_memory:
+            emb = item.get("embedding")
+            if emb is None:
+                continue
+            score = cosine_similarity(query_embedding, emb)
+            scores.append((score, item["segment"]))
+
+        # Sort segments by descending similarity score
+        scores.sort(key=lambda x: x[0], reverse=True)
+        logger.debug(f"Search scores: {scores}")
+
+        top_segments = [segment for score, segment in scores[:top_k]]
+        return top_segments
+
+    def _compute_embedding(self, text: str) -> Optional[np.ndarray]:
+        """
+        Computes text embeddings using the provided model.
+
+        Args:
+            text (str): The text to embed.
+
+        Returns:
+            Optional[np.ndarray]: The computed embedding as a NumPy array, or None if failed.
+        """
+        if not self.embedding_model:
+            return None
+        try:
+            # Assumes embedding_model.encode returns a list or np.ndarray
+            embedding = self.embedding_model.encode(text)
+            # Ensure the embedding is a NumPy array for numerical operations
+            return np.array(embedding, dtype=np.float32)
+        except Exception as e:
+            logger.error(f"Error computing embedding for text '{text}': {e}")
+            return None
+
+    @staticmethod
+    def _normalize_vector(vector: np.ndarray) -> np.ndarray:
+        """
+        Normalizes a vector to unit length.
+
+        Args:
+            vector (np.ndarray): The vector to normalize.
+
+        Returns:
+            np.ndarray: The normalized vector.
+        """
+        norm = np.linalg.norm(vector)
+        if norm == 0:
+            return vector
+        return vector / norm

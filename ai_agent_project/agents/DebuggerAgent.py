@@ -5,15 +5,15 @@ import sys
 import subprocess
 
 # Importing core components from the existing debugging system
-from debugger.debugger_core import DebuggerCore
-from debugger.debugging_strategy import DebuggingStrategy
-from debugger.rollback_manager import RollbackManager
-from debugger.patch_tracking_manager import PatchTrackingManager
-from debugger.debugger_logger import DebuggerLogger
-from debugger.debugger_reporter import DebuggerReporter
-from debugger.project_context_analyzer import ProjectContextAnalyzer
-from debugger.auto_fixer import AutoFixer
-from debugger.error_parser import ErrorParser
+from ai_engine.models.debugger.debugger_core import DebuggerCore
+from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
+from ai_engine.models.debugger.rollback_manager import RollbackManager
+from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
+from ai_engine.models.debugger.debugger_logger import DebuggerLogger
+from ai_engine.models.debugger.debugger_reporter import DebuggerReporter
+from ai_engine.models.debugger.project_context_analyzer import ProjectContextAnalyzer
+from ai_engine.models.debugger.auto_fixer import AutoFixer
+from ai_engine.models.debugger.error_parser import ErrorParser
 from tests.run_tests import run_tests
 
 

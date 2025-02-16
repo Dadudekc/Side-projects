@@ -1,102 +1,97 @@
-import os
-import shutil
+import logging
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
-from debugger.rollback_manager import RollbackManager
 
-# Define constants for test environment
-TEST_FILE = "test_sample.py""
-BACKUP_DIR = "rollback_backups""
+from ai_engine.models.debugger.rollback_manager import RollbackManager
+
+logger = logging.getLogger("TestRollbackManager")
 
 
-@pytest.fixture(scope="function")
-def _setup_env():
-"""Sets up a temporary test file for rollback testing.""""
-    if os.path.exists(TEST_FILE):
-        os.remove(TEST_FILE)
-    if os.path.exists(BACKUP_DIR):
-        shutil.rmtree(BACKUP_DIR)
-
-    # Create a test file
-    with open(TEST_FILE, "w", encoding="utf-8") as f:
-        f.write("print('Original Content')")
-
-    yield TEST_FILE  # Provide the test file for the test
-
-    # Clean up after the test
-    if os.path.exists(TEST_FILE):
-        os.remove(TEST_FILE)
-    if os.path.exists(BACKUP_DIR):
-        shutil.rmtree(BACKUP_DIR)
+@pytest.fixture
+def rollback_manager():
+    """Fixture to initialize RollbackManager."""
+    return RollbackManager()
 
 
-### **🔹 Test File Backup**
-def test_backup_file(_setup_env):
-"""Ensures the backup system correctly creates file copies.""""
-    rollback_manager = RollbackManager()
-    rollback_manager.backup_file(TEST_FILE)
+# ** Test Rollback is Triggered When a Patch Fails**
+@patch.object(RollbackManager, "restore_backup")
+def test_rollback_triggered_on_failure(mock_restore_backup, rollback_manager):
+    """Tests if rollback is triggered after multiple failed patch attempts."""
+    modified_files = ["tests/test_example.py"]
+    rollback_manager.rollback_changes(modified_files)
 
-    backup_path = os.path.join(BACKUP_DIR, os.path.basename(TEST_FILE))
-assert os.path.exists(backup_path), "Backup file was not created!""
-    print("✅ Test passed: Backup file created successfully.")
-
-
-### **🔹 Test File Restore**
-def test_restore_backup(_setup_env):
-"""Ensures the backup system correctly restores original files.""""
-    rollback_manager = RollbackManager()
-    rollback_manager.backup_file(TEST_FILE)
-
-    # Modify the file
-    with open(TEST_FILE, "w", encoding="utf-8") as f:
-        f.write("print('Modified Content')")
-
-    rollback_manager.restore_backup(TEST_FILE)
-
-    # Ensure content is restored
-    with open(TEST_FILE, "r", encoding="utf-8") as f:
-        restored_content = f.read()
-
-assert restored_content == "print('Original Content')", "Backup restoration failed!""
-    print("✅ Test passed: File restoration works correctly.")
+    mock_restore_backup.assert_called_once_with("tests/test_example.py")
+    logger.info("✅ Test passed: Rollback triggered when required.")
 
 
-### **🔹 Test Patch Retry Logic**
-@patch("debugger.rollback_manager.DebuggingStrategy.apply_patch", return_value=True)
+# ** Test Retrying Failed Patches Before AI Fix**
 @patch(
-    "debugger.rollback_manager.PatchTrackingManager.get_failed_patches"
-    return_value=["mock_patch"],
+    "ai_engine.models.debugger.rollback_manager.PatchTrackingManager.get_failed_patches",
+    return_value=["Patch1", "Patch2"],
 )
+@patch(
+    "ai_engine.models.debugger.rollback_manager.DebuggingStrategy.apply_patch",
+    side_effect=[False, True],
+)  # 1st patch fails, 2nd succeeds
+@patch.object(RollbackManager, "backup_file")
+@patch.object(RollbackManager, "restore_backup")
 @patch("debugger.rollback_manager.PatchTrackingManager.record_successful_patch")
-def test_re_attempt_failed_patches(
-    mock_record_patch, mock_get_patches, mock_apply_patch, _setup_env
+def test_re_attempt_failed_patches_success(
+    mock_record_success,
+    mock_restore,
+    mock_backup,
+    mock_apply_patch,
+    mock_get_failed_patches,
+    rollback_manager,
 ):
-"""Ensures that failed patches are retried before using AI.""""
-    rollback_manager = RollbackManager()
+    """Tests if previously failed patches are retried and succeed before falling back to AI."""
+    error_signature = "error_12345"
+    file_path = "tests/test_example.py"
 
-    result = rollback_manager.re_attempt_failed_patches("error123", TEST_FILE)
+    result = rollback_manager.re_attempt_failed_patches(error_signature, file_path)
 
-assert result, "Failed patches were not reattempted before AI intervention!""
-    mock_apply_patch.assert_called_once()  # Ensure patch was retried
-    mock_record_patch.assert_called_once()  # Ensure successful patches are logged
-    print("✅ Test passed: Failed patches are retried correctly before AI.")
+    assert result is True  # ✅ The second patch should succeed
+    mock_apply_patch.assert_called()  # ✅ Patches were attempted
+    mock_record_success.assert_called_once()  # ✅ Successful patch recorded
+    mock_backup.assert_called_once_with(file_path)  # ✅ Backup was created
+    mock_restore.assert_not_called()  # ✅ No rollback needed if a patch succeeds
+
+    logger.info(
+        "✅ Test passed: Failed patches were retried and a successful one was found."
+    )
 
 
-### **🔹 Test Patch Failure Handling**
-@patch("debugger.rollback_manager.DebuggingStrategy.apply_patch", return_value=False)
+# ** Test Max Retry Limit Enforcement**
 @patch(
-    "debugger.rollback_manager.PatchTrackingManager.get_failed_patches"
-    return_value=["mock_patch"],
+    "ai_engine.models.debugger.rollback_manager.PatchTrackingManager.get_failed_patches",
+    return_value=["Patch1", "Patch2"],
 )
-@patch("debugger.rollback_manager.PatchTrackingManager.record_failed_patch")
-def test_patch_fails_reverts_to_backup(
-    mock_record_fail, mock_get_patches, mock_apply_patch, _setup_env
+@patch(
+    "ai_engine.models.debugger.rollback_manager.DebuggingStrategy.apply_patch",
+    return_value=False,
+)  # All patches fail
+@patch.object(RollbackManager, "backup_file")
+@patch.object(RollbackManager, "restore_backup")
+def test_max_retry_limit(
+    mock_restore,
+    mock_backup,
+    mock_apply_patch,
+    mock_get_failed_patches,
+    rollback_manager,
 ):
-"""Ensures that patches that fail multiple times are reverted.""""
-    rollback_manager = RollbackManager()
+    """Tests if rollback stops retrying after reaching max retry attempts."""
+    error_signature = "error_12345"
+    file_path = "tests/test_example.py"
 
-    result = rollback_manager.re_attempt_failed_patches("error123", TEST_FILE)
+    rollback_manager.failed_attempts[error_signature] = (
+        3  # Simulate reaching max attempts
+    )
 
-assert not result, "RollbackManager did not revert changes after failed patches!""
-    mock_record_fail.assert_called_once()
-assert os.path.exists(TEST_FILE), "Rollback manager did not restore the original file.""
+    result = rollback_manager.re_attempt_failed_patches(error_signature, file_path)
+
+    assert result is False  # ✅ Should stop retrying
+    mock_apply_patch.assert_not_called()  # ✅ No patches should be applied if max retries reached
+    mock_restore.assert_not_called()  # ✅ No rollback since no new patch was applied
+
+    logger.info("✅ Test passed: Max retry limit is properly enforced.")

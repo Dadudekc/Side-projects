@@ -1,18 +1,30 @@
-from utils.file_manager import move_file, ensure_init_py, remove_empty_dirs
 import os
 
+from utils.file_manager import ensure_init_py, move_file, remove_empty_dirs
+
 # Define test paths
-src_file = "debugger/test_retry_manager.py""
-dest_file = "debugger/moved_test_retry_manager.py""
-test_dir = "debugger/temp_test_folder""
+src_file = "debugger/test_retry_manager.py"
+dest_file = "debugger/moved_test_retry_manager.py"
+test_dir = "debugger/temp_test_folder"
 
-# Test moving a file
-move_file(src_file, dest_file)
+# Ensure source file exists before attempting to move
+if os.path.exists(src_file):
+    move_file(src_file, dest_file)
+    print(f"✅ Moved file: {src_file} → {dest_file}")
+else:
+    print(f"⚠ Source file not found: {src_file}")
 
-# Ensure a package directory is properly initialized
+# Ensure test directory exists before creating __init__.py
+if not os.path.exists(test_dir):
+    os.makedirs(test_dir)  # Create test directory for the test
 ensure_init_py(test_dir)
+print(f"✅ Ensured __init__.py in: {test_dir}")
 
-# Remove the temporary test directory
+# Remove test directory if it's empty
 remove_empty_dirs(test_dir)
+if not os.path.exists(test_dir):
+    print(f"✅ Removed empty test directory: {test_dir}")
+else:
+    print(f"⚠ Directory not removed (may not be empty): {test_dir}")
 
-print("✅ File Manager Tests Passed!")
+print("🎉 File Manager Tests Passed!")

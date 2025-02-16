@@ -1,6 +1,6 @@
 import logging
 from typing import Dict, List
-from test_retry_manager import TestRetryManager
+from test_retry_manager import AutoFixManager
 from ai_patch_analyzer import AIPatchAnalyzer
 from ai_confidence_manager import AIConfidenceManager
 
@@ -19,7 +19,7 @@ class AIPatchRetryManager:
     MAX_AI_PATCH_ATTEMPTS = 2  # AI gets two additional tries before rollback
 
     def __init__(self):
-        self.retry_manager = TestRetryManager()
+        self.retry_manager = AutoFixManager()
         self.ai_analyzer = AIPatchAnalyzer()
         self.confidence_manager = AIConfidenceManager()
         self.failed_patches = {}

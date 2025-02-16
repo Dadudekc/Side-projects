@@ -11,7 +11,7 @@ This script runs the AI-powered debugging system:
 """
 
 import logging
-from test_retry_manager import TestRetryManager
+from test_retry_manager import AutoFixManager
 from ai_confidence_manager import AIConfidenceManager
 
 logger = logging.getLogger("RunDebuggerAgent")
@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     # Initialize the AI confidence system and retry manager
     confidence_manager = AIConfidenceManager()
-    test_manager = TestRetryManager()
+    test_manager = AutoFixManager()
 
     # Run the debugging process
     result = test_manager.retry_tests(max_retries=3)

@@ -1,29 +1,29 @@
-import unittest
 import json
-from agents.core.core import (
-    AgentBase
-    AIModelManager
-    AIPatchUtils
-    CustomAgent
-    DeepSeekModel
-    MistralModel
-    OpenAIModel
-)
+import unittest
+
+from agents.AgentDispatcher import AgentDispatcher
+from agents.core.AgentBase import AgentBase
+from agents.core.utilities.ai_patch_utils import AIPatchUtils
+from agents.custom_agent import CustomAgent
+from ai_engine.models.ai_model_manager import AIModelManager
+from ai_engine.models.deepseek_model import DeepSeekModel
+from ai_engine.models.mistral_model import MistralModel
+from ai_engine.models.openai_model import OpenAIModel
 
 
 class TestAgentDispatcher(unittest.TestCase):
-"""Unit tests for AgentDispatcher.""""
+    """Unit tests for AgentDispatcher."""
 
     def setUp(self):
-"""Initialize the agent dispatcher before each test.""""
+        """Initialize the agent dispatcher before each test."""
         self.dispatcher = AgentDispatcher()
 
     def test_dispatch_valid_agent(self):
-"""Test dispatching a task to a valid agent.""""
-        task_data = { }
-            "action": "create"
-            "title": "Test Journal"
-            "content": "Test content"
+        """Test dispatching a task to a valid agent."""
+        task_data = {
+            "action": "create",
+            "title": "Test Journal",
+            "content": "Test content",
         }
 
         # Get the response from the dispatcher
@@ -38,11 +38,11 @@ class TestAgentDispatcher(unittest.TestCase):
         except json.JSONDecodeError:
             self.fail("AgentDispatcher did not return a valid JSON string.")
 
-# Ensure status is "success""
+        # Ensure status is "success"
         self.assertEqual(
-            result_data.get("status")
-            "success"
-            "JournalAgent did not process the task correctly."
+            result_data.get("status"),
+            "success",
+            "JournalAgent did not process the task correctly.",
         )
 
 
