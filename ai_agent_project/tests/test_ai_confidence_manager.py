@@ -3,7 +3,7 @@ import os
 import unittest
 from unittest.mock import MagicMock, patch
 
-from agents.core.AIConfidenceManager import (
+from agents.core.utilities.ai_confidence_manager import (
     AI_CONFIDENCE_FILE, PATCH_HISTORY_FILE, AIConfidenceManager
 )
 
@@ -15,7 +15,11 @@ class TestAIConfidenceManager(unittest.TestCase):
         """Sets up an instance of AIConfidenceManager for testing."""
         self.manager = AIConfidenceManager()
         self.error_signature = "example_error_signature"
-        self.test_patch = "--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ fixed code"
+        self.test_patch = """--- a/code.py
++++ b/code.py
+@@ -1 +1 @@
+- old code
++ fixed code"""
 
     def tearDown(self):
         """Cleanup after tests by removing AI confidence and patch history files if created."""
@@ -36,7 +40,7 @@ class TestAIConfidenceManager(unittest.TestCase):
         self.assertIn(self.error_signature, data)
         self.assertEqual(data[self.error_signature][0]["patch"], self.test_patch)
 
-    @patch("agents.core.AIConfidenceManager.AIConfidenceManager._get_historical_success_rate", return_value=0.9)
+    @patch("agents.core.utilities.ai_confidence_manager.AIConfidenceManager._get_historical_success_rate", return_value=0.9)
     def test_assign_confidence_high_success(self, mock_success_rate):
         """Test that a high historical success rate results in high confidence scores."""
         score, _ = self.manager.assign_confidence_score(self.error_signature, self.test_patch)
