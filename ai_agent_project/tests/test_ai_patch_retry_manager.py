@@ -1,7 +1,10 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from agents.core.AIPatchRetryManager import AIPatchRetryManager
+from agents.core.utilities.ai_patch_retry_manager import AIPatchRetryManager
+from agents.core.utilities.ai_confidence_manager import AIConfidenceManager
+from agents.core.utilities.ai_patch_analyzer import AIPatchAnalyzer
+from agents.core.utilities.auto_fix_manager import AutoFixManager
 
 
 class TestAIPatchRetryManager(unittest.TestCase):
@@ -18,10 +21,10 @@ class TestAIPatchRetryManager(unittest.TestCase):
 + fixed code"""
         self.failed_patches = {self.error_signature: [self.failed_patch]}
 
-    @patch("agents.core.AIPatchRetryManager.AIPatchAnalyzer.analyze_failed_patch")
-    @patch("agents.core.AIPatchRetryManager.AIConfidenceManager.get_confidence")
-    @patch("agents.core.AIPatchRetryManager.AIPatchAnalyzer.modify_failed_patch")
-    @patch("agents.core.AIPatchRetryManager.AutoFixManager.debugging_strategy.apply_patch")
+    @patch("agents.core.utilities.ai_patch_analyzer.AIPatchAnalyzer.analyze_failed_patch")
+    @patch("agents.core.utilities.ai_confidence_manager.AIConfidenceManager.get_confidence")
+    @patch("agents.core.utilities.ai_patch_analyzer.AIPatchAnalyzer.modify_failed_patch")
+    @patch("agents.core.utilities.auto_fix_manager.AutoFixManager.debugging_strategy.apply_patch")
     def test_retry_failed_patches_success(self, mock_apply_patch, mock_modify_patch, mock_get_confidence, mock_analyze_failed_patch):
         """Test AI patch retry process when a patch modification is successful."""
         mock_analyze_failed_patch.return_value = ("Patch failed due to syntax error", 0.3)
@@ -39,10 +42,10 @@ class TestAIPatchRetryManager(unittest.TestCase):
         mock_modify_patch.assert_called_once_with(self.error_signature, self.failed_patch)
         mock_apply_patch.assert_called_once()
 
-    @patch("agents.core.AIPatchRetryManager.AIPatchAnalyzer.analyze_failed_patch")
-    @patch("agents.core.AIPatchRetryManager.AIConfidenceManager.get_confidence")
-    @patch("agents.core.AIPatchRetryManager.AIPatchAnalyzer.modify_failed_patch")
-    @patch("agents.core.AIPatchRetryManager.AutoFixManager.debugging_strategy.apply_patch")
+    @patch("agents.core.utilities.ai_patch_analyzer.AIPatchAnalyzer.analyze_failed_patch")
+    @patch("agents.core.utilities.ai_confidence_manager.AIConfidenceManager.get_confidence")
+    @patch("agents.core.utilities.ai_patch_analyzer.AIPatchAnalyzer.modify_failed_patch")
+    @patch("agents.core.utilities.auto_fix_manager.AutoFixManager.debugging_strategy.apply_patch")
     def test_retry_failed_patches_failure(self, mock_apply_patch, mock_modify_patch, mock_get_confidence, mock_analyze_failed_patch):
         """Test AI patch retry process when a patch modification fails."""
         mock_analyze_failed_patch.return_value = ("Patch failed due to syntax error", 0.2)
@@ -60,8 +63,8 @@ class TestAIPatchRetryManager(unittest.TestCase):
         mock_modify_patch.assert_called_once_with(self.error_signature, self.failed_patch)
         mock_apply_patch.assert_called_once()
 
-    @patch("agents.core.AIPatchRetryManager.AIPatchAnalyzer.analyze_failed_patch")
-    @patch("agents.core.AIPatchRetryManager.AIConfidenceManager.get_confidence")
+    @patch("agents.core.utilities.ai_patch_analyzer.AIPatchAnalyzer.analyze_failed_patch")
+    @patch("agents.core.utilities.ai_confidence_manager.AIConfidenceManager.get_confidence")
     def test_retry_failed_patches_low_confidence(self, mock_get_confidence, mock_analyze_failed_patch):
         """Test AI patch retry when confidence remains too low."""
         mock_analyze_failed_patch.return_value = ("Patch failed due to syntax error", 0.1)
