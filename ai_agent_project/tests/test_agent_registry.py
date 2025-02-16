@@ -1,14 +1,15 @@
 import unittest
 from unittest.mock import MagicMock, patch
+import importlib
 
 from agents.core.agent_registry import AgentRegistry
 
 
 class MockAgent:
-    """Mock implementation of AgentBase for testing purposes."""
+    """Mock implementation of an agent for testing purposes."""
 
     def solve_task(self, task: str, **kwargs):
-        """Solves the given task and returns a confirmation message."""
+        """Simulates solving a given task."""
         return f"Task '{task}' solved."
 
     def describe_capabilities(self) -> str:
@@ -21,7 +22,7 @@ class TestAgentRegistry(unittest.TestCase):
 
     @patch("agents.core.agent_registry.importlib.import_module")
     def setUp(self, mock_import_module):
-        """Setup method to mock agent loading."""
+        """Sets up a mocked agent registry for testing."""
         mock_module = MagicMock()
         mock_module.JournalAgent = MockAgent
         mock_module.TradingAgent = MockAgent
@@ -45,9 +46,7 @@ class TestAgentRegistry(unittest.TestCase):
     def test_list_agents(self):
         """Test listing registered agents."""
         agents_list = self.registry.list_agents()
-        self.assertEqual(
-            set(agents_list), {"JournalAgent", "TradingAgent", "DebuggerAgent"}
-        )
+        self.assertEqual(set(agents_list), {"JournalAgent", "TradingAgent", "DebuggerAgent"})
 
 
 if __name__ == "__main__":
