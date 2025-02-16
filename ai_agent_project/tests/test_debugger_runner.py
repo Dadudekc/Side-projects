@@ -21,7 +21,7 @@ def test_run_tests_success(mock_subprocess, debugger):
     mock_subprocess.return_value.stdout = "1 passed in 0.01s\n"
     mock_subprocess.return_value.stderr = ""
 
-    output = ai_engine.models.debugger.run_tests()
+    output = debugger.run_tests()  # Fixed method call
     assert "1 passed" in output
     mock_subprocess.assert_called_once()
 
@@ -29,14 +29,14 @@ def test_run_tests_success(mock_subprocess, debugger):
 @patch("subprocess.run", side_effect=Exception("Pytest crashed"))
 def test_run_tests_failure(mock_subprocess, debugger):
     """Test handling of a subprocess failure during test execution."""
-    output = ai_engine.models.debugger.run_tests()
+    output = debugger.run_tests()  # Fixed method call
     assert "Error: Pytest crashed" in output
 
 
 # ** Test Retrying Tests with Fixes **
-@patch("debugger_runner.DebuggerRunner.run_tests")
-@patch("debugger_runner.DebuggerRunner.parser")
-@patch("debugger_runner.DebuggerRunner.fixer")
+@patch("ai_engine.models.debugger.debugger_runner.DebuggerRunner.run_tests")
+@patch("ai_engine.models.debugger.debugger_runner.DebuggerRunner.parser")
+@patch("ai_engine.models.debugger.debugger_runner.DebuggerRunner.fixer")
 def test_retry_tests_success(mock_fixer, mock_parser, mock_run_tests, debugger):
     """Test retry mechanism when fixes are applied successfully."""
     mock_run_tests.side_effect = [
@@ -56,14 +56,14 @@ def test_retry_tests_success(mock_fixer, mock_parser, mock_run_tests, debugger):
 
     mock_fixer.apply_fix.return_value = True
 
-    result = ai_engine.models.debugger.retry_tests(max_retries=3)
+    result = debugger.retry_tests(max_retries=3)  # Fixed method call
     assert result is True
     assert mock_fixer.apply_fix.call_count == 2  # Fixes were attempted
 
 
-@patch("debugger_runner.DebuggerRunner.run_tests", return_value="2 failed, 1 passed")
-@patch("debugger_runner.DebuggerRunner.parser")
-@patch("debugger_runner.DebuggerRunner.fixer")
+@patch("ai_engine.models.debugger.debugger_runner.DebuggerRunner.run_tests", return_value="2 failed, 1 passed")
+@patch("ai_engine.models.debugger.debugger_runner.DebuggerRunner.parser")
+@patch("ai_engine.models.debugger.debugger_runner.DebuggerRunner.fixer")
 def test_retry_tests_fail(mock_fixer, mock_parser, mock_run_tests, debugger):
     """Test retry mechanism when fixes are ineffective."""
     mock_parser.parse_test_failures.return_value = [
@@ -73,19 +73,19 @@ def test_retry_tests_fail(mock_fixer, mock_parser, mock_run_tests, debugger):
 
     mock_fixer.apply_fix.return_value = False  # No fixes are applied
 
-    result = ai_engine.models.debugger.retry_tests(max_retries=3)
+    result = debugger.retry_tests(max_retries=3)  # Fixed method call
     assert result is False
     assert mock_fixer.apply_fix.call_count == 2  # Fix attempts were made but failed
 
 
 # ** Test No Failures Case **
-@patch("debugger_runner.DebuggerRunner.run_tests", return_value="3 passed")
-@patch("debugger_runner.DebuggerRunner.parser")
+@patch("ai_engine.models.debugger.debugger_runner.DebuggerRunner.run_tests", return_value="3 passed")
+@patch("ai_engine.models.debugger.debugger_runner.DebuggerRunner.parser")
 def test_retry_tests_no_failures(mock_parser, mock_run_tests, debugger):
     """Test when there are no test failures on the first run."""
     mock_parser.parse_test_failures.return_value = []  # No failures
 
-    result = ai_engine.models.debugger.retry_tests(max_retries=3)
+    result = debugger.retry_tests(max_retries=3)  # Fixed method call
     assert result is True
     assert mock_parser.parse_test_failures.call_count == 1  # Only runs once
 
