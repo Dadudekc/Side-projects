@@ -4,7 +4,8 @@ import subprocess
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ai_engine.models.debugger.debugger_core import DebuggerCore
+from agents.core.debugger_core import DebuggerCore
+from agents.core.logger import logger
 
 
 class TestDebuggerCore(unittest.TestCase):
@@ -29,9 +30,7 @@ class TestDebuggerCore(unittest.TestCase):
     @patch("subprocess.run")
     def test_run_tests_simple(self, mock_subprocess):
         """Test running tests in simple mode."""
-        mock_subprocess.return_value = MagicMock(
-            stdout="test_debug.py - FAILED", returncode=1
-        )
+        mock_subprocess.return_value = MagicMock(stdout="test_debug.py - FAILED", returncode=1)
         result = self.debugger.run_tests_simple()
         self.assertIn("test_debug.py - FAILED", result)
 
@@ -68,9 +67,7 @@ class TestDebuggerCore(unittest.TestCase):
 
     def test_load_learning_db(self):
         """Test loading the learning database."""
-        test_db_content = {
-            "error_signature_1": {"attempts": 2, "patch": "sample_patch"}
-        }
+        test_db_content = {"error_signature_1": {"attempts": 2, "patch": "sample_patch"}}
         with open(self.learning_db_file, "w", encoding="utf-8") as f:
             json.dump(test_db_content, f)
 
@@ -79,9 +76,7 @@ class TestDebuggerCore(unittest.TestCase):
 
     def test_save_learning_db(self):
         """Test saving the learning database."""
-        test_db_content = {
-            "error_signature_1": {"attempts": 2, "patch": "sample_patch"}
-        }
+        test_db_content = {"error_signature_1": {"attempts": 2, "patch": "sample_patch"}}
         self.debugger.save_learning_db(test_db_content)
 
         with open(self.learning_db_file, "r", encoding="utf-8") as f:
@@ -125,9 +120,7 @@ class TestDebuggerCore(unittest.TestCase):
     @patch("subprocess.run")
     def test_debug_simple(self, mock_subprocess):
         """Test debugging in simple mode."""
-        mock_subprocess.return_value = MagicMock(
-            stdout="test_debug.py - FAILED", returncode=1
-        )
+        mock_subprocess.return_value = MagicMock(stdout="test_debug.py - FAILED", returncode=1)
         with patch.object(self.debugger, "apply_fix", return_value=True):
             result = self.debugger._debug_simple(max_retries=1)
             self.assertEqual(result["status"], "success")
@@ -137,9 +130,7 @@ class TestDebuggerCore(unittest.TestCase):
     @patch("builtins.open", create=True)
     @patch.object(DebuggerCore, "apply_patch_to_file", return_value=True)
     @patch.object(DebuggerCore, "re_run_tests", return_value=True)
-    def test_debug_advanced(
-        self, mock_re_run, mock_apply_patch, mock_open, mock_json_load, mock_subprocess
-    ):
+    def test_debug_advanced(self, mock_re_run, mock_apply_patch, mock_open, mock_json_load, mock_subprocess):
         """Test debugging in advanced mode."""
         test_json_report = {
             "tests": [
@@ -156,7 +147,7 @@ class TestDebuggerCore(unittest.TestCase):
         mock_json_load.return_value = test_json_report
 
         result = self.debugger._debug_advanced()
-        self.assertIsNone(result)
+        self.assertEqual(result["status"], "success")  # Expected success instead of None
 
     def test_debug_with_unknown_mode(self):
         """Test handling of unknown debugging modes."""
@@ -186,10 +177,8 @@ class TestDebuggerCore(unittest.TestCase):
 
     def test_show_logs(self):
         """Test displaying stored logs."""
-        with patch.object(
-            self.debugger.debugger_logger, "get_logs", return_value=["Test log entry"]
-        ):
-            with patch("agents.core.debugger_core.logger.info") as mock_logger:
+        with patch.object(self.debugger.debugger_logger, "get_logs", return_value=["Test log entry"]):
+            with patch("agents.core.logger.logger.info") as mock_logger:
                 self.debugger.show_logs()
                 mock_logger.assert_called_with("📝 Log Entry: Test log entry")
 
