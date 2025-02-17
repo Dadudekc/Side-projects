@@ -4,11 +4,11 @@
         "fail": 2
     },
     "Mistral": {
-        "success": 2,
-        "fail": 0
+        "success": 1,
+        "fail": 1
     },
     "OpenAI": {
-        "success": 2,
-        "fail": 2
+        "success": 1,
+        "fail": 3
     }
 }
