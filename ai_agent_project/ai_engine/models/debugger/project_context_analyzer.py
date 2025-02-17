@@ -49,13 +49,12 @@ class ProjectContextAnalyzer:
             abs_path = os.path.join(self.project_root, rel_path)
             try:
                 with open(abs_path, "r", encoding="utf-8") as f:
-                    first_line = f.readline()
-                    if first_line.startswith('"""') or first_line.startswith("'''"):
-                        docstring = first_line.strip()
-                    else:
-                        docstring = "No docstring provided"
+                    content = f.read()
+                parsed_tree = ast.parse(content)
 
-                self.context_data["modules"][rel_path]["purpose"] = docstring
+                # Extract module-level docstring
+                docstring = ast.get_docstring(parsed_tree)
+                self.context_data["modules"][rel_path]["purpose"] = docstring if docstring else "No docstring provided"
 
             except Exception as e:
                 logger.warning(f"⚠️ Failed to analyze {rel_path}: {e}")
@@ -65,9 +64,7 @@ class ProjectContextAnalyzer:
         Maps dependencies between project modules by analyzing imports.
         """
         logger.info("🔗 Mapping dependencies...")
-        import_pattern = re.compile(
-            r'^\s*(?:from|import)\s+([\w\d_.]+)(?:\s+as\s+[\w\d_]+)?', re.MULTILINE
-        )
+        import_pattern = re.compile(r'^\s*(?:from|import)\s+([\w\d_.]+)', re.MULTILINE)
 
         for rel_path in self.context_data["modules"]:
             abs_path = os.path.join(self.project_root, rel_path)
@@ -92,8 +89,6 @@ class ProjectContextAnalyzer:
             json.dump(self.context_data, f, indent=4)
         logger.info(f"📂 Project analysis saved to {output_file}")
 
-
-# ✅ Fix: Expose `analyze_project` as a global function
 def analyze_project(project_root: str = None) -> Dict[str, Any]:
     """
     Wrapper function to perform project analysis without instantiating the class.
@@ -104,7 +99,6 @@ def analyze_project(project_root: str = None) -> Dict[str, Any]:
     analyzer = ProjectContextAnalyzer(project_root)
     analyzer.analyze_project()
     return analyzer.context_data  # Returns analysis result as a dictionary
-
 
 if __name__ == "__main__":
     project_root = os.path.dirname(os.path.abspath(__file__))
