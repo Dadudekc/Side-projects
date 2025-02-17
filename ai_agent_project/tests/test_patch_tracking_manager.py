@@ -1,11 +1,17 @@
 import json
 import os
 from datetime import datetime
-from unittest.mock import MagicMock, patch
-
+from unittest.mock import patch
 import pytest
 
-from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
+from ai_engine.models.debugger.patch_tracking_manager import (
+    PatchTrackingManager,
+    FAILED_PATCHES_FILE,
+    SUCCESSFUL_PATCHES_FILE,
+    IMPORT_FIXES_FILE,
+    AI_FEEDBACK_FILE,
+    AI_PERFORMANCE_FILE,
+)
 
 # Test Data
 ERROR_SIGNATURE = "error123"
@@ -23,11 +29,11 @@ def patch_manager():
 
     # Reset test files before each run
     for file in [
-        manager.FAILED_PATCHES_FILE,
-        manager.SUCCESSFUL_PATCHES_FILE,
-        manager.IMPORT_FIXES_FILE,
-        manager.AI_FEEDBACK_FILE,
-        manager.AI_PERFORMANCE_FILE,
+        FAILED_PATCHES_FILE,
+        SUCCESSFUL_PATCHES_FILE,
+        IMPORT_FIXES_FILE,
+        AI_FEEDBACK_FILE,
+        AI_PERFORMANCE_FILE,
     ]:
         if os.path.exists(file):
             os.remove(file)
@@ -43,7 +49,7 @@ def test_record_failed_patch(patch_manager):
     assert failed_patches == [PATCH_1]
 
     # Verify it persists in the file
-    with open(patch_manager.FAILED_PATCHES_FILE, "r", encoding="utf-8") as f:
+    with open(FAILED_PATCHES_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
         assert data[ERROR_SIGNATURE] == [PATCH_1]
 
@@ -57,7 +63,7 @@ def test_record_successful_patch(patch_manager):
     successful_patches = patch_manager.get_successful_patches(ERROR_SIGNATURE)
     assert successful_patches == [PATCH_2]
 
-    with open(patch_manager.SUCCESSFUL_PATCHES_FILE, "r", encoding="utf-8") as f:
+    with open(SUCCESSFUL_PATCHES_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
         assert data[ERROR_SIGNATURE] == [PATCH_2]
 
@@ -69,7 +75,7 @@ def test_record_import_fix(patch_manager):
     patch_manager.record_import_fix(IMPORT_MODULE, True)
     patch_manager.record_import_fix(IMPORT_MODULE, False)
 
-    with open(patch_manager.IMPORT_FIXES_FILE, "r", encoding="utf-8") as f:
+    with open(IMPORT_FIXES_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     assert data[IMPORT_MODULE]["fixed"] == 1
@@ -82,7 +88,7 @@ def test_record_ai_feedback(patch_manager):
     """Ensures AI feedback and quality scores are stored properly."""
     patch_manager.record_ai_feedback(ERROR_SIGNATURE, AI_FEEDBACK, QUALITY_SCORE)
 
-    with open(patch_manager.AI_FEEDBACK_FILE, "r", encoding="utf-8") as f:
+    with open(AI_FEEDBACK_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     assert data[ERROR_SIGNATURE]["feedback"] == AI_FEEDBACK
@@ -91,7 +97,7 @@ def test_record_ai_feedback(patch_manager):
     print("✅ Test passed: AI feedback stored correctly.")
 
 
-@patch("debugger.patch_tracking_manager.datetime")
+@patch("ai_engine.models.debugger.patch_tracking_manager.datetime")
 def test_track_ai_performance(mock_datetime, patch_manager):
     """Ensures AI debugging performance analytics are tracked correctly."""
     mock_datetime.now.return_value.strftime.return_value = "2025-02-14"
@@ -102,13 +108,12 @@ def test_track_ai_performance(mock_datetime, patch_manager):
 
     patch_manager.track_ai_performance()
 
-    with open(patch_manager.AI_PERFORMANCE_FILE, "r", encoding="utf-8") as f:
+    with open(AI_PERFORMANCE_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     today_stats = data["2025-02-14"]
     assert today_stats["total_fixes"] == 3
-    # (2 successes / 3 total) * 100
-    assert today_stats["success_rate"] == 66.67
+    assert today_stats["success_rate"] == 66.67  # (2 successes / 3 total) * 100
 
     print("✅ Test passed: AI performance tracking updates correctly.")
 

@@ -1,12 +1,11 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from agents.core.AgentBase import AgentBase
-from agents.core.utilities.ai_model_manager import AIModelManager
-from agents.core.utilities.ai_patch_utils import AIPatchUtils
-from agents.core.utilities.CustomAgent import CustomAgent
-from agents.core.trading_agent import TradingAgent
-
+# Ensure we are importing from the correct location
+try:
+    from agents.core.trading_agent import TradingAgent
+except ImportError:
+    raise ImportError("Could not find 'TradingAgent'. Check import paths.")
 
 class TestTradingAgent(unittest.TestCase):
     """Unit tests for the TradingAgent class."""
@@ -18,7 +17,7 @@ class TestTradingAgent(unittest.TestCase):
     def test_initialization(self):
         """Test if the TradingAgent initializes correctly."""
         self.assertEqual(self.agent.name, "TradingAgent")
-        self.assertTrue(self.agent.test_mode)  # Should be in test mode
+        self.assertTrue(self.agent.test_mode)
 
     def test_describe_capabilities(self):
         """Test the describe_capabilities method."""
@@ -32,7 +31,7 @@ class TestTradingAgent(unittest.TestCase):
         result = self.agent.execute_trade("AAPL", "buy", 10)
         self.assertEqual(result["status"], "simulated execution")
 
-    @patch("agents.TradingAgent.tradeapi.REST")
+    @patch("agents.core.trading_agent.tradeapi.REST")  # Fix import path
     def test_execute_trade_live_mode(self, mock_tradeapi):
         """Test execute_trade in live mode with mock Alpaca API."""
         mock_api_instance = MagicMock()
@@ -45,7 +44,7 @@ class TestTradingAgent(unittest.TestCase):
         self.assertEqual(result["status"], "executed")
         mock_api_instance.submit_order.assert_called_once()
 
-    @patch("agents.TradingAgent.tradeapi.REST")
+    @patch("agents.core.trading_agent.tradeapi.REST")  # Fix import path
     def test_execute_trade_failure(self, mock_tradeapi):
         """Test handling of trade execution failure."""
         mock_api_instance = MagicMock()
@@ -61,7 +60,7 @@ class TestTradingAgent(unittest.TestCase):
     def test_solve_task_fetch_market_data(self):
         """Test solve_task with market data retrieval."""
         result = self.agent.solve_task("fetch_market_data", symbol="AAPL")
-        self.assertIn("error", result)  # Mock not implemented for fetch_market_data
+        self.assertIn("error", result)
 
     def test_solve_task_execute_trade(self):
         """Test solve_task with execute_trade task."""

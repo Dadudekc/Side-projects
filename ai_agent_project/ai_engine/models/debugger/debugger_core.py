@@ -7,7 +7,7 @@ from ai_engine.models.debugger.learning_db import LearningDB
 from ai_engine.models.debugger.rollback_manager import RollbackManager
 from ai_engine.models.debugger.debugger_reporter import DebuggerReporter
 from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
-
+from ai_engine.models.debugger.report_manager import ReportManager
 logger = logging.getLogger("DebuggerCore")
 logger.setLevel(logging.DEBUG)
 

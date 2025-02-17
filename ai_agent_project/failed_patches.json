@@ -1,5 +1,0 @@
-{
-    "test_error_signature": [
-        "--- test_patch.py\n+++ test_patch.py\n- old_code\n+ fixed_code"
-    ]
-}

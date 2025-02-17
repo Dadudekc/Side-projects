@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 from ai_engine.models.debugger.debugger_core import DebuggerCore
 from agents.core.logger import logger
+from ai_engine.models.debugger.report_manager import ReportManager
 
 
 class TestDebuggerCore(unittest.TestCase):

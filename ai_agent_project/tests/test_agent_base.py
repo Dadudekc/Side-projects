@@ -4,6 +4,10 @@ from agents.core.utilities.AgentBase import AgentBase
 
 
 class MockAgent(AgentBase):
+    def __init__(self, name="MockAgent"):
+        super().__init__(name)
+
+
     """A mock implementation of AgentBase for testing purposes."""
 
     def solve_task(self, task: str, **kwargs):

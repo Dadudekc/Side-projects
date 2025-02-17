@@ -6,18 +6,18 @@ from ai_engine.models.memory.vector_memory_manager import VectorMemoryManager
 from agents.AgentActor import AgentActor
 from agents.core.utilities.ai_agent_utils import PerformanceMonitor
 
+
 class TestAgentActor(unittest.TestCase):
     def setUp(self):
         self.tool_server = MagicMock()
-        # Use the updated VectorMemoryManager with a dummy embedding model.
+        # Use the updated VectorMemoryManager without latent_dim
         dummy_embedding_model = MagicMock()
-        # Simulate the encode() method: simply return the input string's UTF-8 byte values as a float array.
+        # Simulate the encode() method: return the UTF-8 byte values of the input string as a float array.
         dummy_embedding_model.encode.side_effect = lambda text: [float(ord(c)) for c in text]
-        self.memory_manager = VectorMemoryManager(memory_limit=50, embedding_model=dummy_embedding_model, latent_dim=16)
+        
+        self.memory_manager = VectorMemoryManager(memory_limit=50, embedding_model=dummy_embedding_model)
         self.performance_monitor = PerformanceMonitor()
-        self.agent = AgentActor(
-            self.tool_server, self.memory_manager, self.performance_monitor
-        )
+        self.agent = AgentActor(self.tool_server, self.memory_manager, self.performance_monitor)
 
     def test_describe_capabilities(self):
         self.assertEqual(
@@ -48,17 +48,25 @@ class TestAgentActor(unittest.TestCase):
         self.assertEqual(result, "Operation Successful")
 
     def test_utilize_tool_invalid_tool(self):
+        self.tool_server.unknown_tool = None  # Ensure tool does not exist
         result = self.agent.utilize_tool("unknown_tool", "operation", {})
         self.assertEqual(result, "Tool 'unknown_tool' not found")
+
 
     def test_utilize_tool_invalid_operation(self):
         mock_tool = MagicMock()
         setattr(self.tool_server, "mock_tool", mock_tool)
 
+        # Ensure the tool does not have the operation
+        delattr(mock_tool, "unknown_operation")  # Prevents MagicMock from creating it dynamically
+
         result = self.agent.utilize_tool("mock_tool", "unknown_operation", {})
-        self.assertEqual(
-            result, "Operation 'unknown_operation' not found in tool 'mock_tool'"
-        )
+        
+        self.assertEqual(result, "Operation 'unknown_operation' not found in tool 'mock_tool'")
+
+
+        result = self.agent.utilize_tool("mock_tool", "unknown_operation", {})
+        self.assertEqual(result, "Operation 'unknown_operation' not found in tool 'mock_tool'")
 
     def test_perform_task_python(self):
         self.tool_server.python_notebook.execute_code.return_value = "Python Execution Successful"
@@ -78,6 +86,7 @@ class TestAgentActor(unittest.TestCase):
         with self.assertLogs(level="INFO") as log:
             self.agent.shutdown()
         self.assertIn("AgentActor is shutting down.", log.output[0])
+
 
 if __name__ == "__main__":
     unittest.main()

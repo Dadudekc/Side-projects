@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from ai_engine.models.debugger.debugger_cli import AI_PERFORMANCE_FILE, DebuggerCLI
-
+from ai_engine.models.debugger.report_manager import ReportManager
 
 class TestDebuggerCLI(unittest.TestCase):
     """Unit tests for the DebuggerCLI class."""

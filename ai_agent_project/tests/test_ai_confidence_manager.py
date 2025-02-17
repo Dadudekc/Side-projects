@@ -40,7 +40,7 @@ class TestAIConfidenceManager(unittest.TestCase):
         self.assertIn(self.error_signature, data)
         self.assertEqual(data[self.error_signature][0]["patch"], self.test_patch)
 
-    @patch("agents.core.utilities.ai_confidence_manager.AIConfidenceManager._get_historical_success_rate", return_value=0.9)
+    @patch("ai_engine.confidence_manager.AIConfidenceManager._get_historical_success_rate", return_value=0.9)
     def test_assign_confidence_high_success(self, mock_success_rate):
         """Test that a high historical success rate results in high confidence scores."""
         score, _ = self.manager.assign_confidence_score(self.error_signature, self.test_patch)

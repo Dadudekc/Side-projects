@@ -6,7 +6,7 @@ import json
 import logging
 from datetime import datetime
 from typing import List, Dict, Any
-from agents.core.core import AgentBase
+from agents.core.AgentBase import AgentBase
   # Using AgentBase instead of IAgent
 
 logger = logging.getLogger(__name__)
