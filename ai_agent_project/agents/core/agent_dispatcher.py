@@ -2,7 +2,7 @@ import logging
 import json
 from typing import Dict, Any
 
-from agents.agent_registry import AgentRegistry
+from agents.core.agent_registry import AgentRegistry
 from agents.core.AgentBase import AgentBase
 from agents.core.professor_synapse_agent import ProfessorSynapseAgent
 from agents.core.memory_engine import MemoryEngine

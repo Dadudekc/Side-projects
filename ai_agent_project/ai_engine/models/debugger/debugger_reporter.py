@@ -3,7 +3,7 @@ import json
 import os
 from typing import Dict
 from collections import defaultdict
-from email_reporter import EmailReporter  # Optional email notifications
+from ai_engine.models.debugger.email_reporter import EmailReporter
 
 logger = logging.getLogger("DebuggerReporter")
 logger.setLevel(logging.DEBUG)

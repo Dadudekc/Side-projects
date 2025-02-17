@@ -1,0 +1,40 @@
+import logging
+import hashlib
+from typing import Dict, Any
+from ai_engine.reasoning_engine.rule_based_reasoning import RuleBasedReasoning
+
+class ReasoningEngine:
+    """
+    Advanced reasoning engine that performs structured logical inference.
+
+    Features:
+      - Rule-based logic inference.
+      - Caching to optimize performance.
+      - Modular design that can be extended with additional strategies.
+    """
+
+    def __init__(self, cache_enabled: bool = True):
+        self.logger = logging.getLogger(self.__class__.__name__)
+        self.cache_enabled = cache_enabled
+        self.cache: Dict[str, Any] = {}
+        self.reasoning_model = RuleBasedReasoning()
+        self.logger.debug("ReasoningEngine initialized with caching=%s", cache_enabled)
+
+    def _cache_key(self, prompt: str) -> str:
+        # Create a unique key using an MD5 hash of the prompt.
+        return hashlib.md5(prompt.encode("utf-8")).hexdigest()
+
+    def reason(self, prompt: str) -> str:
+        """
+        Performs reasoning on the given prompt using the integrated rule-based model.
+        """
+        self.logger.debug("Processing prompt: %s", prompt)
+        cache_key = self._cache_key(prompt)
+        if self.cache_enabled and cache_key in self.cache:
+            self.logger.debug("Returning cached result for key: %s", cache_key)
+            return self.cache[cache_key]
+
+        response = self.reasoning_model.reason(prompt)
+        if self.cache_enabled:
+            self.cache[cache_key] = response
+        return response

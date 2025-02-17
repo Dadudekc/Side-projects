@@ -4,7 +4,7 @@ import os
 import unittest
 from unittest.mock import MagicMock, patch
 
-from agents.core.debugger_cli import AI_PERFORMANCE_FILE, DebuggerCLI
+from ai_engine.models.debugger.debugger_cli import AI_PERFORMANCE_FILE, DebuggerCLI
 
 
 class TestDebuggerCLI(unittest.TestCase):

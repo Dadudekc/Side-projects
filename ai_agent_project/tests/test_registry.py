@@ -1,6 +1,6 @@
 import unittest
 
-from agents.agent_registry import AgentRegistry
+from agents.core.agent_registry import AgentRegistry
 
 
 class TestAgentRegistry(unittest.TestCase):

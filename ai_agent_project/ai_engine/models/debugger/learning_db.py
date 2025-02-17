@@ -1,7 +1,7 @@
 import json
 import os
 import logging
-from typing import Dict, Any
+from typing import Optional, List, Dict, Any
 
 logger = logging.getLogger("LearningDB")
 

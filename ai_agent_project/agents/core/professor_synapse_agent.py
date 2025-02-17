@@ -2,8 +2,8 @@ import json
 import os
 import requests
 import logging
-from agents.core.api_client import APIClient  # Handles real-time lookups
-from agents.core.reasoning_engine import ReasoningEngine  # Manages dynamic reasoning
+from ai_engine.models.apis.api_client import APIClient  # Handles real-time lookups
+from ai_engine.reasoning_engine.reasoning_engine import ReasoningEngine  # Manages dynamic reasoning
 from agents.core.agent_registry import AgentRegistry  # Enables agent collaboration
 from bs4 import BeautifulSoup  # Web scraping for Yahoo Finance & Google News
 from agents.core.memory_engine import MemoryEngine

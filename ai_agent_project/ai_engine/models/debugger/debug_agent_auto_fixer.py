@@ -4,8 +4,8 @@ import json
 import shutil
 import logging
 from typing import List, Dict, Optional
-from debugging_strategy import DebuggingStrategy
-from patch_tracking_manager import PatchTrackingManager
+from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
+from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
 
 logger = logging.getLogger("DebugAgentAutoFixer")
 logger.setLevel(logging.DEBUG)

@@ -1,0 +1,14 @@
+{
+    "DeepSeek": {
+        "success": 3,
+        "fail": 2
+    },
+    "Mistral": {
+        "success": 2,
+        "fail": 0
+    },
+    "OpenAI": {
+        "success": 1,
+        "fail": 3
+    }
+}

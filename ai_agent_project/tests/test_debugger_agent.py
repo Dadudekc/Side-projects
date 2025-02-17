@@ -4,15 +4,15 @@ from unittest.mock import MagicMock, patch
 from agents.core.utilities.ai_model_manager import AIModelManager
 from agents.core.AgentBase import AgentBase
 from agents.core.utilities.debug_agent_utils import DebugAgentUtils
-from agents.core.debugger_agent import DebuggerAgent  # Ensure this exists
+from agents.debugger_agent import DebugAgent  # Ensure this exists
 
 
 class TestDebuggerAgent(unittest.TestCase):
-    """Unit tests for DebuggerAgent."""
+    """Unit tests for DebugAgent."""
 
     def setUp(self):
-        """Initialize the DebuggerAgent before each test."""
-        self.agent = DebuggerAgent()
+        """Initialize the DebugAgent before each test."""
+        self.agent = DebugAgent()
 
     @patch("subprocess.run")
     def test_run_tests(self, mock_subprocess):
@@ -43,16 +43,16 @@ class TestDebuggerAgent(unittest.TestCase):
         result = self.agent.apply_fix(failure)
         self.assertTrue(result)
 
-    @patch("agents.core.debugger_agent.DebuggerAgent.run_tests")
-    @patch("agents.core.debugger_agent.DebuggerAgent.parse_test_failures", return_value=[])
+    @patch("agents.core.debugger_agent.DebugAgent.run_tests")
+    @patch("agents.core.debugger_agent.DebugAgent.parse_test_failures", return_value=[])
     def test_retry_tests_success(self, mock_parse_failures, mock_run_tests):
         """Test retrying tests and succeeding."""
         result = self.agent.retry_tests()
         self.assertEqual(result["status"], "success")
 
-    @patch("agents.core.debugger_agent.DebuggerAgent.run_tests")
+    @patch("agents.core.debugger_agent.DebugAgent.run_tests")
     @patch(
-        "agents.core.debugger_agent.DebuggerAgent.parse_test_failures",
+        "agents.core.debugger_agent.DebugAgent.parse_test_failures",
         return_value=[
             {"file": "test_file.py", "test": "test_example", "error": "SyntaxError"}
         ],

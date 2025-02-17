@@ -62,7 +62,6 @@ def find_class_in_file(source_file: str, class_name: str) -> Optional[int]:
         logger.error(f"❌ Error parsing {source_file}: {e}")
     return None
 
-
 class DebuggingStrategy:
     """
     Automated debugging system that generates, applies, and refines patches.

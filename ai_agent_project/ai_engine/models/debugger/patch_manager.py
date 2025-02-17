@@ -1,6 +1,6 @@
 import logging
 from typing import Optional, Dict, Any
-from debugger.debugging_strategy import DebuggingStrategy
+from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
 
 logger = logging.getLogger("PatchManager")
 

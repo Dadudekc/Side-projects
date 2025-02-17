@@ -5,8 +5,8 @@ from typing import Dict, List, Tuple, Optional
 import pandas as pd
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem, QPushButton, QComboBox
-from ai_clients import AIClient  # AI for evaluating/refining patches
-from patch_tracking_manager import PatchTrackingManager
+from agents.core.utilities.ai_client import AIClient
+from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
 
 logger = logging.getLogger("AIRollbackAnalysis")
 logger.setLevel(logging.DEBUG)

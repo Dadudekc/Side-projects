@@ -1,12 +1,12 @@
 import logging
 from typing import Optional, List, Dict, Any
-from debugger.test_runner import TestRunner
-from debugger.test_parser import TestParser
-from debugger.patch_manager import PatchManager
-from debugger.learning_db import LearningDB
-from debugger.rollback_manager import RollbackManager
-from debugger.report_manager import ReportManager
-from debugger.debugging_strategy import DebuggingStrategy
+from ai_engine.models.debugger.test_runner import TestRunner
+from ai_engine.models.debugger.test_parser import TestParser
+from ai_engine.models.debugger.patch_manager import PatchManager
+from ai_engine.models.debugger.learning_db import LearningDB
+from ai_engine.models.debugger.rollback_manager import RollbackManager
+from ai_engine.models.debugger.debugger_reporter import DebuggerReporter
+from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
 
 logger = logging.getLogger("DebuggerCore")
 logger.setLevel(logging.DEBUG)

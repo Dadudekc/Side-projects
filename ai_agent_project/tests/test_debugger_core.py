@@ -3,8 +3,7 @@ import os
 import subprocess
 import unittest
 from unittest.mock import MagicMock, patch
-
-from agents.core.debugger_core import DebuggerCore
+from ai_engine.models.debugger.debugger_core import DebuggerCore
 from agents.core.logger import logger
 
 

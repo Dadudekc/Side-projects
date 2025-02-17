@@ -1,54 +1,40 @@
-import logging
-from typing import Dict, List
-from test_retry_manager import AutoFixManager
-from ai_patch_analyzer import AIPatchAnalyzer
-from ai_confidence_manager import AIConfidenceManager
+"""
+AIPatchAnalyzer module
 
-logger = logging.getLogger("AIPatchRetryManager")
-logger.setLevel(logging.DEBUG)
+This module defines the AIPatchAnalyzer class used to analyze failed patches and modify them.
+"""
 
-class AIPatchRetryManager:
+class AIPatchAnalyzer:
     """
-    Handles AI-assisted patch retries before rollback.
-    - AI explains why a patch failed.
-    - AI suggests modifications if confidence improves.
-    - Automatically retries modified patches.
-    - If all fails, marks patch for manual review.
+    AIPatchAnalyzer analyzes failed patches to extract error messages and compute a confidence
+    score indicating the likelihood that a patch modification will succeed. It also provides a method
+    to generate a modified patch based on the error signature and original patch.
     """
 
-    MAX_AI_PATCH_ATTEMPTS = 2  # AI gets two additional tries before rollback
-
-    def __init__(self):
-        self.retry_manager = AutoFixManager()
-        self.ai_analyzer = AIPatchAnalyzer()
-        self.confidence_manager = AIConfidenceManager()
-        self.failed_patches = {}
-
-    def retry_failed_patches(self, failed_patches: Dict[str, List[str]]):
+    @staticmethod
+    def analyze_failed_patch(error_signature: str, patch: str) -> tuple:
         """
-        AI reviews failed patches and decides whether to retry or flag them.
+        Analyzes the failed patch and returns a tuple (error_message, patch_confidence).
+        
+        For demonstration purposes, this dummy implementation always returns:
+            - error_message: "Patch failed due to syntax error"
+            - patch_confidence: 0.5
+        
+        In a production system, this method would implement complex analysis logic.
         """
-        for error_signature, patches in failed_patches.items():
-            for patch in patches:
-                reason, confidence_boost = self.ai_analyzer.analyze_failed_patch(error_signature, patch)
+        error_message = "Patch failed due to syntax error"
+        patch_confidence = 0.5  # Dummy confidence value; adjust as needed.
+        return error_message, patch_confidence
 
-                current_confidence = self.confidence_manager.get_confidence(error_signature)
-                new_confidence = min(1.0, current_confidence + confidence_boost)  # Keep confidence ≤ 1.0
-
-                logger.info(f"🔄 Confidence updated: {current_confidence} ➡ {new_confidence} for {error_signature}")
-
-                if new_confidence >= 0.7:
-                    logger.info(f"🛠️ AI suggests retrying patch for {error_signature}.")
-                    modified_patch = self.ai_analyzer.modify_failed_patch(error_signature, patch)
-                    patch_success = self.retry_manager.debugging_strategy.apply_patch(modified_patch)
-
-                    if patch_success:
-                        logger.info(f"✅ AI-modified patch for {error_signature} worked!")
-                        self.retry_manager.debugging_strategy.learning_db[error_signature] = {
-                            "patch": modified_patch, "success": True
-                        }
-                        self.retry_manager.debugging_strategy._save_learning_db()
-                    else:
-                        logger.warning(f"❌ AI-modified patch failed for {error_signature}.")
-                else:
-                    logger.error(f"🚨 AI confidence remains low. Marking {error_signature} for manual review.")
+    @staticmethod
+    def modify_failed_patch(error_signature: str, patch: str) -> str:
+        """
+        Generates a modified patch based on the error signature and the original failed patch.
+        
+        For demonstration purposes, this dummy implementation simply replaces "old code" with 
+        "modified code" in the patch.
+        
+        In a real implementation, more advanced modifications could be applied.
+        """
+        modified_patch = patch.replace("old code", "modified code")
+        return modified_patch

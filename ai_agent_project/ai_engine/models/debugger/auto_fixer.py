@@ -4,7 +4,7 @@ import re
 import shutil
 from typing import Dict, Optional
 from ai_engine.models.debugger.learning_db import LearningDB
-from agents.core.core import DebugAgentUtils
+from agents.core.utilities.debug_agent_utils import DebugAgentUtils
 
 logger = logging.getLogger(__name__)
 

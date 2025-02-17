@@ -4,9 +4,9 @@ import logging
 import random
 import subprocess
 from typing import Optional, Tuple, Dict, List
-from debugger.patch_tracking_manager import PatchTrackingManager
-from confidence_manager import AIConfidenceManager
-from models.ai_model_manager import AIModelManager
+from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
+from ai_engine.confidence_manager import AIConfidenceManager
+from ai_engine.models.ai_model_manager import AIModelManager
 
 logger = logging.getLogger("AIPatchOptimizer")
 logger.setLevel(logging.DEBUG)

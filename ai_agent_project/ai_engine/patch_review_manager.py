@@ -2,8 +2,8 @@ import json
 import logging
 import os
 from typing import Dict, List, Tuple, Optional
-from ai_clients import AIClient  # AI model for ranking patches
-from patch_tracking_manager import PatchTrackingManager
+from agents.core.utilities.ai_client import AIClient
+from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
 
 logger = logging.getLogger("AIPatchReviewManager")
 logger.setLevel(logging.DEBUG)
