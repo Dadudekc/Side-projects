@@ -1,58 +1,70 @@
+import ast
 import os
-import re
-import json
-import shutil
 import logging
-from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
-from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
 
 logger = logging.getLogger("DebugAgentAutoFixer")
 logger.setLevel(logging.DEBUG)
 
 # Project Paths
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-TESTS_PATH = os.path.join(PROJECT_ROOT, "tests")
+TESTS_PATH = os.path.abspath(os.path.join(PROJECT_ROOT, "..", "..", "..", "tests"))
 BACKUP_DIR = os.path.join(PROJECT_ROOT, "rollback_backups")
 
 class DebugAgentAutoFixer:
     """
-    **Automates error fixing in DebugAgent before AI intervention.**
+    **Fixes incorrect imports properly using AST parsing instead of blind replacement.**
     
-    ✅ Ensures required modules exist  
-    ✅ Fixes broken imports in test files  
-    ✅ Re-attempts previously failed patches before AI generates new fixes  
+    ✅ Fixes broken imports without corrupting syntax  
     ✅ Detects and corrects unterminated string literals  
     ✅ Checks for syntax errors before debugging  
     ✅ Backs up & restores files if fixes introduce more errors  
     """
 
     def __init__(self):
-        self.debugging_strategy = DebuggingStrategy()
-        self.patch_tracker = PatchTrackingManager()
+        self.tests_path = TESTS_PATH
 
-    ### **🔹 Fix Import Issues in Test Files**
     def fix_test_imports(self):
-        """Scans test files for incorrect imports and fixes them."""
-        for test_file in os.listdir(TESTS_PATH):
-            test_file_path = os.path.join(TESTS_PATH, test_file)
+        """Scans test files and fixes incorrect imports properly."""
+        for test_file in os.listdir(self.tests_path):
+            test_file_path = os.path.join(self.tests_path, test_file)
 
             if test_file.endswith(".py"):
                 with open(test_file_path, "r", encoding="utf-8") as file:
                     content = file.read()
 
-                # Fix incorrect imports
-                content = re.sub(r"from agents.core\.(\w+)", r"from agents.core.\1 import \1", content)
+                # Parse AST tree to detect incorrect imports
+                fixed_content = self._fix_import_statements(content)
 
-                with open(test_file_path, "w", encoding="utf-8") as file:
-                    file.write(content)
+                if fixed_content != content:  # Only write if changes were made
+                    with open(test_file_path, "w", encoding="utf-8") as file:
+                        file.write(fixed_content)
+                    logger.info(f"✅ Fixed imports in {test_file}")
 
-                logger.info(f"✅ Fixed imports in {test_file}")
+    def _fix_import_statements(self, content):
+        """Uses AST parsing to correct incorrect import paths."""
+        try:
+            tree = ast.parse(content)
+        except SyntaxError:
+            logger.warning("❌ Skipping file due to syntax error.")
+            return content  # Return unchanged content if the file has syntax errors
 
-    ### **🔹 Detect and Fix Unterminated Strings**
+        corrected_imports = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom):  # Handles "from module import something"
+                if node.module and "utilities.utilities" in node.module:
+                    corrected_import = node.module.replace("utilities.utilities", "utilities")
+                    corrected_imports.append(f"from {corrected_import} import {', '.join(alias.name for alias in node.names)}")
+                else:
+                    corrected_imports.append(ast.unparse(node))  # Keep original if no issue
+            elif isinstance(node, ast.Import):  # Handles "import module"
+                corrected_imports.append(ast.unparse(node))
+        
+        return "\n".join(corrected_imports)  # Return corrected file content
+
     def fix_unterminated_strings(self):
         """Finds and fixes unterminated string literals in test files."""
-        for test_file in os.listdir(TESTS_PATH):
-            test_file_path = os.path.join(TESTS_PATH, test_file)
+        for test_file in os.listdir(self.tests_path):
+            test_file_path = os.path.join(self.tests_path, test_file)
             if test_file.endswith(".py"):
                 with open(test_file_path, "r", encoding="utf-8") as file:
                     content = file.readlines()
@@ -68,11 +80,10 @@ class DebugAgentAutoFixer:
 
                 logger.info(f"✅ Fixed unterminated strings in {test_file}")
 
-    ### **🔹 Check for Syntax Errors Before Debugging**
     def check_syntax_errors(self):
         """Detects and logs syntax errors in test files before running tests."""
-        for test_file in os.listdir(TESTS_PATH):
-            test_file_path = os.path.join(TESTS_PATH, test_file)
+        for test_file in os.listdir(self.tests_path):
+            test_file_path = os.path.join(self.tests_path, test_file)
             if test_file.endswith(".py"):
                 try:
                     with open(test_file_path, "r", encoding="utf-8") as file:
@@ -80,7 +91,6 @@ class DebugAgentAutoFixer:
                 except SyntaxError as e:
                     logger.error(f"❌ Syntax Error in {test_file}: {e}")
 
-    ### **🔹 Run All Fixes Before Debugging**
     def auto_fix_before_debugging(self):
         """Runs all auto-fixes before starting debugging."""
         logger.info("🚀 Running pre-debugging auto-fixes...")

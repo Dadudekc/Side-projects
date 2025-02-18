@@ -3,20 +3,20 @@ import os
 import subprocess
 import unittest
 from unittest.mock import MagicMock, patch
-from ai_engine.models.debugger.debugger_core import DebuggerCore
+from ai_engine.models.debugger.debugger_core import DebugAgent
 from agents.core.logger import logger
 from ai_engine.models.debugger.report_manager import ReportManager
 
 
-class TestDebuggerCore(unittest.TestCase):
-    """Unit tests for the DebuggerCore class."""
+class TestDebugAgent(unittest.TestCase):
+    """Unit tests for the DebugAgent class."""
 
     def setUp(self):
-        """Sets up an instance of DebuggerCore for testing."""
-        self.debugger = DebuggerCore()
+        """Sets up an instance of DebugAgent for testing."""
+        self.debugger = DebugAgent()
         self.test_file = "test_debug.py"
-        self.learning_db_file = DebuggerCore.LEARNING_DB_FILE
-        self.report_archive_dir = DebuggerCore.REPORT_ARCHIVE_DIR
+        self.learning_db_file = DebugAgent.LEARNING_DB_FILE
+        self.report_archive_dir = DebugAgent.REPORT_ARCHIVE_DIR
 
     def tearDown(self):
         """Cleans up any temporary test files."""
@@ -128,8 +128,8 @@ class TestDebuggerCore(unittest.TestCase):
     @patch("subprocess.run")
     @patch("json.load")
     @patch("builtins.open", create=True)
-    @patch.object(DebuggerCore, "apply_patch_to_file", return_value=True)
-    @patch.object(DebuggerCore, "re_run_tests", return_value=True)
+    @patch.object(DebugAgent, "apply_patch_to_file", return_value=True)
+    @patch.object(DebugAgent, "re_run_tests", return_value=True)
     def test_debug_advanced(self, mock_re_run, mock_apply_patch, mock_open, mock_json_load, mock_subprocess):
         """Test debugging in advanced mode."""
         test_json_report = {

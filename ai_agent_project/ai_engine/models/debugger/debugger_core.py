@@ -1,71 +1,117 @@
 import logging
+import subprocess
+from typing import List, Dict, Optional
+
+# Import core debugging components
 from ai_engine.models.debugger.test_runner import TestRunner
 from ai_engine.models.debugger.error_parser import ErrorParser
 from ai_engine.models.debugger.auto_fix_manager import AutoFixManager
 from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
 from ai_engine.models.debugger.rollback_manager import RollbackManager
+from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
+from ai_engine.models.debugger.learning_db import LearningDB
+from ai_engine.models.debugger.report_manager import ReportManager
 from ai_engine.models.debugger.debug_agent_auto_fixer import DebugAgentAutoFixer
+from ai_engine.models.debugger.debugger_logger import DebuggerLogger
+from ai_engine.models.debugger.debugger_reporter import DebuggerReporter
+from ai_engine.models.debugger.project_context_analyzer import ProjectContextAnalyzer
 
 logger = logging.getLogger("DebugAgent")
+logger.setLevel(logging.DEBUG)
+
 
 class DebugAgent:
     """
-    🚀 AI-driven debugging agent that detects, fixes, and verifies code issues automatically.
+    🚀 AI-powered debugging agent that automates test failure analysis, applies fixes, and validates corrections.
     """
 
-    def __init__(self):
+    MAX_ATTEMPTS = 3
+
+    def __init__(self, enable_ai_fixes: bool = True):
+        """Initialize DebugAgent with key debugging components."""
+        self.enable_ai_fixes = enable_ai_fixes
         self.test_runner = TestRunner()
         self.error_parser = ErrorParser()
         self.auto_fixer = AutoFixManager()
         self.patch_tracker = PatchTrackingManager()
         self.rollback_manager = RollbackManager()
-        self.pre_debug_fixer = DebugAgentAutoFixer()  # Runs fixes before debugging
+        self.debugging_strategy = DebuggingStrategy()
+        self.learning_db = LearningDB()
+        self.report_manager = ReportManager()
+        self.pre_debug_fixer = DebugAgentAutoFixer()
+        self.logger = DebuggerLogger()
+        self.reporter = DebuggerReporter()
+        self.context_analyzer = ProjectContextAnalyzer()
 
-    def debug(self):
-        """Runs the debugging workflow: Detect errors → Fix issues → Re-run tests."""
-        logger.info("🚀 Running DebugAgent...")
-
-        # Run all pre-debugging fixes before checking for errors
+    def run_debug_cycle(self, max_retries: int = MAX_ATTEMPTS) -> Dict[str, str]:
+        """
+        Runs a full debugging cycle:
+        1️⃣ Executes tests.
+        2️⃣ Analyzes failures.
+        3️⃣ Applies AI-driven or learned fixes.
+        4️⃣ Validates fixes by re-running tests.
+        5️⃣ Logs and reports results.
+        """
+        logger.info("🚀 Starting AI DebugAgent session...")
         self.pre_debug_fixer.auto_fix_before_debugging()
 
-        # Run initial tests
+        # Step 1: Run Tests
         test_output = self.test_runner.run_tests_simple()
         failures = self.error_parser.parse_test_failures(test_output)
 
         if not failures:
-            logger.info("✅ No issues found! Exiting DebugAgent.")
-            return
+            logger.info("✅ All tests passed! No debugging needed.")
+            return {"status": "success", "message": "All tests passed!"}
 
-        logger.info(f"⚠️ {len(failures)} test failures detected. Attempting fixes...")
+        logger.warning(f"⚠️ {len(failures)} test failures detected. Attempting fixes...")
 
-        # Apply automatic fixes
-        for failure in failures:
-            success = self.auto_fixer.apply_fix(failure)
-            if success:
-                logger.info(f"✅ Fix applied for {failure['file']}")
-            else:
-                logger.warning(f"❌ Failed to fix {failure['file']} - Adding to rollback queue.")
-                self.rollback_manager.backup_file(failure["file"])
+        for attempt in range(1, max_retries + 1):
+            logger.info(f"🔄 Debugging attempt {attempt}/{max_retries}...")
 
-        # Re-run tests to verify fixes
-        self.verify_fixes()
+            fixes_applied = False
+            for failure in failures:
+                fixes_applied |= self._attempt_fix(failure)
 
-    def verify_fixes(self):
-        """Re-runs tests to validate fixes."""
-        logger.info("🔄 Re-running tests after applying fixes...")
-        test_output = self.test_runner.run_tests_simple()
-        failures = self.error_parser.parse_test_failures(test_output)
+            if fixes_applied:
+                test_output = self.test_runner.run_tests_simple()
+                failures = self.error_parser.parse_test_failures(test_output)
 
-        if not failures:
-            logger.info("✅ All issues resolved!")
-            return
+                if not failures:
+                    logger.info("✅ All fixes were successful!")
+                    return {"status": "success", "message": "All tests fixed!"}
 
-        logger.warning(f"⚠️ {len(failures)} tests still failing. Applying rollbacks...")
+                logger.warning(f"📉 {len(failures)} tests still failing.")
 
-        # Rollback failed fixes
+        logger.error("❌ Max retries reached. Rolling back changes...")
         for failure in failures:
             self.rollback_manager.restore_backup(failure["file"])
 
+        self.reporter.generate_report(failures)
+        return {"status": "error", "message": "Some tests are still failing after fixes."}
+
+    def _attempt_fix(self, failure: Dict[str, str]) -> bool:
+        """
+        Attempts to fix a failing test using AI or learned fixes.
+        """
+        error_sig = self.learning_db.get_signature(failure)
+        patch = self.learning_db.get_known_fix(error_sig) or None
+
+        if not patch and self.enable_ai_fixes:
+            patch = self.auto_fixer.apply_fix(failure)
+
+        if patch:
+            success = self.patch_tracker.record_successful_patch(error_sig, patch)
+            if success:
+                logger.info(f"✅ Fix applied successfully to {failure['file']}")
+                return True
+
+            logger.warning(f"❌ Failed to apply fix for {failure['file']}. Rolling back changes.")
+            self.rollback_manager.restore_backup(failure["file"])
+
+        return False
+
+
 if __name__ == "__main__":
-    agent = DebugAgent()
-    agent.debug()
+    agent = DebugAgent(enable_ai_fixes=True)
+    result = agent.run_debug_cycle()
+    logger.info(f"🛠️ Debugging completed: {result}")

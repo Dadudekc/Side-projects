@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 
 from ai_engine.models.debugger.debugger_cli import AI_PERFORMANCE_FILE, DebuggerCLI
 from ai_engine.models.debugger.report_manager import ReportManager
-from ai_engine.models.debugger.debugger_core import DebuggerCore
+from ai_engine.models.debugger.debugger_core import DebugAgent
 from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
 
 
@@ -46,33 +46,33 @@ class TestDebuggerCLI(unittest.TestCase):
         result = self.cli.load_ai_performance()
         self.assertEqual(result, {})
 
-    @patch("ai_engine.models.debugger.debugger_core.DebuggerCore.debug_file", return_value="Debugging Successful")
+    @patch("ai_engine.models.debugger.debugger_core.DebugAgent.debug_file", return_value="Debugging Successful")
     def test_run_debugger_specific_file(self, mock_debug_file):
         """Test debugging a specific file."""
         self.cli.run_debugger(self.test_file)
         mock_debug_file.assert_called_with(self.test_file)
 
-    @patch("ai_engine.models.debugger.debugger_core.DebuggerCore.debug", return_value="Full Debugging Successful")
+    @patch("ai_engine.models.debugger.debugger_core.DebugAgent.debug", return_value="Full Debugging Successful")
     def test_run_debugger_full(self, mock_debug):
         """Test running the full debugging process."""
         self.cli.run_debugger()
         mock_debug.assert_called()
 
-    @patch("ai_engine.models.debugger.debugger_core.DebuggerCore.show_logs")
+    @patch("ai_engine.models.debugger.debugger_core.DebugAgent.show_logs")
     def test_show_logs(self, mock_show_logs):
         """Test displaying debugging logs."""
         self.cli.show_logs()
         mock_show_logs.assert_called()
 
-    @patch("ai_engine.models.debugger.debugger_core.DebuggerCore.get_last_modified_files", return_value=["file1.py", "file2.py"])
-    @patch("ai_engine.models.debugger.debugger_core.DebuggerCore.rollback_changes")
+    @patch("ai_engine.models.debugger.debugger_core.DebugAgent.get_last_modified_files", return_value=["file1.py", "file2.py"])
+    @patch("ai_engine.models.debugger.debugger_core.DebugAgent.rollback_changes")
     def test_rollback_fixes(self, mock_rollback_changes, mock_get_last_modified_files):
         """Test rolling back fixes."""
         self.cli.rollback_fixes()
         mock_get_last_modified_files.assert_called()
         mock_rollback_changes.assert_called_with(["file1.py", "file2.py"])
 
-    @patch("ai_engine.models.debugger.debugger_core.DebuggerCore.get_last_modified_files", return_value=[])
+    @patch("ai_engine.models.debugger.debugger_core.DebugAgent.get_last_modified_files", return_value=[])
     def test_rollback_fixes_no_changes(self, mock_get_last_modified_files):
         """Test rolling back fixes when no modifications exist."""
         self.cli.rollback_fixes()

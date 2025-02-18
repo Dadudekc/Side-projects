@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 from agents.core.utilities.ai_model_manager import AIModelManager
 from agents.core.AgentBase import AgentBase
 from agents.core.utilities.debug_agent_utils import DebugAgentUtils
-from agents.debugger_agent import DebugAgent  # Ensure this exists
+from ai_engine.models.debugger.debugger_core import DebugAgent
 
 
 class TestDebuggerAgent(unittest.TestCase):
