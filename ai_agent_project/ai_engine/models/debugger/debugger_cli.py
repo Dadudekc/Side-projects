@@ -76,7 +76,7 @@ class DebuggerCLI:
     def fix_imports(self):
         """Checks for and fixes missing imports."""
         logger.info("🔍 Scanning for Import Errors...")
-        import_fixes = self.patch_tracker.import_fixes()
+        import_fixes = self.patch_tracker.import_fixes
         if not import_fixes:
             logger.info("✅ No import errors detected.")
         else:
