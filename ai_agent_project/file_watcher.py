@@ -1,3 +1,10 @@
+"""
+
+This script monitors a directory containing tests (`TESTS_DIR`) and backs them up in real time to another directory (`BACKUP_DIR`). It uses the watchdog library to observe changes and trigger events when files are created, modified, or deleted. This script also interacts with the psutil library to list processes that may have modified the files.
+
+If a test file is deleted, it is automatically restored from the backup directory, if a backup exists. Temporary and unnecessary files and directories (listed in `IGNORE
+"""
+
 import os
 import time
 import shutil

@@ -1,3 +1,15 @@
+"""
+
+Module for creating a mock agent and performing unit tests on the AgentRegistry class methods. 
+
+The MockAgent class is a simulation of a real agent. This class inherits from AgentBase class and implemented for testing purposes.
+
+The TestAgentRegistry class is a subclass of unittest.TestCase for defining unit tests for the AgentRegistry class.
+It provides setUp method for initializing the agent registry before each test and several test methods:
+- test_get_invalid_agent: Test retrieving a non-existent agent.
+- test_get_valid_agent
+"""
+
 import unittest
 from agents.core.agent_registry import AgentRegistry
 from agents.core.AgentBase import AgentBase

@@ -1,3 +1,19 @@
+"""
+
+A Python class that uses OpenAI's GPT models to generate AI-driven market forecasts.
+
+This class requires an OpenAI API key, which can be set as an environment variable("OPENAI_API_KEY").
+
+Attributes:
+    None
+
+Methods:
+    generate_forecast(context: str) -> str: 
+        Takes a string argument 'context' that represents financial or trading context. 
+        This method generates a forecast based on the given context using OpenAI's GPT model and 
+        returns the
+"""
+
 import openai
 import os
 

@@ -1,3 +1,11 @@
+"""
+
+This module checks Python files for incorrect import statements, unterminated string literals, and syntax errors in Python code.
+It then logs these errors and fixes them in order. It also handles the backing up and restoring of files. The DebugAgentAutoFixer 
+class has methods to fix test imports, fix import statements, fix unterminated strings, check for syntax errors, and to run all 
+these fixes automatically before debugging. The module uses logging for debugging and ast and os for file handling and parsing
+"""
+
 import ast
 import os
 import logging
@@ -13,11 +21,11 @@ BACKUP_DIR = os.path.join(PROJECT_ROOT, "rollback_backups")
 class DebugAgentAutoFixer:
     """
     **Fixes incorrect imports properly using AST parsing instead of blind replacement.**
-    
-    ✅ Fixes broken imports without corrupting syntax  
-    ✅ Detects and corrects unterminated string literals  
-    ✅ Checks for syntax errors before debugging  
-    ✅ Backs up & restores files if fixes introduce more errors  
+
+    ✅ Fixes broken imports without corrupting syntax
+    ✅ Detects and corrects unterminated string literals
+    ✅ Checks for syntax errors before debugging
+    ✅ Backs up & restores files if fixes introduce more errors
     """
 
     def __init__(self):
@@ -58,7 +66,7 @@ class DebugAgentAutoFixer:
                     corrected_imports.append(ast.unparse(node))  # Keep original if no issue
             elif isinstance(node, ast.Import):  # Handles "import module"
                 corrected_imports.append(ast.unparse(node))
-        
+
         return "\n".join(corrected_imports)  # Return corrected file content
 
     def fix_unterminated_strings(self):

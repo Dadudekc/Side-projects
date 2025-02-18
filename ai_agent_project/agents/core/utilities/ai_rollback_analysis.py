@@ -1,11 +1,10 @@
 """
-agents/core/utilities/ai_rollback_analysis.py
 
-AI-powered rollback analysis that:
-1. Tracks patch history per error signature.
-2. Uses AI to determine if a patch is fundamentally incorrect or refinable.
-3. Sends human-reviewed patches back to AI to improve learning.
-4. Provides an interactive PyQt5 dashboard for patch analysis.
+This python program imports various libraries and modules needed for working with AI patch tracking for debugging purposes. It includes the use of pandas for data manipulation, matplotlib for visualizations, PyQt5 for creating a user-interface, and various custom built AI and debugging modules.
+
+It contains two main classes - AIRollbackAnalysis and PatchAnalysisDashboard.
+
+The AIRollbackAnalysis class helps in tracking patch history for each error signature and making use of AI to determine if a patch needs improvement or is totally incorrect. It
 """
 
 import json
@@ -32,7 +31,6 @@ HUMAN_REVIEW_FILE = "human_review.json"
 AI_DECISIONS_LOG = "ai_decisions.json"
 PATCH_HISTORY_FILE = "patch_history.json"
 BAD_PATCH_THRESHOLD = 3  # Number of failures before marking a patch as "bad"
-
 
 class AIRollbackAnalysis:
     """
@@ -157,7 +155,6 @@ class AIRollbackAnalysis:
         """
         return self.refine_patches(error_signature)
 
-
 ### 🖥️ PyQt5 Dashboard for Patch Analysis
 class PatchAnalysisDashboard(QMainWindow):
     def __init__(self, rollback_analysis: AIRollbackAnalysis):
@@ -220,7 +217,6 @@ class PatchAnalysisDashboard(QMainWindow):
             self.table_widget.setItem(row_idx, 0, QTableWidgetItem(error_sig))
             self.table_widget.setItem(row_idx, 1, QTableWidgetItem(patch))
             self.table_widget.setItem(row_idx, 2, QTableWidgetItem(status))
-
 
 if __name__ == "__main__":
     rollback_analysis = AIRollbackAnalysis()

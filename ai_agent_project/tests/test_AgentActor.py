@@ -1,3 +1,16 @@
+"""
+
+A unit test class for the AgentActor class (from agents.AgentActor) in an AI framework. 
+
+The test cases in this class cover the behavior of the AgentActor, which mainly includes 
+describing its capabilities, executing Python scripts, executing shell commands, interacting 
+with various tools, performing various tasks, and shutting down the AgentActor.
+
+Entities Mocked:
+- self.tool_server: a mock object that simulates the behavior of a server running various tools.
+- self.memory_manager: a
+"""
+
 import unittest
 from unittest.mock import MagicMock
 

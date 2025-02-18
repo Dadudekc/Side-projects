@@ -1,3 +1,14 @@
+"""
+
+This class implements an advanced reasoning engine that utilizes a rule-based logical inference model. It also features a cache mechanism to optimize performance. The reasoning engine is used to perform reasoning on the given prompts and it returns the response.
+
+Attributes:
+    logger (Logger): Logging object instance.
+    cache_enabled (bool): flag that defines whether to store the reasoning results or not.
+    cache (dict): Dictionary to store the results of the inference.
+    reasoning_model (RuleBasedReasoning): object instance of
+"""
+
 import logging
 import hashlib
 from typing import Dict, Any

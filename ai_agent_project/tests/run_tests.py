@@ -1,3 +1,14 @@
+"""
+
+Executes pytest testing framework using subprocess library. The short traceback is collected for failed test cases. 
+
+This function captures the output, scans each line for failures and appends the failures to a list. This list of failures is then returned.
+
+Returns:
+    list: A list of failed test cases.
+
+"""
+
 import subprocess
 
 

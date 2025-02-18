@@ -1,3 +1,16 @@
+"""
+
+This module provides a PerformanceMonitor class that measures, logs, and returns the execution performance of
+specified functions. If wanted, the class can be also used to measure CPU and memory usage before and after the 
+execution of the function. 
+
+Upon initialization, the max number of entries to store in the log, as well as whether to track system usage, 
+can be specified.
+
+The PerformanceMonitor class provides the following methods:
+- track_execution(): acts as a decorator to measure the execution time and
+"""
+
 import time
 import logging
 import psutil
@@ -14,7 +27,6 @@ try:
 except ImportError:
     PSUTIL_AVAILABLE = False
     logger.warning("psutil not installed. CPU & memory usage tracking disabled.")
-
 
 class PerformanceMonitor:
     """
@@ -36,7 +48,7 @@ class PerformanceMonitor:
     def track_execution(self, function: Callable) -> Callable:
         """
         Decorator to measure execution time (and optional system usage) of a function.
-        
+
         Usage:
             @performance_monitor.track_execution
             def my_function(...):

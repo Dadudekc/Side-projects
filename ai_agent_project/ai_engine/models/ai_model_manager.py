@@ -1,3 +1,14 @@
+"""
+
+AIModelManager is a unified debugging system that selects the best available model. 
+It supports local models (Mistral, DeepSeek) and cloud models (OpenAI GPT-4 fallback) with various features like
+AI Confidence Tracking, AI Patch History, Auto-Retries etc. Provides methods to generate patch suggestions for the provided error message
+
+Attributes:
+    openai_api_key (str): OpenAI API key 
+    patch_tracker (PatchTrackingManager): an instance of PatchTracking
+"""
+
 import os
 import subprocess
 import logging
@@ -9,15 +20,14 @@ from ai_engine.confidence_manager import AIConfidenceManager
 logger = logging.getLogger("AIModelManager")
 logger.setLevel(logging.DEBUG)
 
-
 class AIModelManager:
     """
     A unified AI debugging system that selects the best available model.
-    
+
     Supports:
       - Local models (Mistral, DeepSeek)
       - Cloud models (OpenAI GPT-4 fallback)
-    
+
     Features:
       ✅ AI Confidence Tracking (Assigns confidence to patches)
       ✅ AI Patch History (Avoids repeating bad patches)

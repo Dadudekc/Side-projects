@@ -1,3 +1,13 @@
+"""
+This Python script contains several classes and methods for performance monitoring and memory management in an AI system.
+
+1. `PerformanceMonitor` class: This is a utility class that helps to track and log the execution performance of an AI system. It provides timing, logging, and optionally, the usage of system resources (CPU and Memory).
+
+2. `MemoryManager` class: This is a utility class that manages the short-term memory of AI agents. It keeps track of the past interactions and task history.
+
+3
+"""
+
 import time
 import logging
 import json
@@ -35,7 +45,7 @@ class PerformanceMonitor:
     def track_execution(self, function: Callable) -> Callable:
         """
         Decorator to measure execution time (and optional system usage) of a function.
-        
+
         Usage:
             @performance_monitor.track_execution
             def my_function(...):
@@ -99,7 +109,6 @@ class PerformanceMonitor:
         """
         self.execution_logs.clear()
         logger.info("Performance logs cleared.")
-
 
 class MemoryManager:
     """
@@ -177,7 +186,6 @@ class MemoryManager:
         except (FileNotFoundError, json.JSONDecodeError) as e:
             logger.error(f"Error importing memory: {e}")
 
-
 class StructuredMemorySegment:
     """
     A structured memory record that stores text, metadata, tags, or embeddings
@@ -199,7 +207,6 @@ class StructuredMemorySegment:
 
     def __repr__(self) -> str:
         return f"<StructuredMemorySegment tags={self.tags}, metadata={self.metadata}>"
-
 
 class VectorMemoryManager(MemoryManager):
     """
@@ -265,7 +272,6 @@ class VectorMemoryManager(MemoryManager):
         # return self.embedding_model.encode(text)
         # We'll simulate an embedding output:
         return [0.0]
-
 
 if __name__ == "__main__":
     # Example usage:

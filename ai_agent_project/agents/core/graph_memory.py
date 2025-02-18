@@ -1,3 +1,21 @@
+"""
+
+A GraphMemory class which manipulates and stores knowledge data in a graph-like structure using the Networkx library.
+
+Attributes: 
+-----------
+graph : nx.DiGraph
+    An instance of a directed graph from the Networkx library.
+
+Methods: 
+--------
+add_knowledge(subject: str, relation: str, obj: str) -> None:
+    Adds a knowledge triplet {subject - relation - object} to the created graph instance.
+    
+get_relationships(node: str) -> list:
+    Fetch all
+"""
+
 import networkx as nx
 
 class GraphMemory:

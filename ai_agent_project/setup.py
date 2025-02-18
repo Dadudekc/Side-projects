@@ -1,3 +1,12 @@
+"""
+
+This Python script is for setting up the package for "debugagent". 
+The package setup requires the following dependencies to be installed: "openai", "tqdm", "unidiff", "pytest", "PyQt5", 
+"alpaca-trade-api", "matplotlib", "pandas", "psutil". 
+
+The entry point for this package, when run from the console, is set to the "main" function in the "debugger.debugger_runner" module
+"""
+
 from setuptools import setup, find_packages
 
 setup(

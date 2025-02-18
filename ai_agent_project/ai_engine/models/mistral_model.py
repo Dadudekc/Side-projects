@@ -1,3 +1,9 @@
+"""
+This is a class for a Mistral AI model wrapper. This wrapper is used for generating debugging patches, using the Mistral AI either locally or via the CLI. The model will fall back to the OpenAI GPT-4 model if the Mistral fails, and retries failed patches with slight modifications. It will validate the AI patches before applying them and will track which AI model generates the best patches. 
+
+This class includes methods for generating a patch sutgestions, formatting the debugging request into an
+"""
+
 import os
 import subprocess
 import logging
@@ -13,7 +19,6 @@ logger.setLevel(logging.DEBUG)
 TRACKER_DIR = "tracking_data"
 os.makedirs(TRACKER_DIR, exist_ok=True)
 AI_PERFORMANCE_TRACKER_FILE = os.path.join(TRACKER_DIR, "ai_performance.json")
-
 
 class MistralModel:
     """

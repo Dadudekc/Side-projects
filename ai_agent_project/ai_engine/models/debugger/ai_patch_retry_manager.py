@@ -1,3 +1,8 @@
+"""
+
+Python class AIPatchRetryManager is in charge of managing patches that fail initially by analyzing them, suggesting modified ones, and retrying them before rollback. The AI incorporates an AutoFixManager as the `retry_manager`, an AIPatchAnalyzer as the `ai_analyzer`, and an AIConfidenceManager as the `confidence_manager`. The AI attempts to retry patches if the calculated confidence boost warrants retrying the patch. The patch is then modified and applied using the `retry_manager`
+"""
+
 import logging
 from typing import Dict, List
 from ai_engine.patch_analyzer import AIPatchAnalyzer
@@ -33,11 +38,11 @@ class AIPatchRetryManager:
             for patch in patches:
                 # Analyze the failed patch
                 reason, confidence_boost = self.ai_analyzer.analyze_failed_patch(error_signature, patch)
-                
+
                 # Retrieve current confidence and update
                 current_confidence = self.confidence_manager.get_confidence(error_signature)
                 new_confidence = min(1.0, current_confidence + confidence_boost)  # Ensure confidence ≤ 1.0
-                
+
                 logger.info(f"🔄 Confidence updated: {current_confidence:.2f} ➡ {new_confidence:.2f} for {error_signature}")
 
                 if new_confidence >= self.CONFIDENCE_THRESHOLD:

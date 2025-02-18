@@ -1,9 +1,21 @@
+"""
+
+The `CustomAgent` class is a subclass of `AgentBase` and provides customizable agents with flexible task-solving capabilities.
+It handles user-defined tasks and implements all the necessary functionality that makes this possible.
+
+It contains the following methods: 
+- `__init__`: Initializes the CustomAgent.
+- `solve_task`: Executes a custom-defined task.
+- `perform_task_logic`: Implements the core logic for task execution.
+- `describe_capabilities`: Provides a description of the agent’s capabilities.
+- `
+"""
+
 from typing import Dict, Any, List
 from typing import Dict, List
 import logging
 from typing import Any, Dict, Optional
 from agents.core.AgentBase import AgentBase
-
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

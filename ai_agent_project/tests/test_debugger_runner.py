@@ -1,3 +1,19 @@
+"""
+
+This module provides several test cases exploring different use-cases and functionalities of the DebuggerRunner module.
+
+Functions:
+    debugger: A pytest fixture that initialises and returns a DebuggerRunner instance.
+
+    test_run_tests_success: Tests if the run_tests method of DebuggerRunner works properly when the 
+                            tests complete successfully.
+
+    test_run_tests_failure: Tests how the run_tests method of DebuggerRunner handles exceptions raised 
+                            when a test fails while being executed.
+
+    test_retry_tests_success: Tests the retry
+"""
+
 import logging
 from unittest.mock import MagicMock, patch
 

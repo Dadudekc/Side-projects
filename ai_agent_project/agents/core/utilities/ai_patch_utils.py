@@ -1,3 +1,13 @@
+"""
+
+A Python class that utilizes various AI models to generate a patch for given code and error. This Class incorporates three AI models: Ollama, DeepSeek, and OpenAI, and uses them in order of preference, cascading down to the next when feedback is not received. 
+
+The class methods are as follows:
+
+- `chunk_code`: This method splits a given file content into chunks for Local Language Model(LMM) processing.
+- `query_llm`: This method executes a subprocess call
+"""
+
 from typing import Dict, Any, List
 from typing import Dict, List
 import os
@@ -66,15 +76,15 @@ class AIPatchUtils:
         Analyze the following code and error:
         Code:
         {' '.join(chunks)}
-        
+
         Error:
         {error_msg}
-        
+
         Suggest a minimal fix in unified diff format (`diff --git`...)
         """
-        
+
         suggestions = []
-        
+
         # Try Ollama (Mistral Model)
         with tqdm(total=len(chunks), desc="Processing with Ollama", unit="chunk") as pbar:
             for chunk in chunks:
@@ -92,19 +102,19 @@ class AIPatchUtils:
                     if patch:
                         suggestions.append(patch)
                     pbar.update(1)
-        
+
         # If no results, fallback to OpenAI
         if not suggestions:
             logger.warning("⚠️ Both Ollama and DeepSeek failed. Trying OpenAI.")
             patch = cls.query_openai(prompt)
             if patch:
                 suggestions.append(patch)
-        
+
         combined_patch = "\n".join(suggestions).strip()
-        
+
         if combined_patch:
             logger.info("✅ Successfully generated AI patch.")
         else:
             logger.warning("❌ No valid patch data generated.")
-        
+
         return combined_patch

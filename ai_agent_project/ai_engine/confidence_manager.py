@@ -1,3 +1,7 @@
+"""
+The given python code defines a class `AIConfidenceManager` that manages the confidence scoring of patches using AI analysis and historical success. It loads JSON files that hold patch history and AI confidence scores and is able to assign confidence based on past performance of patches. It provides functionality to retrieve the highest-confidence patch for an error if confidence is high enough, and suggests a re-attempt on patches that failed previously but have improved AI confidence over time. It also includes logging for AI reasoning and score assignments.
+"""
+
 import json
 import logging
 import os
@@ -9,7 +13,6 @@ logger.setLevel(logging.DEBUG)
 
 AI_CONFIDENCE_FILE = "ai_confidence_scores.json"
 PATCH_HISTORY_FILE = "patch_history.json"
-
 
 class AIConfidenceManager:
     """
@@ -112,15 +115,14 @@ class AIConfidenceManager:
         for patch_data in previous_patches:
             if patch_data["confidence"] > 0.7 and patch_data["patch"] in self.patch_history.get(error_signature, []):
                 return patch_data["patch"]
-        
-        return None
 
+        return None
 
 if __name__ == "__main__":
     manager = AIConfidenceManager()
     test_error = "example_error_signature"
     test_patch = "--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ fixed code"
-    
+
     score, reason = manager.assign_confidence_score(test_error, test_patch)
     logger.info(f"🎯 Assigned confidence score: {score}, Reason: {reason}")
 

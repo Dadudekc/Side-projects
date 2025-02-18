@@ -1,3 +1,16 @@
+"""
+
+This module provides ErrorParser class for parsing pytest output to extract test failure details.
+
+The ErrorParser class uses a regex (regular expression) pattern to search through a pytest output 
+string and find information about test failures.
+
+The main methods include:
+    - __init__: Initializes the ErrorParser object with a regex pattern for parsing pytest outputs.
+    - parse_test_failures: This method accepts a string of pytest output, applies the regex
+        pattern to find failing tests, and returns a list of
+"""
+
 import re
 import logging
 from typing import List, Dict
@@ -15,7 +28,7 @@ class ErrorParser:
         Initializes the ErrorParser with a compiled regex pattern for efficiency.
         """
         self.failure_pattern = re.compile(
-            r"FAILED\s*-?\s*([\w./]+)\s*(::|\s*:\s*)([\w\[\]<>]+)\s*[-:]\s*(.+)", 
+            r"FAILED\s*-?\s*([\w./]+)\s*(::|\s*:\s*)([\w\[\]<>]+)\s*[-:]\s*(.+)",
             re.MULTILINE
         )
 

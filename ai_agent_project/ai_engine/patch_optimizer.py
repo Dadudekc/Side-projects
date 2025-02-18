@@ -1,3 +1,10 @@
+"""
+This class is used for AI-driven patch tuning system. It auto-modifies failed patches based on known patterns, tracks failed patches and prevents retrying known bad fixes. If confidence improves on a modified patch, re-tries debugging. The main components of this class include:
+
+1. `refine_failed_patch`: A method that auto-tunes a failed patch by making incremental modifications. If the AI confidence improves, the patch is retried.
+2. `_modify_patch`: A private method that modifies a
+"""
+
 import os
 import json
 import logging
@@ -14,7 +21,7 @@ logger.setLevel(logging.DEBUG)
 class AIPatchOptimizer:
     """
     AI-driven patch tuning system.
-    
+
     ✅ Auto-modifies failed patches based on known patterns.
     ✅ Tracks failed patches & prevents retrying known bad fixes.
     ✅ If confidence improves on a modified patch, re-attempts debugging.

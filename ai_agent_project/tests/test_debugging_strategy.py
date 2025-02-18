@@ -1,3 +1,13 @@
+"""
+
+This module contains test methods for the DebuggingStrategy class in the ai_engine.models.debugger.debugging_strategy module.
+
+Test methods:
+- test_generate_patch_with_ai: A test to ensure that the generate_patch function successfully generates a patch when AST-based fixes are not applicable.
+- test_generate_patch_ai_fails: A test to check the behavior of generate_patch when the AI fails to create a patch.
+- test_generate_patch_ast_based: A test to confirm that the generate_patch function generates the appropriate
+"""
+
 import json
 import logging
 import os

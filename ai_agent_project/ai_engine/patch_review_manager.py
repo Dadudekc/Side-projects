@@ -1,3 +1,16 @@
+"""
+
+A class for managing AI-powered patch reviews.
+
+The AIPatchReviewManager uses AI to rank patches by effectiveness based on past success rates, logs every patch attempt 
+with AI reasoning and human feedback, and tracks which patches worked to refine AI decision-making over time.
+
+Attributes:
+    patch_tracker (PatchTrackingManager): The manager for tracking patches.
+    ai_client (AIClient): The AI client used for evaluating patches.
+    human_review (dict): The human review data loaded from a JSON file
+"""
+
 import json
 import logging
 import os
@@ -14,11 +27,10 @@ AI_DECISIONS_LOG = "ai_decisions.json"
 PATCH_RANKINGS_FILE = "patch_rankings.json"
 DETAILED_ERROR_LOG_FILE = "detailed_patch_log.json"
 
-
 class AIPatchReviewManager:
     """
     AI-powered ranking for human-reviewed patches and detailed patch logging.
-    
+
     Features:
     - Uses AI to rank patches by effectiveness based on past success rates.
     - Logs every patch attempt with AI reasoning and human feedback.
@@ -55,10 +67,10 @@ class AIPatchReviewManager:
     def rank_human_reviewed_patches(self):
         """Ranks human-reviewed patches based on AI evaluation and past success rates."""
         ranked_patches = {}
-        
+
         for error_signature, patches in self.human_review.items():
             patch_scores = []
-            
+
             for patch in patches:
                 score_data = self.ai_client.evaluate_patch_with_reason(patch)
                 patch_score = score_data["score"]
@@ -127,18 +139,17 @@ class AIPatchReviewManager:
 
         for error_signature, attempts in self.detailed_logs.items():
             failure_counts = {}
-            
+
             for attempt in attempts:
                 if attempt["outcome"] == "Failed to Apply":
                     reason = attempt.get("extra_info", "Unknown Failure")
                     failure_counts[reason] = failure_counts.get(reason, 0) + 1
-            
+
             if failure_counts:
                 failure_patterns[error_signature] = failure_counts
 
         logger.info(f"📉 Common Patch Failure Reasons: {failure_patterns}")
         return failure_patterns
-
 
 if __name__ == "__main__":
     review_manager = AIPatchReviewManager()

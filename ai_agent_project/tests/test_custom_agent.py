@@ -1,3 +1,12 @@
+"""
+
+This Python module is a unit test for the CustomAgent class. It includes tests for initialization, describing capabilities, solving tasks in both success and failure scenarios, performing task logic, and shutdown.
+
+The tests are performed via unittest framework. In cases a method is expected to fail, it uses mocking strategy via unittest.mock to simulate errors and check how method is handling them.
+
+Note: This unit test requires AgentBase, AIModelManager, AIPatchUtils, CustomAgent from the agents.core package,
+"""
+
 import logging
 import unittest
 from unittest.mock import patch

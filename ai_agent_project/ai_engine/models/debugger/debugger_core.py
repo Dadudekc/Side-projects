@@ -1,3 +1,12 @@
+"""
+
+This module contains the implementation of DebugAgent, a class designed to programmatically debug python applications and tests. The DebugAgent combines features from both a DebuggerAgent and DebugAgent, allowing it to run tests, analyze errors, attempt to solve errors using quick fixes or adaptive learning fixes, automate debugging cycles, and interact with version control.
+
+Main functions include:
+- run_tests() : Run test files using pytest and captures output 
+- run_tests_for_files(files: set) : Run tests specifically for a
+"""
+
 import os
 import re
 import json

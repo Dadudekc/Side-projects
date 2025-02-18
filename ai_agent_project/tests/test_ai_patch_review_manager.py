@@ -1,3 +1,13 @@
+"""
+
+This module provides unit tests for the AIPatchReviewManager class which manages the automatic review, ranking and application of code patches.
+
+Test Cases:
+- Test SetUp and TearDown for configuring test environment before and after each test case.
+- Test AI ranking of human-reviewed patches (`test_rank_human_reviewed_patches`). Check AI's ability to rank patches reviewed by humans based on certain criteria.
+- Test logging of patch attempts (`test_log_patch_attempt`). Ensure the module properly logs patch attempts with specific outcomes
+"""
+
 import json
 import os
 import unittest

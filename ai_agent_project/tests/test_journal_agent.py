@@ -1,3 +1,13 @@
+"""
+
+Module for unit testing the JournalAgent class. This module tests functions such as 
+create_journal_entry, retrieve_journal_entry, update_journal_entry, delete_journal_entry 
+and list_journal_entries. It also tests various task actions such as create, retrieve, 
+update, delete and handling of invalid actions. Each function and task is tested under 
+normal conditions as well as various edge-case conditions.
+
+"""
+
 import json
 import os
 import unittest

@@ -1,3 +1,17 @@
+"""
+
+A class for managing different AI models for generating patch suggestions to errors in code.
+
+This class supports different types of both local and cloud-based AI models, and it prioritizes
+them based on their performance. The class provides functions to generate patch suggestions
+based on the error message, the code context, and the test file. It also provides features such
+as tracking past AI models performance, retrying failed models with modifications, and assigning 
+confidence scores to the generated patches.
+
+Attributes:
+    open
+"""
+
 import os
 import subprocess
 import logging
@@ -9,15 +23,14 @@ from ai_engine.confidence_manager import AIConfidenceManager
 logger = logging.getLogger("AIModelManager")
 logger.setLevel(logging.DEBUG)
 
-
 class AIModelManager:
     """
     A unified AI debugging system that selects the best available model.
-    
+
     Supports:
       - Local models (Mistral, DeepSeek)
       - Cloud models (OpenAI GPT-4 fallback)
-    
+
     Features:
       ✅ AI Confidence Tracking (Assigns confidence to patches)
       ✅ AI Patch History (Avoids repeating bad patches)

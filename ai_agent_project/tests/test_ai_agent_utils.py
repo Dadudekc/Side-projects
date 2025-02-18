@@ -1,3 +1,14 @@
+"""
+
+This module provides a series of unit tests for various modules within the ai_agent_utils package, including PerformanceMonitor, MemoryManager, StructuredMemorySegment, and VectorMemoryManager.
+
+These classes are tested:
+
+- TestPerformanceMonitor: Tests for the PerformanceMonitor class, including tracking of execution time and clearing of logs.
+- TestMemoryManager: Tests for the MemoryManager class, covering storage and retrieving of memory, clearing memory storage, and exporting and importing memory to and from a file.
+- TestStructured
+"""
+
 import json
 import os
 import time

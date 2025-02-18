@@ -1,3 +1,11 @@
+"""
+The Python class `AutoFixer` is designed to automatically fix known errors. It utilizes pattern-based fixes, LLM-generated patches, and stored solutions from past fixes accessed from a learning database. 
+
+The AutoFixer class can be instantiated with an optional `needed_files` parameter that can be passed a list of files needed from your test. It then sets up the workspace and copies only those test dependencies from `PROJECT_DIR` if it exists otherwise logs an error message.
+
+The `apply_fix`
+"""
+
 import os
 import re
 import shutil

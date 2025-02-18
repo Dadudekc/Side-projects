@@ -1,3 +1,16 @@
+"""
+
+This module contains unit tests for the TradingAgent class. 
+
+It contains the following methods:
+- A setUp method to instantiate a new TradingAgent object for testing.
+- A method to test if the TradingAgent initializes correctly. 
+- A method to test the describe_capabilities method of the TradingAgent class. 
+- A method to test the execution of a trade in test mode.
+- A method to test the execution of a trade in live mode using mocked Alpaca API.  
+- A test
+"""
+
 import unittest
 from unittest.mock import MagicMock, patch
 

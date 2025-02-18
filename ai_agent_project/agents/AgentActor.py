@@ -1,3 +1,12 @@
+"""
+The class AgentActor is used to execute tasks and manage tools operations using a ToolServer. It is initialized with a tool server, memory manager, and a performance monitor to manage tools and track performance metrics respectively.
+
+It contains methods for:
+- Providing a description of the agent's capabilities through the method 'describe_capabilities'.
+- Solving a task where the task could vary between executing Python scripts, shell commands to using tools, which is implemented in the 'solve_task' method.
+- Executing Python code
+"""
+
 import logging
 
 class AgentActor:
@@ -82,7 +91,7 @@ class AgentActor:
 
         Args:
             task (Dict[str, Any]): A dictionary containing task details.
-        
+
         Returns:
             Any: Result of task execution.
         """

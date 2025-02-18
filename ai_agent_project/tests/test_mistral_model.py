@@ -1,3 +1,15 @@
+"""
+
+This module provides unit tests for the MistralModel class. This includes tests for defining
+prompt formatting, using Mistral AI and OpenAI GPT-4 for patches generation, validation of patches
+based on a confidence score, and performance tracking of AI models.
+
+Methods are as follows:
+- setUp: Sets up an instance of the MistralModel for testing and ensures that the AI performance tracking file exists.
+- tearDown: Cleans up after tests by removing AI performance tracking file if created.
+-
+"""
+
 import json
 import os
 import random

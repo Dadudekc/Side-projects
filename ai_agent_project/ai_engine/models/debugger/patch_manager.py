@@ -1,9 +1,27 @@
+"""
+
+This module contains the PatchManager class which is in charge of managing patch generation and application.
+
+Classes:
+    PatchManager: Manages the generation and application of patches based on the provided DebuggingStrategy.
+
+Attributes:
+    logger: A logging object with 'PatchManager' as logger's name.
+"""
+
+class PatchManager:
+    """
+    Manages the generation and application of patches based on the provided DebuggingStrategy.
+
+    Attributes:
+        debug_strategy (DebuggingStrategy, optional): An instance of the
+"""
+
 import logging
 from typing import Optional, Dict, Any
 from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
 
 logger = logging.getLogger("PatchManager")
-
 
 class PatchManager:
     """

@@ -1,3 +1,20 @@
+"""
+Module for unit testing the functionality of AgentDispatcher class.
+
+This module includes setup for initializing an instance of AgentDispatcher class 
+and tests for dispatching tasks to valid agents.
+
+Classes:
+    TestAgentDispatcher: A unit test class for testing AgentDispatcher class.
+
+Functions:
+    setUp(self): Initialize an AgentDispatcher instance before each test.
+    test_dispatch_valid_agent(self): Test dispatching a tasks to a valid agent and correct processing.  
+
+Raises:
+    AssertionError: An error occurred when the dispatched task
+"""
+
 import json
 import unittest
 

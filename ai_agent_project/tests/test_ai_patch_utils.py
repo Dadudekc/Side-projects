@@ -1,3 +1,13 @@
+"""
+
+A module for unit tests for the AIPatchUtils class. 
+
+The class contains the following test methods:
+1. 'test_chunk_code' - Tests that the method 'chunk_code' in the AIPatchUtils class correctly splits content that is too long.  
+2. 'test_query_llm_success' - Tests that the 'query_llm' method in AIPatchUtils class successfully returns a patch suggestion.
+3. 'test_query_llm_failure' - Tests that the 
+"""
+
 import unittest
 from unittest.mock import MagicMock, patch
 

@@ -1,3 +1,15 @@
+"""
+
+APIClient Class handles real-time API lookups from different financial and weather APIs. 
+Prioritizes free sources first before using authenticated APIs.
+
+Methods:
+    - fetch_stock_price: Fetches the current stock price from Yahoo Finance.
+    - fetch_crypto_price: Fetches the current cryptocurrency price from CoinGecko.
+    - fetch_weather: Fetches the current weather for a given location from wttr.in.
+    - fetch_news: Fetches the latest news on a given topic from Google News
+"""
+
 import requests
 import logging
 import os
@@ -114,4 +126,3 @@ class APIClient:
         if "seriess" in data:
             return f"GDP Data: {data['seriess'][0]['title']}"
         return "FRED API fetch failed"
-

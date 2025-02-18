@@ -1,0 +1,126 @@
+"""
+This Python module provides functions for fetching real-time financial data, geopolitical news,
+weather forecasts, and cryptocurrency prices from both free sources and authenticated APIs.
+It integrates various external services like Yahoo Finance, CoinGecko, wttr.in, Google News,
+and several authenticated APIs including Alpaca, Finnhub, AlphaVantage, and FRED.
+
+Functions range from gathering stock prices and crypto values to retrieving weather information
+and news headlines, all arranged into free and API-key-required methods for easier
+"""
+
+import requests
+import logging
+import os
+from typing import Optional, Dict
+from bs4 import BeautifulSoup  # Web scraping (Yahoo Finance, Google News)
+
+class APIClient:
+    """
+    Handles real-time API lookups, prioritizing free sources first before using authenticated APIs.
+    """
+
+    # 🔑 API KEYS (Loaded from environment)
+    API_KEYS = {
+        "alpaca": os.getenv("ALPACA_API_KEY"),
+        "polygon": os.getenv("POLYGONIO_API_KEY"),
+        "finnhub": os.getenv("FINNHUB_API_KEY"),
+        "newsapi": os.getenv("NEWSAPI_API_KEY"),
+        "alphavantage": os.getenv("ALPHAVANTAGE_API_KEY"),
+        "nasdaq": os.getenv("NASDAQ_API_KEY"),
+        "fred": os.getenv("FRED_API_KEY"),
+        "mailchimp": os.getenv("MAILCHIMP_API_KEY"),
+    }
+
+    # ✅ TIER 1: Free APIs (No API Key Needed)
+    @staticmethod
+    def fetch_stock_price(symbol: str) -> Optional[str]:
+        """ Fetches stock price from Yahoo Finance (Free, No API Key) """
+        try:
+            url = f"https://finance.yahoo.com/quote/{symbol}"
+            headers = {"User-Agent": "Mozilla/5.0"}
+            response = requests.get(url, headers=headers)
+            soup = BeautifulSoup(response.text, "html.parser")
+            price_tag = soup.find("fin-streamer", {"data-field": "regularMarketPrice"})
+            if price_tag:
+                return f"{symbol.upper()} is trading at ${price_tag.text}"
+        except Exception as e:
+            logging.error(f"Yahoo Finance fetch failed: {e}")
+        return None
+
+    @staticmethod
+    def fetch_crypto_price(symbol: str) -> Optional[str]:
+        """ Fetches crypto prices from CoinGecko (Free, No API Key) """
+        try:
+            url = f"https://api.coingecko.com/api/v3/simple/price?ids={symbol}&vs_currencies=usd"
+            response = requests.get(url)
+            data = response.json()
+            if symbol in data:
+                return f"{symbol.upper()} is trading at ${data[symbol]['usd']}"
+        except Exception as e:
+            logging.error(f"CoinGecko fetch failed: {e}")
+        return None
+
+    @staticmethod
+    def fetch_weather(location: str) -> Optional[str]:
+        """ Fetches weather data using wttr.in (Free, No API Key) """
+        try:
+            url = f"https://wttr.in/{location}?format=%C+%t"
+            response = requests.get(url)
+            return f"Weather in {location}: {response.text.strip()}"
+        except Exception as e:
+            logging.error(f"Weather fetch failed: {e}")
+        return None
+
+    @staticmethod
+    def fetch_news(topic: str) -> Optional[str]:
+        """ Fetches news from Google News RSS (Free, No API Key) """
+        try:
+            url = f"https://news.google.com/rss/search?q={topic}"
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, "xml")
+            first_item = soup.find("item")
+            if first_item:
+                title = first_item.title.text
+                link = first_item.link.text
+                return f"Latest news on {topic}: {title} ({link})"
+        except Exception as e:
+            logging.error(f"Google News RSS fetch failed: {e}")
+        return None
+
+    # 🔑 TIER 2: APIs That Require Authentication
+    @staticmethod
+    def fetch_stock_from_alpaca(symbol: str) -> Optional[str]:
+        """ Fetches stock price using Alpaca API (Requires API Key) """
+        url = f"https://data.alpaca.markets/v2/stocks/{symbol}/quotes"
+        headers = {"Authorization": f"Bearer {APIClient.API_KEYS['alpaca']}"}
+        response = requests.get(url, headers=headers)
+        data = response.json()
+        return f"{symbol} latest price: {data.get('last', {}).get('price', 'Unavailable')}" if "last" in data else "Data unavailable"
+
+    @staticmethod
+    def fetch_news_from_finnhub(topic: str) -> Optional[str]:
+        """ Fetches financial news from Finnhub API """
+        url = f"https://finnhub.io/api/v1/news?category={topic}&token={APIClient.API_KEYS['finnhub']}"
+        response = requests.get(url)
+        data = response.json()
+        return f"Latest finance news: {data[0]['headline']}" if data else "No news found"
+
+    @staticmethod
+    def fetch_forex_rate(currency: str) -> Optional[str]:
+        """ Fetches Forex rates from AlphaVantage API """
+        url = f"https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency={currency}&to_currency=USD&apikey={APIClient.API_KEYS['alphavantage']}"
+        response = requests.get(url)
+        data = response.json()
+        if "Realtime Currency Exchange Rate" in data:
+            return f"1 {currency} = {data['Realtime Currency Exchange Rate']['5. Exchange Rate']} USD"
+        return "Exchange rate unavailable"
+
+    @staticmethod
+    def fetch_macro_data() -> Optional[str]:
+        """ Fetches macroeconomic data from the FRED API """
+        url = f"https://api.stlouisfed.org/fred/series?series_id=GDP&api_key={APIClient.API_KEYS['fred']}&file_type=json"
+        response = requests.get(url)
+        data = response.json()
+        if "seriess" in data:
+            return f"GDP Data: {data['seriess'][0]['title']}"
+        return "FRED API fetch failed"

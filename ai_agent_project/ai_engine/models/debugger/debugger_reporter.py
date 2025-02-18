@@ -1,3 +1,13 @@
+"""
+
+This module provides a class `DebuggerReporter` which generates detailed debugging session reports with AI analysis and logs failed patches and AI explanations. The report is stored locally in a JSON file and can be sent via email to a recipient.
+
+Class Methods:
+    - __init__: Initializes a new instance of the class and loads any existing report if available.
+    - load_existing_report: Loads the existing debugging report or initializes a new one.
+    - log_failed_patch: Logs a failed patch attempt with a reason
+"""
+
 import logging
 import json
 import os
@@ -9,7 +19,6 @@ logger = logging.getLogger("DebuggerReporter")
 logger.setLevel(logging.DEBUG)
 
 REPORT_FILE = "debugging_report.json"
-
 
 class DebuggerReporter:
     """
@@ -35,7 +44,7 @@ class DebuggerReporter:
     def log_failed_patch(self, error_signature: str, reason: str):
         """
         Logs a failed patch attempt with a reason.
-        
+
         Args:
             error_signature (str): Unique hash of the error.
             reason (str): Explanation of why the patch failed.
@@ -46,7 +55,7 @@ class DebuggerReporter:
     def log_ai_explanation(self, error_signature: str, explanation: str):
         """
         Logs an AI-generated explanation for debugging insights.
-        
+
         Args:
             error_signature (str): Unique hash of the error.
             explanation (str): AI analysis or suggestion.
@@ -66,7 +75,7 @@ class DebuggerReporter:
     def send_email_report(self, recipient_email: str):
         """
         Sends the debugging report via email.
-        
+
         Args:
             recipient_email (str): Email address of the recipient.
         """
@@ -81,7 +90,6 @@ class DebuggerReporter:
             logger.info(f"📧 Debugging report sent successfully to {recipient_email}.")
         else:
             logger.error(f"❌ Failed to send debugging report to {recipient_email}.")
-
 
 # Example Usage:
 if __name__ == "__main__":

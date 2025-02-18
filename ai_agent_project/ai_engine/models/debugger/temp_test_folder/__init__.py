@@ -1,1 +1,1 @@
-# Init file to make the directory a package
+# Auto-generated __init__.py

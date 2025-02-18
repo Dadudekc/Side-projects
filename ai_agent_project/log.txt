@@ -1,0 +1,355 @@
+2025-02-18 15:13:52,037 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:13:54,042 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:13:56,047 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:13:58,048 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\example.py (Failed to generate docstring)
+2025-02-18 15:14:31,437 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:33,440 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:35,440 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:37,441 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\1.py (Failed to generate docstring)
+2025-02-18 15:14:37,441 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:39,444 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:41,447 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:43,450 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\docstring_generator.py (Failed to generate docstring)
+2025-02-18 15:14:43,451 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:45,452 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:47,453 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:49,454 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\example.py (Failed to generate docstring)
+2025-02-18 15:14:49,454 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:51,455 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:53,459 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:55,460 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\extract_passing_tests.py (Failed to generate docstring)
+2025-02-18 15:14:55,461 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:57,461 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:14:59,462 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:01,463 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\file_watcher.py (Failed to generate docstring)
+2025-02-18 15:15:01,468 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:03,469 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:05,470 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:07,471 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\main.py (Failed to generate docstring)
+2025-02-18 15:15:07,471 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:09,477 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:11,479 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:13,482 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\project_context_analyzer.py (Failed to generate docstring)
+2025-02-18 15:15:13,483 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:15,483 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:17,486 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:19,487 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\setup.py (Failed to generate docstring)
+2025-02-18 15:15:19,487 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\__init__.py (init file)
+2025-02-18 15:15:19,492 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:21,493 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:23,494 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:25,496 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\AgentActor.py (Failed to generate docstring)
+2025-02-18 15:15:25,497 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:27,498 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:29,501 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:31,505 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\AgentDispatcher.py (Failed to generate docstring)
+2025-02-18 15:15:31,506 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:33,509 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:35,510 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:37,511 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\custom_agent.py (Failed to generate docstring)
+2025-02-18 15:15:37,511 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\agents\__init__.py (init file)
+2025-02-18 15:15:37,512 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:39,515 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:41,516 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:43,518 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\AgentBase.py (Failed to generate docstring)
+2025-02-18 15:15:43,518 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:45,525 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:47,526 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:49,530 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\agent_dispatcher.py (Failed to generate docstring)
+2025-02-18 15:15:49,530 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:51,531 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:53,535 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:55,537 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\agent_registry.py (Failed to generate docstring)
+2025-02-18 15:15:55,537 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:57,538 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:15:59,542 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:01,546 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\gpt_forecasting.py (Failed to generate docstring)
+2025-02-18 15:16:01,547 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:03,550 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:05,551 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:07,552 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\graph_memory.py (Failed to generate docstring)
+2025-02-18 15:16:07,552 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:09,557 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:11,561 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:13,561 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\journal_agent.py (Failed to generate docstring)
+2025-02-18 15:16:13,562 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:15,563 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:17,564 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:19,567 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\logger.py (Failed to generate docstring)
+2025-02-18 15:16:19,567 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:21,569 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:23,570 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:25,570 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\memory_engine.py (Failed to generate docstring)
+2025-02-18 15:16:25,574 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:27,575 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:29,579 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:31,579 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\professor_synapse_agent.py (Failed to generate docstring)
+2025-02-18 15:16:31,584 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:33,585 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:35,586 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:37,590 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\trading_agent.py (Failed to generate docstring)
+2025-02-18 15:16:37,590 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\agents\core\__init__.py (init file)
+2025-02-18 15:16:37,591 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:39,592 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:41,599 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:43,601 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\utilities\AgentBase.py (Failed to generate docstring)
+2025-02-18 15:16:43,601 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:45,604 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:47,607 - ERROR - \u26a0 OpenAI API call failed (Attempt 3/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:49,607 - WARNING - \u26a0 Skipping update for D:/side_projects/Side-projects/ai_agent_project\agents\core\utilities\ai_agent_utils.py (Failed to generate docstring)
+2025-02-18 15:16:49,608 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:16:51,608 - ERROR - \u26a0 OpenAI API call failed (Attempt 2/3): module 'openai' has no attribute 'OpenAI'
+2025-02-18 15:20:17,282 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\example.py.bak
+2025-02-18 15:20:17,311 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\example.py
+2025-02-18 15:20:53,309 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\example.py.bak
+2025-02-18 15:20:53,333 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\example.py
+2025-02-18 15:21:28,846 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\example.py.bak
+2025-02-18 15:21:28,879 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\example.py
+2025-02-18 15:27:26,707 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\example.py.bak
+2025-02-18 15:27:26,744 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\example.py
+2025-02-18 15:30:22,184 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\example.py.bak
+2025-02-18 15:30:22,220 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\example.py
+2025-02-18 15:30:42,972 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\1.py.bak
+2025-02-18 15:30:43,768 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\1.py
+2025-02-18 15:30:48,958 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\docstring_generator.py.bak
+2025-02-18 15:30:48,994 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\docstring_generator.py
+2025-02-18 15:30:53,087 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\example.py.bak
+2025-02-18 15:30:53,118 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\example.py
+2025-02-18 15:30:56,935 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\extract_passing_tests.py.bak
+2025-02-18 15:30:57,147 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\extract_passing_tests.py
+2025-02-18 15:31:03,704 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\file_watcher.py.bak
+2025-02-18 15:31:04,053 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\file_watcher.py
+2025-02-18 15:31:09,177 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\main.py.bak
+2025-02-18 15:31:10,160 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\main.py
+2025-02-18 15:31:15,409 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\project_context_analyzer.py.bak
+2025-02-18 15:31:16,094 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\project_context_analyzer.py
+2025-02-18 15:31:20,414 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\setup.py.bak
+2025-02-18 15:31:20,603 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\setup.py
+2025-02-18 15:31:20,604 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\__init__.py (init file)
+2025-02-18 15:31:25,021 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\AgentActor.py.bak
+2025-02-18 15:31:25,584 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\AgentActor.py
+2025-02-18 15:31:30,514 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\AgentDispatcher.py.bak
+2025-02-18 15:31:30,548 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\AgentDispatcher.py
+2025-02-18 15:31:36,518 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\custom_agent.py.bak
+2025-02-18 15:31:37,060 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\custom_agent.py
+2025-02-18 15:31:37,060 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\agents\__init__.py (init file)
+2025-02-18 15:31:41,774 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\AgentBase.py.bak
+2025-02-18 15:31:41,802 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\AgentBase.py
+2025-02-18 15:31:47,536 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\agent_dispatcher.py.bak
+2025-02-18 15:31:47,922 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\agent_dispatcher.py
+2025-02-18 15:31:51,663 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\agent_registry.py.bak
+2025-02-18 15:31:52,442 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\agent_registry.py
+2025-02-18 15:31:57,725 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\gpt_forecasting.py.bak
+2025-02-18 15:31:57,815 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\gpt_forecasting.py
+2025-02-18 15:32:03,400 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\graph_memory.py.bak
+2025-02-18 15:32:03,617 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\graph_memory.py
+2025-02-18 15:32:10,057 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\journal_agent.py.bak
+2025-02-18 15:32:10,085 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\journal_agent.py
+2025-02-18 15:32:14,607 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\logger.py.bak
+2025-02-18 15:32:14,633 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\logger.py
+2025-02-18 15:32:20,052 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\memory_engine.py.bak
+2025-02-18 15:32:20,961 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\memory_engine.py
+2025-02-18 15:32:25,411 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\professor_synapse_agent.py.bak
+2025-02-18 15:32:26,267 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\professor_synapse_agent.py
+2025-02-18 15:32:32,044 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\trading_agent.py.bak
+2025-02-18 15:32:32,249 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\trading_agent.py
+2025-02-18 15:32:32,249 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\agents\core\__init__.py (init file)
+2025-02-18 15:32:36,499 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\AgentBase.py.bak
+2025-02-18 15:32:36,706 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\utilities\AgentBase.py
+2025-02-18 15:32:41,283 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\ai_agent_utils.py.bak
+2025-02-18 15:32:41,556 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\utilities\ai_agent_utils.py
+2025-02-18 15:32:46,483 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\ai_client.py.bak
+2025-02-18 15:32:47,262 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\utilities\ai_client.py
+2025-02-18 15:32:52,531 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\ai_model_manager.py.bak
+2025-02-18 15:32:53,121 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\utilities\ai_model_manager.py
+2025-02-18 15:32:58,976 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\ai_patch_utils.py.bak
+2025-02-18 15:32:59,208 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\utilities\ai_patch_utils.py
+2025-02-18 15:33:03,231 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\ai_rollback_analysis.py.bak
+2025-02-18 15:33:03,692 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\utilities\ai_rollback_analysis.py
+2025-02-18 15:33:09,265 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\CustomAgent.py.bak
+2025-02-18 15:33:10,020 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\utilities\CustomAgent.py
+2025-02-18 15:33:15,486 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\debug_agent_utils.py.bak
+2025-02-18 15:33:15,968 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\agents\core\utilities\debug_agent_utils.py
+2025-02-18 15:33:15,968 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\agents\core\utilities\__init__.py (init file)
+2025-02-18 15:33:22,501 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\confidence_manager.py.bak
+2025-02-18 15:33:22,546 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\confidence_manager.py
+2025-02-18 15:33:27,758 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\patch_analyzer.py.bak
+2025-02-18 15:33:27,792 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\patch_analyzer.py
+2025-02-18 15:33:33,352 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\patch_optimizer.py.bak
+2025-02-18 15:33:34,103 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\patch_optimizer.py
+2025-02-18 15:33:38,882 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\patch_review_manager.py.bak
+2025-02-18 15:33:38,905 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\patch_review_manager.py
+2025-02-18 15:33:38,905 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\ai_engine\__init__.py (init file)
+2025-02-18 15:33:43,027 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\ai_model_manager.py.bak
+2025-02-18 15:33:43,250 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\ai_model_manager.py
+2025-02-18 15:33:47,620 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\deepseek_model.py.bak
+2025-02-18 15:33:47,824 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\deepseek_model.py
+2025-02-18 15:33:53,023 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\mistral_model.py.bak
+2025-02-18 15:33:53,231 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\mistral_model.py
+2025-02-18 15:33:57,731 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\openai_model.py.bak
+2025-02-18 15:33:57,954 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\openai_model.py
+2025-02-18 15:33:57,955 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\__init__.py (init file)
+2025-02-18 15:34:02,451 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\api_client.py.bak
+2025-02-18 15:34:03,107 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\apis\api_client.py
+2025-02-18 15:34:08,127 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\ai_patch_retry_manager.py.bak
+2025-02-18 15:34:08,675 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\ai_patch_retry_manager.py
+2025-02-18 15:34:13,150 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\auto_fixer.py.bak
+2025-02-18 15:34:13,177 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\auto_fixer.py
+2025-02-18 15:34:18,037 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\auto_fix_manager.py.bak
+2025-02-18 15:34:18,380 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\auto_fix_manager.py
+2025-02-18 15:34:24,142 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\debugger_cli.py.bak
+2025-02-18 15:34:24,988 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\debugger_cli.py
+2025-02-18 15:34:29,529 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\debugger_core.py.bak
+2025-02-18 15:34:29,905 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\debugger_core.py
+2025-02-18 15:34:35,685 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\debugger_logger.py.bak
+2025-02-18 15:34:35,892 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\debugger_logger.py
+2025-02-18 15:34:41,191 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\debugger_reporter.py.bak
+2025-02-18 15:34:41,496 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\debugger_reporter.py
+2025-02-18 15:34:46,042 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\debugger_runner.py.bak
+2025-02-18 15:34:46,255 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\debugger_runner.py
+2025-02-18 15:34:51,477 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\debugging_strategy.py.bak
+2025-02-18 15:34:51,678 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\debugging_strategy.py
+2025-02-18 15:34:56,186 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\debug_agent_auto_fixer.py.bak
+2025-02-18 15:34:56,385 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\debug_agent_auto_fixer.py
+2025-02-18 15:35:02,178 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\email_reporter.py.bak
+2025-02-18 15:35:02,383 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\email_reporter.py
+2025-02-18 15:35:09,241 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\error_parser.py.bak
+2025-02-18 15:35:09,839 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\error_parser.py
+2025-02-18 15:35:16,036 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\learning_db.py.bak
+2025-02-18 15:35:17,111 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\learning_db.py
+2025-02-18 15:35:22,527 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\patch_manager.py.bak
+2025-02-18 15:35:22,547 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\patch_manager.py
+2025-02-18 15:35:27,400 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\patch_tracking_manager.py.bak
+2025-02-18 15:35:27,616 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\patch_tracking_manager.py
+2025-02-18 15:35:32,076 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\project_context_analyzer.py.bak
+2025-02-18 15:35:33,106 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\project_context_analyzer.py
+2025-02-18 15:35:38,237 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\report_manager.py.bak
+2025-02-18 15:35:38,446 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\report_manager.py
+2025-02-18 15:35:42,295 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\rollback_manager.py.bak
+2025-02-18 15:35:42,503 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\rollback_manager.py
+2025-02-18 15:35:48,671 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_parser.py.bak
+2025-02-18 15:35:48,876 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\test_parser.py
+2025-02-18 15:35:53,442 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_runner.py.bak
+2025-02-18 15:35:53,918 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\test_runner.py
+2025-02-18 15:35:53,918 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\__init__.py (init file)
+2025-02-18 15:35:53,919 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\debugger\temp_test_folder\__init__.py (init file)
+2025-02-18 15:35:58,731 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\context_manager.py.bak
+2025-02-18 15:35:59,525 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\memory\context_manager.py
+2025-02-18 15:36:07,719 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\memory_manager.py.bak
+2025-02-18 15:36:07,919 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\memory\memory_manager.py
+2025-02-18 15:36:14,079 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\performance_monitor.py.bak
+2025-02-18 15:36:14,113 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\memory\performance_monitor.py
+2025-02-18 15:36:19,463 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\structured_memory_segment.py.bak
+2025-02-18 15:36:19,957 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\memory\structured_memory_segment.py
+2025-02-18 15:36:24,485 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\vector_memory_manager.py.bak
+2025-02-18 15:36:24,689 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\memory\vector_memory_manager.py
+2025-02-18 15:36:24,689 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\ai_engine\models\memory\__init__.py (init file)
+2025-02-18 15:36:29,855 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\reasoning_engine.py.bak
+2025-02-18 15:36:29,890 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\reasoning_engine\reasoning_engine.py
+2025-02-18 15:36:39,363 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\rule_based_reasoning.py.bak
+2025-02-18 15:36:39,575 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ai_engine\reasoning_engine\rule_based_reasoning.py
+2025-02-18 15:36:39,576 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\debugger\temp_test_folder\__init__.py (init file)
+2025-02-18 15:36:45,895 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\main.py.bak
+2025-02-18 15:36:45,918 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\scripts\main.py
+2025-02-18 15:36:52,241 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\run_debugger.py.bak
+2025-02-18 15:36:52,455 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\scripts\run_debugger.py
+2025-02-18 15:36:57,538 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\run_debugger_agent.py.bak
+2025-02-18 15:36:57,564 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\scripts\run_debugger_agent.py
+2025-02-18 15:36:57,565 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\scripts\__init__.py (init file)
+2025-02-18 15:36:59,690 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\conftest.py.bak
+2025-02-18 15:36:59,748 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\conftest.py
+2025-02-18 15:37:03,482 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\run_tests.py.bak
+2025-02-18 15:37:03,704 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\run_tests.py
+2025-02-18 15:37:08,114 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_AgentActor.py.bak
+2025-02-18 15:37:08,338 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_AgentActor.py
+2025-02-18 15:37:13,579 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_agent_base.py.bak
+2025-02-18 15:37:13,602 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_agent_base.py
+2025-02-18 15:37:18,855 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_agent_dispatcher.py.bak
+2025-02-18 15:37:19,063 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_agent_dispatcher.py
+2025-02-18 15:37:23,352 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_agent_registry.py.bak
+2025-02-18 15:37:23,381 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_agent_registry.py
+2025-02-18 15:37:28,556 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_ai_agent_utils.py.bak
+2025-02-18 15:37:29,068 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_ai_agent_utils.py
+2025-02-18 15:37:34,991 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_ai_confidence_manager.py.bak
+2025-02-18 15:37:35,011 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_ai_confidence_manager.py
+2025-02-18 15:37:40,006 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_ai_model_manager.py.bak
+2025-02-18 15:37:40,214 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_ai_model_manager.py
+2025-02-18 15:37:48,681 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_ai_patch_optimizer.py.bak
+2025-02-18 15:37:48,978 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_ai_patch_optimizer.py
+2025-02-18 15:37:53,449 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_ai_patch_retry_manager.py.bak
+2025-02-18 15:37:54,076 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_ai_patch_retry_manager.py
+2025-02-18 15:37:54,354 - INFO - error_code=None error_message='The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our help center at help.openai.com if you keep seeing this error. (Please include the request ID req_b7cd4014442d8a6d7490ac3a8f23755e in your email.)' error_param=None error_type=server_error message='OpenAI API error received' stream_error=False
+2025-02-18 15:37:54,354 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our help center at help.openai.com if you keep seeing this error. (Please include the request ID req_b7cd4014442d8a6d7490ac3a8f23755e in your email.) {
+  "error": {
+    "message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our help center at help.openai.com if you keep seeing this error. (Please include the request ID req_b7cd4014442d8a6d7490ac3a8f23755e in your email.)",
+    "type": "server_error",
+    "param": null,
+    "code": null
+  }
+} 500 {'error': {'message': 'The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our help center at help.openai.com if you keep seeing this error. (Please include the request ID req_b7cd4014442d8a6d7490ac3a8f23755e in your email.)', 'type': 'server_error', 'param': None, 'code': None}} {'Date': 'Tue, 18 Feb 2025 21:37:56 GMT', 'Content-Type': 'application/json', 'Content-Length': '369', 'Connection': 'keep-alive', 'access-control-expose-headers': 'X-Request-ID', 'openai-processing-ms': '121', 'x-ratelimit-limit-requests': '5000', 'x-ratelimit-limit-tokens': '40000', 'x-ratelimit-remaining-requests': '4999', 'x-ratelimit-remaining-tokens': '38701', 'x-ratelimit-reset-requests': '12ms', 'x-ratelimit-reset-tokens': '1.948s', 'x-request-id': 'req_b7cd4014442d8a6d7490ac3a8f23755e', 'strict-transport-security': 'max-age=31536000; includeSubDomains; preload', 'cf-cache-status': 'DYNAMIC', 'X-Content-Type-Options': 'nosniff', 'Server': 'cloudflare', 'CF-RAY': '914129465c1f16b5-IAH', 'alt-svc': 'h3=":443"; ma=86400'}
+2025-02-18 15:38:01,591 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_ai_patch_review_manager.py.bak
+2025-02-18 15:38:01,618 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_ai_patch_review_manager.py
+2025-02-18 15:38:06,235 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_ai_patch_utils.py.bak
+2025-02-18 15:38:06,438 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_ai_patch_utils.py
+2025-02-18 15:38:12,225 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_ai_rollback_analysis.py.bak
+2025-02-18 15:38:12,603 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_ai_rollback_analysis.py
+2025-02-18 15:38:17,366 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_auto_fixer.py.bak
+2025-02-18 15:38:17,393 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_auto_fixer.py
+2025-02-18 15:38:21,542 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_custom_agent.py.bak
+2025-02-18 15:38:21,751 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_custom_agent.py
+2025-02-18 15:38:26,687 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_debugger_cli.py.bak
+2025-02-18 15:38:27,540 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_debugger_cli.py
+2025-02-18 15:38:32,458 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_debugger_core.py.bak
+2025-02-18 15:38:33,055 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_debugger_core.py
+2025-02-18 15:38:36,988 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_debugger_reporter.py.bak
+2025-02-18 15:38:37,203 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_debugger_reporter.py
+2025-02-18 15:38:37,441 - INFO - error_code=None error_message='The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our help center at help.openai.com if you keep seeing this error. (Please include the request ID req_39f9b5fa09d7d3513906e514ccfa24f6 in your email.)' error_param=None error_type=server_error message='OpenAI API error received' stream_error=False
+2025-02-18 15:38:37,442 - ERROR - \u26a0 OpenAI API call failed (Attempt 1/3): The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our help center at help.openai.com if you keep seeing this error. (Please include the request ID req_39f9b5fa09d7d3513906e514ccfa24f6 in your email.) {
+  "error": {
+    "message": "The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our help center at help.openai.com if you keep seeing this error. (Please include the request ID req_39f9b5fa09d7d3513906e514ccfa24f6 in your email.)",
+    "type": "server_error",
+    "param": null,
+    "code": null
+  }
+} 500 {'error': {'message': 'The server had an error processing your request. Sorry about that! You can retry your request, or contact us through our help center at help.openai.com if you keep seeing this error. (Please include the request ID req_39f9b5fa09d7d3513906e514ccfa24f6 in your email.)', 'type': 'server_error', 'param': None, 'code': None}} {'Date': 'Tue, 18 Feb 2025 21:38:39 GMT', 'Content-Type': 'application/json', 'Content-Length': '369', 'Connection': 'keep-alive', 'access-control-expose-headers': 'X-Request-ID', 'openai-processing-ms': '81', 'x-ratelimit-limit-requests': '5000', 'x-ratelimit-limit-tokens': '40000', 'x-ratelimit-remaining-requests': '4999', 'x-ratelimit-remaining-tokens': '38988', 'x-ratelimit-reset-requests': '12ms', 'x-ratelimit-reset-tokens': '1.518s', 'x-request-id': 'req_39f9b5fa09d7d3513906e514ccfa24f6', 'strict-transport-security': 'max-age=31536000; includeSubDomains; preload', 'cf-cache-status': 'DYNAMIC', 'X-Content-Type-Options': 'nosniff', 'Server': 'cloudflare', 'CF-RAY': '91412a53de0816b5-IAH', 'alt-svc': 'h3=":443"; ma=86400'}
+2025-02-18 15:38:44,430 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_debugger_runner.py.bak
+2025-02-18 15:38:44,480 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_debugger_runner.py
+2025-02-18 15:38:50,451 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_debugging_strategy.py.bak
+2025-02-18 15:38:50,666 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_debugging_strategy.py
+2025-02-18 15:38:55,997 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_debug_agent_auto_fixer.py.bak
+2025-02-18 15:38:56,214 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_debug_agent_auto_fixer.py
+2025-02-18 15:39:01,405 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_debug_agent_utils.py.bak
+2025-02-18 15:39:01,612 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_debug_agent_utils.py
+2025-02-18 15:39:07,903 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_deepseek_model.py.bak
+2025-02-18 15:39:08,110 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_deepseek_model.py
+2025-02-18 15:39:11,987 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_dispatcher.py.bak
+2025-02-18 15:39:12,012 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_dispatcher.py
+2025-02-18 15:39:20,433 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_error_parser.py.bak
+2025-02-18 15:39:21,205 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_error_parser.py
+2025-02-18 15:39:24,392 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_journal_agent.py.bak
+2025-02-18 15:39:24,417 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_journal_agent.py
+2025-02-18 15:39:30,782 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_mistral_model.py.bak
+2025-02-18 15:39:30,994 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_mistral_model.py
+2025-02-18 15:39:36,564 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_openai_model.py.bak
+2025-02-18 15:39:37,042 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_openai_model.py
+2025-02-18 15:39:41,871 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_patch_tracking_manager.py.bak
+2025-02-18 15:39:42,198 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_patch_tracking_manager.py
+2025-02-18 15:39:47,008 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_project_context_analyzer.py.bak
+2025-02-18 15:39:47,802 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_project_context_analyzer.py
+2025-02-18 15:39:52,945 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_registry.py.bak
+2025-02-18 15:39:53,945 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_registry.py
+2025-02-18 15:39:59,211 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_report_manager.py.bak
+2025-02-18 15:39:59,238 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_report_manager.py
+2025-02-18 15:40:04,477 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_rollback_manager.py.bak
+2025-02-18 15:40:04,683 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_rollback_manager.py
+2025-02-18 15:40:09,724 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_test_retry_manager.py.bak
+2025-02-18 15:40:09,932 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_test_retry_manager.py
+2025-02-18 15:40:15,383 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\test_trading_agent.py.bak
+2025-02-18 15:40:16,437 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\tests\test_trading_agent.py
+2025-02-18 15:40:16,438 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\tests\__init__.py (init file)
+2025-02-18 15:40:16,438 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\tests\test_agents\__init__.py (init file)
+2025-02-18 15:40:16,438 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\tests\test_debugger\__init__.py (init file)
+2025-02-18 15:40:23,581 - INFO - \U0001f4c2 Backup saved to: D:/side_projects/Side-projects/ai_agent_project\backup\debugger_dashboard.py.bak
+2025-02-18 15:40:23,793 - INFO - \u2705 Updated: D:/side_projects/Side-projects/ai_agent_project\ui\debugger_dashboard.py
+2025-02-18 15:40:23,793 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\ui\__init__.py (init file)
+2025-02-18 15:40:23,794 - INFO - \U0001f6ab Skipping D:/side_projects/Side-projects/ai_agent_project\utils\__init__.py (init file)

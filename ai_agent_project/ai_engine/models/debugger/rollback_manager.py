@@ -1,3 +1,17 @@
+"""
+
+A Python module that defines RollbackManagerclass to automate the rollback and retry process for failed patches.
+This module also includes methods to backup and restore from backups for original files.
+
+Class RollbackManager:
+    This class represents a manager to control the rollback process of patches. 
+    It leverages two custom strategies: patch tracking and debugging, to manage 
+    the process of error recovery through reapplying patches.
+    
+    Attributes:
+        - patch_tracker: An instance of PatchTrackingManager,
+"""
+
 import os
 import json
 import logging
@@ -14,11 +28,10 @@ logger.setLevel(logging.DEBUG)
 MAX_PATCH_RETRIES = 3
 BACKUP_DIR = "rollback_backups"
 
-
 class RollbackManager:
     """
     Automates the rollback and retry process for failed patches.
-    
+
     🔹 How it Works:
       ✅ Re-applies **previously failed patches** before generating new AI fixes.
       ✅ If multiple failed patches exist, **tries different orders** before resorting to AI.
@@ -75,7 +88,7 @@ class RollbackManager:
                 logger.info(f"✅ Patch successfully applied for {error_signature} on retry.")
                 self.patch_tracker.record_successful_patch(error_signature, patch)
                 return True  # Stop if a patch works
-            
+
             # If patch fails again, restore from backup
             self.restore_backup(file_path)
             logger.warning(f"❌ Patch failed again for {error_signature}. Trying next one.")
@@ -94,7 +107,6 @@ class RollbackManager:
         for file in modified_files:
             self.restore_backup(file)
             logger.info(f"🔄 Rolled back changes in {file}.")
-
 
 if __name__ == "__main__":
     rollback_manager = RollbackManager()

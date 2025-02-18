@@ -1,3 +1,15 @@
+"""
+
+A class to manage the process of automated test retries, patching failed tests, and rolling back changes if necessary.
+
+This manager class handles various tasks related to automated test retries and patching. 
+The class tracks multiple failed patches per each error, and tries multiple AI-generated patches before rolling back. 
+Successful patches are stored in a learning database, and a history of failed patches is maintained for later review.
+
+Attributes:
+    MAX_PATCH_ATTEMPTS (int): Maximum number of AI-generated patch attempts
+"""
+
 import os
 import shutil
 import subprocess
@@ -10,11 +22,10 @@ from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManage
 logger = logging.getLogger("AutoFixManager")
 logger.setLevel(logging.DEBUG)
 
-
 class AutoFixManager:
     """
     Handles automated test retries, patching failed tests, and rollback if necessary.
-    
+
     Features:
     - Tracks multiple failed patches per error.
     - Attempts multiple AI-generated patches before rollback.
@@ -60,7 +71,7 @@ class AutoFixManager:
 
         # ✅ Convert bytes to string if necessary
         if isinstance(test_output, bytes):
-            test_output = test_output.decode("utf-8")  
+            test_output = test_output.decode("utf-8")
 
         for match in failure_pattern.findall(test_output):
             file, error_message = match
@@ -160,7 +171,6 @@ class AutoFixManager:
             if os.path.exists(backup_path):
                 shutil.copy(backup_path, file)
                 logger.info(f"🔄 Rolled back {file} from backup.")
-
 
 if __name__ == "__main__":
     manager = AutoFixManager()

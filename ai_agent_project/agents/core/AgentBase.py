@@ -1,3 +1,12 @@
+"""
+The `AgentBase` class is an abstract base class that forms the foundation for all AI agents. It dictates the structure and shared methods for logging, task execution, and lifecycle management. All subclasses must implement the abstract `solve_task` and `describe_capabilities` methods.
+
+The class has following methods:
+
+- `__init__(self, name: str, project_name: str)`: This method initializes the base agent with a name and project association.
+- `solve_task(self, task: str,
+"""
+
 from typing import Dict, Any, List
 from typing import Dict, List
 import logging

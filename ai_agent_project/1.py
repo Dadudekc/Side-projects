@@ -1,23 +1,55 @@
+"""
+
+This Python module is for generating and restoring docstrings for Python files in a project.
+
+It works by reading a JSON file (project_analysis.json) that contains analysis data of the project. Files lacking docstrings
+are identified. If there are missing docstrings, it checks if there are backup files present in a backup folder. If backups are 
+available, it restores the files from backup. If not, it calls an external script (docstring_generator.py) to generate a new 
+docstring
+"""
+
+import json
 import os
 
-base_path = "D:\\side_projects\\Side-projects\\ai_agent_project\\ai_engine\\models\\debugger"
-output_file = "debugger_files_summary.txt"
+# Path to the extracted project analysis
+ANALYSIS_JSON_PATH = "project_analysis.json"
+BACKUP_FOLDER = "backup"
 
-def extract_code_snippets():
-    with open(output_file, "w", encoding="utf-8") as out:
-        for root, _, files in os.walk(base_path):
-            for file in files:
-                if file.endswith(".py"):
-                    file_path = os.path.join(root, file)
-                    out.write(f"\n{'='*80}\n📌 {file_path}\n{'='*80}\n")
-                    try:
-                        with open(file_path, "r", encoding="utf-8") as f:
-                            lines = f.readlines()
-                            snippet = "".join(lines[:50])  # First 50 lines for context
-                            out.write(snippet + "\n")
-                    except Exception as e:
-                        out.write(f"Error reading {file}: {e}\n")
+# Load analysis results
+with open(ANALYSIS_JSON_PATH, "r", encoding="utf-8") as f:
+    analysis_data = json.load(f)
 
-if __name__ == "__main__":
-    extract_code_snippets()
-    print(f"✅ Debugger file summaries saved to: {output_file}")
+# Identify files where docstrings are missing
+missing_docstring_files = [
+    file for file, details in analysis_data["modules"].items()
+    if details.get("purpose") == "No docstring found."
+]
+
+# Identify backups to restore (if necessary)
+backup_files = {file: os.path.join(BACKUP_FOLDER, f"{file}.bak") for file in missing_docstring_files}
+
+# Function to restore from backup (if needed)
+def restore_backup(file_path, backup_path):
+    if os.path.exists(backup_path):
+        os.remove(file_path)  # Remove the current incorrect file
+        os.rename(backup_path, file_path)  # Restore backup
+        print(f"Restored backup for: {file_path}")
+    else:
+        print(f"No backup found for: {file_path}")
+
+# Restore missing files from backups if available
+for file, backup in backup_files.items():
+    restore_backup(file, backup)
+
+# Re-run the OpenAI docstring generation ONLY on the missing files
+def generate_docstrings_for_files(files):
+    for file in files:
+        print(f"Generating docstring for: {file}")
+        # Run the OpenAI docstring generation process for this file
+        os.system(f'python docstring_generator.py {file}')  # Adjust with your actual script name
+
+# Run docstring regeneration on missing files
+if missing_docstring_files:
+    generate_docstrings_for_files(missing_docstring_files)
+else:
+    print("All files already have docstrings. No action needed.")

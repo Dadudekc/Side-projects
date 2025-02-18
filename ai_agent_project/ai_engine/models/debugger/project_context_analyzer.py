@@ -1,3 +1,21 @@
+"""
+
+This module provides a class, ProjectContextAnalyzer, to analyse a Python project and its modules and their dependencies. 
+The module root directory is passed as an argument during instantiation. The module provides the functionality to 
+scan directories, extract code context, map dependencies and save the analysis results.
+
+Classes:
+    ProjectContextAnalyzer
+    
+Functions:
+    analyze_project(project_root: str = None) -> Dict[str, Any]
+
+Usage:
+
+    from project_analyzer import analyze_project
+    project_data = analyze_project
+"""
+
 import os
 import json
 import logging
@@ -27,7 +45,7 @@ class ProjectContextAnalyzer:
             abs_path = os.path.join(self.project_root, file_path)
             with open(abs_path, "r", encoding="utf-8") as f:
                 lines = f.readlines()
-            
+
             # Extract the first docstring (if present)
             docstring = None
             if lines and lines[0].startswith('"""'):
@@ -72,7 +90,6 @@ class ProjectContextAnalyzer:
         self.save_analysis()
         logger.info("✅ Project analysis completed!")
 
-
 # **Wrapper Function to Run Analysis Without Instantiating the Class**
 def analyze_project(project_root: str = None) -> Dict[str, Any]:
     """
@@ -84,7 +101,6 @@ def analyze_project(project_root: str = None) -> Dict[str, Any]:
     analyzer = ProjectContextAnalyzer(project_root)
     analyzer.analyze_project()
     return analyzer.context_data  # Returns analysis result as a dictionary
-
 
 # **Example Usage**
 if __name__ == "__main__":

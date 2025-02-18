@@ -1,10 +1,14 @@
 """
-agents/core/utilities/ai_client.py
 
-AIClient class that can:
-1. Send prompts to an AI service (real or simulated).
-2. Evaluate a patch with a score and reason.
-3. Refine a patch if possible.
+This module provides the AIClient class which includes multiple AI-based methods to be used in the debugging workflow such as sending prompts to a real or simulated AI service, evaluating a code patch for correctness, and automatically improving a patch.
+
+The AI Client class uses two important configurations:
+- The API endpoint for a real AI service.
+- An API key for authenticating with a real AI service.
+
+These configurations are optional and if no real endpoint is configured, it returns a simulated response.
+
+The methods included in
 """
 
 import logging

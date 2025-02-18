@@ -1,3 +1,14 @@
+"""
+
+A script that provides a Command Line Interface (CLI) for managing and executing debugging operations. 
+The DebuggerCLI class manages the loading of AI debugging performance reports, displaying AI debugging 
+performance, running the debugger, showing logs, rolling back fixes and fixing import errors. 
+Command-line arguments are parsed to execute various commands. 
+The following command line parameters are parsed: 
+--debug, --logs, --rollback, --performance, --fix-imports, --file, and --verbose.
+
+"""
+
 import os
 import json
 import argparse

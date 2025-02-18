@@ -1,3 +1,10 @@
+"""
+
+This module provides a MemoryManager class that helps in managing both short-term and long-term memory for AI agents. The short-term memory is a volatile storage that tracks recent interactions while the long-term memory is a persistent storage that uses text similarity for data retrieval.
+
+The MemoryManager class includes methods to load and save long-term memory to and from a JSON file, preprocesses text into n-grams for better text similarity retrieval, store and retrieve key-value pairs in short-term memory, store a key-value
+"""
+
 import os
 import json
 import logging

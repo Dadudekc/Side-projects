@@ -1,3 +1,12 @@
+"""
+
+This snippet of code includes a class named PatchTrackingManager that manages AI debugging patch tracking. The class includes methods to load and save patch data, handle successful and failed patches, track import fixes, handle AI feedback, track AI debugging performance, and review and rollback fixes.
+
+The patch storage, including failed and successful patches, import fixes, AI feedback, and performance data, is stored in JSON files. Debugging events are logged.
+
+There is a demonstration of how the PatchTrackingManager is used,
+"""
+
 import os
 import json
 import logging

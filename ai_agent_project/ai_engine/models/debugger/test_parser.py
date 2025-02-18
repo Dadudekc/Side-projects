@@ -1,8 +1,21 @@
+"""
+
+A TestParser class used to parse test failures from pytest output.
+
+Attributes:
+    None
+
+Methods:
+    parse_simple_failures(test_output: str) -> List[Dict[str, str]]: 
+    Extracts failure details from simple pytest output. It gets the test output as an 
+    input argument, split the lines and checks if "FAILED" is in line. If "FAILED" 
+    is found, it splits the line again with " - ". If the length of the splitted
+"""
+
 import logging
 from typing import List, Dict
 
 logger = logging.getLogger("TestParser")
-
 
 class TestParser:
     """

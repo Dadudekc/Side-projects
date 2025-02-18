@@ -1,3 +1,21 @@
+"""
+
+A module for testing the AgentRegistry class from the agents.core.agent_registry module.
+
+This module includes a unit test suite composed by the class TestAgentRegistry which tests functionalities of
+the AgentRegistry class.
+
+MockAgent class:
+    A mock class used for creating fake agents in the context of the tests.
+
+TestAgentRegistry class:
+    A subclass of the unittest.TestCase, tailored for testing the AgentRegistry class.
+
+TestAgentRegistry methods:
+    - setUp: prepares the requirements before each test.
+    -
+"""
+
 import unittest
 from unittest.mock import MagicMock, patch
 import importlib

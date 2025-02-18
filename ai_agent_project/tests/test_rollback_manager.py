@@ -1,3 +1,13 @@
+"""
+
+This module provides unit tests for the RollbackManager in the 'ai_engine.models.debugger' package.
+It includes tests to validate the following behaviour: 
+- Rollback is triggered when necessary, particularly after multiple failed patch attempts. 
+- Previously failed patches can be successfully retried before the system falls back to AI. 
+- The system stops retrying to apply patches after reaching the max retry attempts limit.
+These tests use the pytest framework and mock objects from the unittest.mock package to simulate components
+"""
+
 import logging
 from unittest.mock import MagicMock, patch
 

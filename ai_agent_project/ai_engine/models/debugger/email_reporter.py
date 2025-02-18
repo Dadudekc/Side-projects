@@ -1,3 +1,16 @@
+"""
+
+A Python class for sending email notifications for test failures through SMTP.
+
+This class encapsulates the process of creating and sending an email using the SMTP protocol.
+A logger called "EmailReporter" is used for error reporting.
+
+Class Attributes:
+    smtp_server (str): The SMTP server to connect to. Defaults to "smtp.gmail.com".
+    smtp_port (int): The port on which to connect to the SMTP server. Defaults to 587 which is for TLS.
+    sender_email (str): The
+"""
+
 import smtplib
 import logging
 from email.mime.text import MIMEText
@@ -7,11 +20,11 @@ logger = logging.getLogger("EmailReporter")
 
 class EmailReporter:
     """Handles sending email notifications for test failures."""
-    
+
     def __init__(self, smtp_server="smtp.gmail.com", smtp_port=587, sender_email=None, sender_password=None, recipient_email=None):
         """
         Initializes EmailReporter with SMTP settings.
-        
+
         Args:
             smtp_server (str): SMTP server address (default: Gmail SMTP).
             smtp_port (int): SMTP port number (default: 587 for TLS).
@@ -28,7 +41,7 @@ class EmailReporter:
     def send_email(self, subject, message):
         """
         Sends an email notification.
-        
+
         Args:
             subject (str): Email subject.
             message (str): Email body content.
@@ -52,7 +65,6 @@ class EmailReporter:
                 server.sendmail(self.sender_email, self.recipient_email, msg.as_string())
 
             logger.info(f"Email sent successfully to {self.recipient_email}")
-        
+
         except Exception as e:
             logger.error(f"Failed to send email: {e}")
-

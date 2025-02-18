@@ -1,3 +1,16 @@
+"""
+
+Unit test for the AIPatchRetryManager class in the ai_engine module.
+
+This class contains three methods, each one testing a different outcome for the retry_failed_patches method of the 
+AIPatchRetryManager class. The outcomes include: 
+- success, in which the patch is modified and applied successfully, 
+- failure, in which the patch is modified but fails to be applied, and 
+- low confidence, where the confidence score is too low for the patch to be applied.
+
+The
+"""
+
 import unittest
 from unittest.mock import MagicMock, patch
 

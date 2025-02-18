@@ -1,3 +1,14 @@
+"""
+
+This Python module allows for tracking of debugging patches added to AI models. The main class, PatchTrackingManager, tracks both failed and successful patches, import fixes, AI feedback, and AI performance analytics. 
+
+The module includes numerous methods such as:
+- __init__: initializes patch tracking with persistent storage
+- _load_patch_data: loads JSON patch data in a dictionary format
+- _save_patch_data: writes patch tracking data to a JSON file
+- record_failed_patch: saves details of a
+"""
+
 import os
 import json
 import logging
@@ -142,7 +153,6 @@ class PatchTrackingManager:
         else:
             logger.info(f"⚠️ No fix found to roll back for {error_signature}.")
             return None
-
 
 if __name__ == "__main__":
     tracker = PatchTrackingManager()

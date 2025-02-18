@@ -1,3 +1,15 @@
+"""
+
+This module includes tests for the ErrorParser class. Specifically, it tests whether:
+
+    - ErrorParser can correctly extract failures from valid pytest output (test_parse_test_failures_valid).
+    - ErrorParser can handle an empty pytest output gracefully (test_parse_test_failures_empty).
+    - ErrorParser can correctly identify output with no failures (test_parse_test_failures_no_failures).
+    - ErrorParser can handle pytest output with unexpected formatting (test_parse_test_failures_malformed).
+
+Fixtures
+"""
+
 import logging
 
 import pytest

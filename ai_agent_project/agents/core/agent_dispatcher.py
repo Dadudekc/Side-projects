@@ -1,3 +1,15 @@
+"""
+
+This Python script defines an AgentDispatcher class that manages and validates multiple AI agents, dispatches tasks to these agents, and provides the responses serialized as JSON. 
+
+The AI agents include: Professor Synapse Agent, GPT Forecaster, Memory Engine, and Graph Memory. 
+
+AgentDispatcher includes the following methods:
+- __init__: Initializes the AgentDispatcher and loads registered agents.
+- _validate_agents: Checks if all registered agents inherit from AgentBase.
+- dispatch_task: Receives a specific agent
+"""
+
 import logging
 import json
 from typing import Dict, Any

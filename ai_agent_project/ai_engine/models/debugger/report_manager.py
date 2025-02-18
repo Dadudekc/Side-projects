@@ -1,3 +1,9 @@
+"""
+The Python class `ReportManager` manages structured reports for debugging, test results, and analytics. It has the ability to save and load JSON-formatted report files, list and search for existing reports, automatically delete outdated reports, and log events with different levels of severity. It also handles log rotation to avoid log files from growing too large and causing issues with the filesystem. 
+
+Its methods include `save_report`, which saves a structured JSON report with automatic versioning; `load_report`, which loads a
+"""
+
 import json
 import logging
 import os
@@ -64,14 +70,14 @@ class ReportManager:
     def save_report(self, base_filename: str, data: Dict):
         """
         Saves a structured JSON report with automatic versioning.
-        
+
         Args:
             base_filename (str): Name of the report without extension.
             data (Dict): The report data.
         """
         filename = self._generate_filename(base_filename)
         filepath = os.path.join(self.REPORTS_DIR, filename)
-        
+
         try:
             with open(filepath, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4)
@@ -82,19 +88,19 @@ class ReportManager:
     def load_report(self, filename: str) -> Optional[Dict]:
         """
         Loads a JSON report by filename.
-        
+
         Args:
             filename (str): The report filename.
-            
+
         Returns:
             Optional[Dict]: The report data if found, else None.
         """
         filepath = os.path.join(self.REPORTS_DIR, filename)
-        
+
         if not os.path.exists(filepath):
             self.logger.warning(f"⚠️ Report not found: {filename}")
             return None
-        
+
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 return json.load(f)
@@ -102,13 +108,13 @@ class ReportManager:
             self.logger.error(f"❌ Error loading report {filename}: Invalid JSON - {e}")
         except Exception as e:
             self.logger.error(f"❌ Unexpected error loading report {filename}: {e}")
-        
+
         return None
 
     def list_reports(self) -> List[str]:
         """
         Returns a list of all available reports.
-        
+
         Returns:
             List[str]: List of report filenames.
         """
@@ -119,10 +125,10 @@ class ReportManager:
     def search_reports(self, keyword: str) -> List[str]:
         """
         Searches reports for a specific keyword in the filename or content.
-        
+
         Args:
             keyword (str): The keyword to search for.
-            
+
         Returns:
             List[str]: Filenames of matching reports.
         """
@@ -141,7 +147,7 @@ class ReportManager:
     def delete_old_reports(self, days: int = 30):
         """
         Deletes reports older than a specified number of days.
-        
+
         Args:
             days (int): Number of days before reports are considered old.
         """
@@ -159,7 +165,7 @@ class ReportManager:
     def log_entry(self, message: str, level="info"):
         """
         Logs a structured message into the report log file.
-        
+
         Args:
             message (str): Log message.
             level (str): Log level ('info', 'warning', 'error', 'critical').
@@ -171,7 +177,6 @@ class ReportManager:
             "critical": self.logger.critical,
         }
         log_methods.get(level, self.logger.info)(message)
-
 
 if __name__ == "__main__":
     manager = ReportManager()

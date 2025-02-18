@@ -1,0 +1,45 @@
+import json
+import os
+
+# Path to the extracted project analysis
+ANALYSIS_JSON_PATH = "project_analysis.json"
+BACKUP_FOLDER = "backup"
+
+# Load analysis results
+with open(ANALYSIS_JSON_PATH, "r", encoding="utf-8") as f:
+    analysis_data = json.load(f)
+
+# Identify files where docstrings are missing
+missing_docstring_files = [
+    file for file, details in analysis_data["modules"].items()
+    if details.get("purpose") == "No docstring found."
+]
+
+# Identify backups to restore (if necessary)
+backup_files = {file: os.path.join(BACKUP_FOLDER, f"{file}.bak") for file in missing_docstring_files}
+
+# Function to restore from backup (if needed)
+def restore_backup(file_path, backup_path):
+    if os.path.exists(backup_path):
+        os.remove(file_path)  # Remove the current incorrect file
+        os.rename(backup_path, file_path)  # Restore backup
+        print(f"Restored backup for: {file_path}")
+    else:
+        print(f"No backup found for: {file_path}")
+
+# Restore missing files from backups if available
+for file, backup in backup_files.items():
+    restore_backup(file, backup)
+
+# Re-run the OpenAI docstring generation ONLY on the missing files
+def generate_docstrings_for_files(files):
+    for file in files:
+        print(f"Generating docstring for: {file}")
+        # Run the OpenAI docstring generation process for this file
+        os.system(f'python docstring_generator.py {file}')  # Adjust with your actual script name
+
+# Run docstring regeneration on missing files
+if missing_docstring_files:
+    generate_docstrings_for_files(missing_docstring_files)
+else:
+    print("All files already have docstrings. No action needed.")

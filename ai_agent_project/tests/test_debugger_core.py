@@ -1,3 +1,15 @@
+"""
+
+This code includes a set of unit tests for the DebugAgent class in the ai_engine.models.debugger.debugger_core module.
+
+Functions:
+
+- test_analyze_error: Tests that the analyze_error method correctly includes the provided error and detail in its return.
+- test_run_diagnostics: Tests that the run_diagnostics method includes the expected outputs.
+- test_describe_capabilities: Tests that the describe_capabilities method includes "can run tests" in its capabilities.
+- test_learning_db: Tests that the _
+"""
+
 import os
 import tempfile
 import json

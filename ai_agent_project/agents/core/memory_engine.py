@@ -1,3 +1,23 @@
+"""
+
+A class used to represent the Memory Engine which stores user interactions to enable auto-learning. 
+
+Attributes
+----------
+memory : dict
+    A dictionary storing user queries as well as their corresponding responses. 
+
+Methods
+-------
+load_memory() -> dict: 
+    Loads user interactions from the JSON file if it exists, else it returns an empty list. 
+
+save_memory(): 
+    Saves changes made to the memory (user interactions) into the JSON file. 
+
+store_interaction(user_query: str, response:
+"""
+
 import json
 import os
 

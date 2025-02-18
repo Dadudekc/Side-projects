@@ -1,3 +1,14 @@
+"""
+
+This module defines a Graphical User Interface (GUI) for an AI Debugging System. The GUI built with PyQt5 features a 
+debugger dashboard that reports on debugging metrics. It provides patch success rate, import error tracking, debugging 
+report visualization, and also supports the Undo function for fixes.
+
+Classes:
+    DebuggerDashboard: Class representing the main GUI for the AI Debugging System. The interface provides a real-time
+    summary of debugging activities as well as the ability to address import issues
+"""
+
 import sys
 import json
 import os

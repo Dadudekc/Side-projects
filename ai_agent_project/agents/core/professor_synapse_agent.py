@@ -1,3 +1,16 @@
+"""
+
+This module defines the ProfessorSynapseAgent class which is an extension of the AgentBase class defined in Core. 
+
+This AI Agent, Professor Synapse, evolves through learning, forecasting, and knowledge-based reasoning. 
+
+Notably, the Professor Synapse Agent can perform various tasks related to reasoning, forecasting, and collaboration.
+
+Functions:
+    - describe_capabilities() -> str: Returns a description of the agent's responsibilities.
+    - respond(user_input: str) -> str: Processes the query and generates
+"""
+
 import json
 import os
 import requests

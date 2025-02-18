@@ -1,3 +1,9 @@
+"""
+This Python code defines a class named 'OpenAIModel' which acts as a wrapper for the OpenAI GPT-4 model. The class generates debugging patches using the OpenAI GPT-4 Turbo and validates the generated patches before applying them. It also keeps track of the performance of AI settings that generate these patches. The class provides methods to load and save performance data, record the AI performance, generate patch suggestions with retries, and validate the generated patches. 
+
+The code further initializes a
+"""
+
 import os
 import openai
 import logging
@@ -12,7 +18,6 @@ logger.setLevel(logging.DEBUG)
 TRACKER_DIR = "tracking_data"
 os.makedirs(TRACKER_DIR, exist_ok=True)
 AI_PERFORMANCE_TRACKER_FILE = os.path.join(TRACKER_DIR, "ai_performance.json")
-
 
 class OpenAIModel:
     """
@@ -115,7 +120,7 @@ class OpenAIModel:
         for attempt in range(self.MAX_RETRIES + 1):
             modified_prompt = self._modify_prompt(prompt, attempt) if attempt > 0 else prompt
             patch = self._generate_with_openai(modified_prompt)
-            
+
             if patch:  # ✅ Ensure we return a valid patch
                 logger.info(f"✅ Patch generated successfully on attempt {attempt + 1}")
                 return patch, "OpenAI"
@@ -138,7 +143,7 @@ class OpenAIModel:
         if not self.api_key:
             logger.error("❌ OpenAI API key not set. Skipping GPT-4 Turbo call.")
             return None
-        
+
         try:
             response = openai.ChatCompletion.create(
                 model="gpt-4-turbo",

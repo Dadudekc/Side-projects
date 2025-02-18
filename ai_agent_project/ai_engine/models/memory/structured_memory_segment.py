@@ -1,3 +1,15 @@
+"""
+
+A Python class that represents a structured memory segment for storage of text, metadata, tags, and embeddings
+to be utilized for advanced retrieval or classification. This class also provides a representation function
+to produce a string representation of the StructuredMemorySegment instance in a developer-friendly format.
+
+Attributes:
+    text (str): The main textual content of the memory segment.
+    metadata (dict, optional): Additional descriptive information about the memory segment. Defaults to an empty dictionary.
+    tags (list, optional
+"""
+
 import logging
 from typing import Any, Dict, List, Optional
 

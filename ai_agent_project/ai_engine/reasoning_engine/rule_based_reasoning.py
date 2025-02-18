@@ -1,3 +1,11 @@
+"""
+The RuleBasedReasoning class is an internal rule-based reasoning engine that applies predefined logic rules. It can detect cause-effect patterns, use conditional reasoning and can be extended with additional rules. The class has the following methods:
+
+-   `__init__()`: Initialises the logger using the class name and sets up rules for processing.
+-   `reason(prompt: str) -> str`: This method processes the input prompt using pattern-based rules.
+-   `reason_cause_effect(cause: str,
+"""
+
 import logging
 import re
 

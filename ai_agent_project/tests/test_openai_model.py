@@ -1,3 +1,12 @@
+"""
+
+This module contains the unit test cases for the OpenAIModel class in the 'ai_engine.models.openai_model' module.
+
+During the setup for the test cases, it ensures the existence of the AI performance tracking file and prepares an instance 
+of the OpenAIModel for testing. If the tracking file doesn't exist, it would create it and log an empty dictionary. If it 
+exists but either empty or corrupt, it would reset it. The AI performance tracking file is cleaned up or removed
+"""
+
 import json
 import os
 import unittest
@@ -113,4 +122,3 @@ class TestOpenAIModel(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

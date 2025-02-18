@@ -1,3 +1,13 @@
+"""
+
+This module consists of a DebuggerLogger class which is designed to log debugging attempts including patch attempts, failures and successes.
+The logs are stored in memory as well as appended to a log file. 
+
+The DebuggerLogger has the following methods:
+- log_attempt: This method logs a single debugging attempt by accepting failure details, a patch description, and a success indicator. The log is then added to the in-memory logs and written to the log file.
+- _write_log: This is a private method
+"""
+
 import os
 import json
 import logging
@@ -12,7 +22,7 @@ LOG_FILE = "debugger_attempts.log"
 class DebuggerLogger:
     """
     Logs debugging attempts including patch attempts, failures, and successes.
-    
+
     Logs are stored in-memory and appended to a log file.
     """
 
@@ -22,7 +32,7 @@ class DebuggerLogger:
     def log_attempt(self, failure: Dict[str, str], patch_description: str, success: bool):
         """
         Logs a debugging attempt.
-        
+
         Args:
             failure (Dict[str, str]): Dictionary containing details about the failure.
                 Expected keys: "file", "error".

@@ -1,3 +1,12 @@
+"""
+
+This module contains the unit tests for the ReportManager class which is used for managing debugging reports in an AI engine. 
+
+The test suite includes functions to test the creation, load, deletion and listing of debug reports. There are also function to test for deleting old reports based on the number of days specified and to search reports by specified keyword.
+
+The setUp method is responsible for creating a ReportManager instance along with dummy report content for testing. The tearDown method cleans up the generated report files and releases their
+"""
+
 import os
 import json
 import unittest

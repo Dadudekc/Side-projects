@@ -1,8 +1,10 @@
 """
-tests/test_ai_rollback_analysis.py
 
-Pytest-based tests for AIRollbackAnalysis.
+This script contains test scenarios for the rollback analysis of an AI. It tests the correct storage and tracking of patch history. It also simluates scenarios where an AI evaluates patches,
+classifying 'refinable', 'bad' and 'uncertain' patches. Test scenarios also include if a patch could successfully be refined or moved to human review. It also checks scenarios where no patches were found for refinement.
+Additionally, it verifies if refinement process completed successfully or not. To isolate scenarios, the
 """
+
 import json
 import os
 import pytest

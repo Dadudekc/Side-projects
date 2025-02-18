@@ -1,3 +1,11 @@
+"""
+
+A module to dispatch tasks to multiple specialized AI agents. It provides a way to manage and validate dynamic task assignment among various agent subclasses. These tasks are dispatched to the requested agent and ensures structured task execution.
+In case of any exception, it is also handled and the appropriate response is sent.
+Using this module, Agents can be effectively managed and utilized. The module also provides easy logging of various activities during the execution of tasks assigned to various agents.
+
+"""
+
 import logging
 import json
 from typing import Dict, Any

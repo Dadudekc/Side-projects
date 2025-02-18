@@ -1,3 +1,15 @@
+"""
+
+A module that contains a unittest class, TestReportManager, to test the functionality of ReportManager.
+
+The class contains set up and tear down methods that sets up the testing environment and cleans up after every test.
+
+Test methods included in the class:
+- test_save_report: Verifies that a JSON report saved using the class 'ReportManager'.
+- test_load_report: Verifies that a report saved using the class 'ReportManager' is loadable and its contents are as expected.
+- test_list
+"""
+
 import os
 import json
 import unittest

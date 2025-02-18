@@ -1,3 +1,14 @@
+"""
+
+This module consists of two functions to work with the tests in your project.
+
+The module has the following functions:
+
+1. `find_tests_directory(start_path=".")`: This function is used to find the directory named 'tests'. It starts its search from the current directory or any other directory specified. The function returns the absolute path of the test directory if it's found and return None if it's not.
+
+2. `extract_passing_tests()`: This function is used to run pytest on all
+"""
+
 import os
 import subprocess
 import re

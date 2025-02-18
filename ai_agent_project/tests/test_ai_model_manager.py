@@ -1,3 +1,17 @@
+"""
+
+This module contains unit tests for the AIModelManager class. 
+It tests, among other things:
+
+- Setting up an instance of AIModelManager for testing purposes
+- Making calls to local Ollama model and OpenAI GPT-4 as a fallback
+- The generation of patches with model priority and confidence tracking
+- The correct formatting of debugging prompts
+- The generation of error signatures.
+
+Test cases include class setup, calls to different AI models, patch generation with model priority and confidence
+"""
+
 import unittest
 from unittest.mock import MagicMock, patch
 

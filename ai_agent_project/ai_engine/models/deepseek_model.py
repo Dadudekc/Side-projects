@@ -1,3 +1,9 @@
+"""
+This Python code represents a class named 'DeepSeekModel' which serves as a model wrapper for generating debugging patches. It uses a DeepSeek AI model, either locally or via a Command Line Interface (CLI), and if DeepSeek fails, it falls back to use OpenAI GPT-4. The debugging patches are generated, retried if failed (with slight modifications), and are validated before applying them. The class also keeps a record of the performances of the AI models it used. 
+
+Major
+"""
+
 import os
 import subprocess
 import logging

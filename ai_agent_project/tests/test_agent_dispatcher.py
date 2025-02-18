@@ -1,3 +1,19 @@
+"""
+
+This module contains the unittests for the AgentDispatcher class. 
+
+Tests include checking if the dispatcher initializes with/without agents, if it dispatches task to a valid/not valid agent,
+if it performs dispatching for a non-existent agent and if it handles exceptions during task execution.
+
+Imports necessary utilities and models for the test.
+
+Classes:
+    TestAgentDispatcher: Unit tests for the AgentDispatcher.
+
+Methods:
+    test_initialization_with_agents: Test case to check if the dispatcher initializes the agents correctly
+"""
+
 import logging
 import unittest
 from unittest.mock import MagicMock, patch

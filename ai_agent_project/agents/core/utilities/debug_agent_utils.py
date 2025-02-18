@@ -1,3 +1,10 @@
+"""
+
+This Python module provides a comprehensive set of utilities for advanced debugging and AI-driven fixes. These utilities include patch/diff using unidiff, partial file merges, code chunking for DeepSeek, agent queuing and rollback systems using Git.
+
+The module uses functionalities from `logging`, `subprocess`, `re`, `os`, `unidiff`, `tqdm`, and the `openai` library. The `DebugAgentUtils` class encapsulated within the module contains several static
+"""
+
 from typing import Dict, Any, List
 import logging
 import subprocess
@@ -27,7 +34,7 @@ class DebugAgentUtils:
     @staticmethod
     def deepseek_chunk_code(file_content: str, max_chars: int = 1000) -> List[str]:
         """
-        Splits file content into smaller chunks to feed into an LLM or 
+        Splits file content into smaller chunks to feed into an LLM or
         DeepSeek for advanced contextual analysis.
         """
         chunks = []

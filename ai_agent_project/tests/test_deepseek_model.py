@@ -1,3 +1,13 @@
+"""
+
+This module is for testing the DeepSeekModel class. The DeepSeekModel class is a model class for interacting with AI debugging engine using DeepSeek AI. The following functionalities are tested in this module:
+
+1. Test if the DeepSeek AI and OpenAI GPT-4 are able to accurately generate patch data.
+2. Test if the formatting of debugging prompts is correct.
+3. Test whether the prompt can be properly modified for AI retries.
+4. Check if the patch validation happens accurately based
+"""
+
 import json
 import os
 import random

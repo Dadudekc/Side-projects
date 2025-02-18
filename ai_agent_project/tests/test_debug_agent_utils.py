@@ -1,3 +1,14 @@
+"""
+
+This module contains unit tests for the DebugAgentUtils class. 
+
+It includes test cases for the following methods: 
+- deepseek_chunk_code: This method is tested to ensure correct chunking of code into smaller pieces. 
+- run_deepseek_ollama_analysis: This method tests a fallback system using Ollama and DeepSeek. 
+- parse_diff_suggestion: The parse_diff_suggestion method test ensures correct parsing of a patch. 
+- rollback_changes: Tests whether the rollback_changes
+"""
+
 import os
 import unittest
 from unittest.mock import MagicMock, patch

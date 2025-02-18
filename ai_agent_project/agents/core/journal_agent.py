@@ -1,3 +1,17 @@
+"""
+
+JournalAgent is derived from the AgentBase class and provides the functionality for managing journal entries.
+Each journal entry is saved as a JSON file that contains the title, content, timestamp of creation and associated tags.
+The JournalAgent can create new journal entries, retrieve existing ones, update their content, delete them, and list all
+journal entries in the directory where they are stored.
+
+    Attributes:
+        journal_directory (str): The directory where journal entries will be stored.
+
+    Methods:
+        __init
+"""
+
 from typing import Dict, Any, List
 from typing import Dict, List
 # agents/core/JournalAgent.py

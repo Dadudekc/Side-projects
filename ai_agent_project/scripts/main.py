@@ -1,3 +1,15 @@
+"""
+
+This is the main module of the Overnight AI Debugger. It starts by running an immediate debugging cycle, 
+and then schedules future cycles (for example, on an hourly basis). 
+
+It uses the logging module to track its activities and schedule module to handle the scheduling of future debugging cycles.
+The actual debugging is handled by the overnight_debugging function from the debugger_core module, 
+which uses the DebuggingStrategy provided.
+
+The main function handles the creation and configuration of a logging object with StreamHandler.
+"""
+
 #!/usr/bin/env python
 """
 Main module for the Overnight AI Debugger.

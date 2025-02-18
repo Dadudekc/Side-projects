@@ -1,3 +1,16 @@
+"""
+
+This module contains unit tests for the AIConfidenceManager class.
+
+The AIConfidenceManager class is designed to manage the confidence scores associated with different patches for issues in code. 
+
+The tests include setting up and tearing down instances of the AIConfidenceManager, assigning and storing confidence scores, 
+handling high historical success rates, retrieving the best high-confidence patches and deciding whether to suggest a reattempt 
+for patches with improved confidence scores.
+
+For every test, if any file named AI_CONFIDENCE
+"""
+
 import json
 import os
 import unittest

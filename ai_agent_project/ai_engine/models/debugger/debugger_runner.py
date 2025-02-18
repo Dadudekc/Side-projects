@@ -1,26 +1,60 @@
+"""
+debugger_runner.py
+
+A Python module that integrates testing and debugging using pytest, ErrorParser, and AutoFixer.
+
+Key Features:
+- Runs automated tests using pytest.
+- Parses test failures with ErrorParser.
+- Applies automated fixes using AutoFixer.
+- Retries test runs up to a configurable limit.
+- Uses structured logging to track debugging progress.
+
+Classes:
+    DebuggerRunner: Manages test execution, failure analysis, fix application, and retry attempts.
+
+DebuggerRunner Methods:
+    - __init__: Initializes ErrorParser and AutoFixer.
+    - run_tests: Runs all tests using pytest and returns the output.
+    - retry_tests: Retries failed tests with automated fixes up to a max retry count.
+"""
+
 import logging
 import subprocess
 import os
 from ai_engine.models.debugger.error_parser import ErrorParser
 from ai_engine.models.debugger.auto_fixer import AutoFixer
 
+# Configure logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 class DebuggerRunner:
     """
-    Coordinates running tests, parsing failures, applying fixes, and retrying until success.
+    Coordinates the testing and debugging process by:
+      - Running tests via pytest.
+      - Analyzing failures using ErrorParser.
+      - Attempting automated fixes with AutoFixer.
+      - Retrying tests until they pass or max retries are reached.
     """
 
     def __init__(self):
+        """
+        Initializes the DebuggerRunner by setting up:
+          - ErrorParser for identifying failed tests and their causes.
+          - AutoFixer for applying automated code patches.
+        """
         self.parser = ErrorParser()
         self.fixer = AutoFixer()
 
     def run_tests(self) -> str:
         """
-        Runs all tests using pytest and returns the combined output.
+        Runs all tests using pytest and returns the combined output (stdout + stderr).
+
+        Returns:
+            str: The output of the pytest execution.
         """
-        logger.info("🚀 Running pytest to execute tests...")
+        logger.info("🚀 Running tests with pytest...")
         try:
             result = subprocess.run(
                 ["pytest", "tests", "--maxfail=5", "--tb=short", "-q"],
@@ -28,38 +62,51 @@ class DebuggerRunner:
             )
             return result.stdout + result.stderr
         except Exception as e:
-            logger.error(f"Failed to run tests: {e}")
+            logger.error(f"❌ Failed to execute tests: {e}")
             return f"Error: {e}"
 
     def retry_tests(self, max_retries: int = 3) -> bool:
         """
-        Retries tests up to max_retries, applying fixes as needed.
+        Runs tests and retries failed ones up to a maximum number of attempts,
+        applying automated fixes as necessary.
+
+        Args:
+            max_retries (int): The maximum number of retry attempts.
+
+        Returns:
+            bool: True if all tests pass after retries, False otherwise.
         """
         for attempt in range(1, max_retries + 1):
-            logger.info(f"🔄 Attempt {attempt} of {max_retries}")
+            logger.info(f"🔄 Test run attempt {attempt} of {max_retries}")
             output = self.run_tests()
             failures = self.parser.parse_test_failures(output)
+
             if not failures:
                 logger.info("✅ All tests passed!")
-                return True
-            logger.info(f"📉 {len(failures)} tests failed. Attempting to fix...")
+                return True  # Exit early if no failures
+
+            logger.info(f"📉 {len(failures)} test(s) failed. Attempting to apply fixes...")
+
             any_fixed = False
             for failure in failures:
                 if self.fixer.apply_fix(failure):
                     any_fixed = True
-                    logger.info(f"✅ Fix applied for {failure['file']}")
+                    logger.info(f"✅ Successfully applied fix for {failure['file']}")
                 else:
-                    logger.error(f"❌ Could not fix {failure['file']}")
+                    logger.warning(f"⚠️ No fix available for {failure['file']}")
+
             if not any_fixed:
-                logger.error("No fixes were applied in this round.")
+                logger.error("❌ No fixes were applied in this attempt. Aborting retry process.")
                 return False
-        logger.error("Max retries reached; tests still failing.")
+
+        logger.error("❌ Max retries reached. Some tests are still failing.")
         return False
 
 if __name__ == "__main__":
     runner = DebuggerRunner()
     success = runner.retry_tests()
+
     if success:
-        logger.info("All tests passed after automated debugging!")
+        logger.info("🎉 All tests passed after automated debugging!")
     else:
-        logger.error("Automated debugging failed to resolve all issues.")
+        logger.error("❌ Automated debugging could not resolve all test failures.")

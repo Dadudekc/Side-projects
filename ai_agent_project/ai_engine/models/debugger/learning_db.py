@@ -1,10 +1,20 @@
+"""
+
+This module defines the LearningDB class which is responsible for managing a JSON database that tracks encountered errors and their respective fixes. The class is capable of loading and saving the database from/to a file, as well as performing operations like storing a new fix or searching for an existing fix based on an error message.
+
+The LearningDB class has the following attributes:
+- DB_FILE: A string that represents the name of the database file.
+- data: A dictionary that holds the content of the database.
+
+The
+"""
+
 import json
 import os
 import logging
 from typing import Optional, Dict, Any
 
 logger = logging.getLogger("LearningDB")
-
 
 class LearningDB:
     """
@@ -48,7 +58,6 @@ class LearningDB:
             logger.info("✅ Learning database updated successfully.")
         except Exception as e:
             logger.error(f"❌ Failed to save learning database: {e}")
-
 
 # Auto-initialize learning DB if needed
 if __name__ == "__main__":

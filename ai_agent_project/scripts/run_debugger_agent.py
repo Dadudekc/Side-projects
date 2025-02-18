@@ -1,3 +1,8 @@
+"""
+
+This script sets up and runs an AI-powered debugging agent. It initializes the Confidence Manager and Test Retry Manager, launching the debugging process to detect and attempt to fix failing tests with the help of AI-assisted patches. It runs the process with a retry limit of 3 tries, then logs the final results as either a success or failure. If the debugging fails, a review of log details is recommended. In the end, it provides a report of all final AI patch confidence scores for each attempted
+"""
+
 #!/usr/bin/env python
 """
 run_debugger_agent.py

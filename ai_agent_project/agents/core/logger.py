@@ -1,3 +1,11 @@
+"""
+This python module is an implementation of advanced logging. It creates a custom logger instance that logs both to the console and to a file. 
+
+The 'LOG_LEVEL' is an environmental variable that can be set, determining the log level of the logger. If not set, the default value will be 'DEBUG'. 
+
+Two handlers are added to the logger - one for displaying logs on the console, and another for storing logs in a file. The console handler uses a custom formatter ('ColoredFormatter')
+"""
+
 import logging
 import logging.handlers
 import os

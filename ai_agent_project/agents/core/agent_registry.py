@@ -1,3 +1,12 @@
+"""
+
+Docstring for AgentRegistry Class:
+
+The AgentRegistry Class is capable of dynamically managing the registration, retrieval, and lifecycle of AI agents. It maintains a list of different agents like ProfessorSynapseAgent, GPTForecaster, MemoryEngine, GraphMemory, and JournalAgent. It provides methods to register a new agent, unregister an existing agent, check the existence of an agent in the list, retrieve specified agent by name and to list all registered agent's names.
+
+The methods supported by AgentRegistry
+"""
+
 import logging
 from agents.core.AgentBase import AgentBase
 from agents.core.professor_synapse_agent import ProfessorSynapseAgent

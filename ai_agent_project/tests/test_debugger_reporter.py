@@ -1,3 +1,15 @@
+"""
+
+This script is a test suite for debugging reporter in an AI model. It includes tests to verify the functionality of various aspects such as initialization and loading, logging failed patches and AI explanations, saving the debugging report and email reporting with the help of mock objects.
+
+Functions:
+reporter(): A fixture to initialise a DebuggerReporter instance.
+temp_report_file(tmp_path): A fixture to create a temporary debugging report file.
+
+Test Cases:
+test_initialize_report(): Test case to check if a new report is created if
+"""
+
 import json
 import os
 from unittest.mock import MagicMock, patch

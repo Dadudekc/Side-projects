@@ -1,3 +1,10 @@
+"""
+
+This module implements a centralized global memory system with the class 'ContextManager'. This class uses the deque collection to store and manage information. It has methods for preprocessing text (tokenizing and stopwords removal), storing and retrieving data based on text similarity using a key-value logic, saving and loading memory items from a JSON file for persistence, and clearing the global memory. 
+
+The module also sets up a logger to record events at the debug level and downloads the required nltk resources if not already available. An
+"""
+
 import json
 import logging
 from collections import deque

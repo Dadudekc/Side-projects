@@ -1,3 +1,12 @@
+"""
+
+This module contains the VectorMemoryManager class which serves as an advanced MemoryManager that stores embeddings for semantic/long-term search. The VectorMemoryManager includes methods for initializing the memory manager, storing segments, searching by text, computing an embedding, and normalizing a vector. It calculates and stores normalized embeddings using a given embedding model and uses cosine similarity for search queries.
+
+Function 'cosine_similarity' computes the cosine similarity between two vectors, returning a float. 
+
+The VectorMemoryManager object includes methods
+"""
+
 import logging
 from collections import deque
 from typing import Any, Dict, List, Optional, Tuple
@@ -10,13 +19,11 @@ from .structured_memory_segment import StructuredMemorySegment
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-
 def cosine_similarity(vec_a: np.ndarray, vec_b: np.ndarray) -> float:
     """Compute cosine similarity between two vectors."""
     if np.linalg.norm(vec_a) == 0 or np.linalg.norm(vec_b) == 0:
         return 0.0
     return float(np.dot(vec_a, vec_b) / (np.linalg.norm(vec_a) * np.linalg.norm(vec_b)))
-
 
 class VectorMemoryManager(MemoryManager):
     """

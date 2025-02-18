@@ -1,3 +1,18 @@
+"""
+
+Module for running tests with two different modes. It includes a logger "TestRunner" and a class TestRunner which implements these test modes: 
+
+1. Simple Mode - Runs pytest in simple mode and returns the output.
+2. Advanced Mode - Runs pytest with JSON report enabled and extracts failures.
+
+Classes:
+    TestRunner: Provides method for running tests in simple and advance mode.
+
+Methods:
+    run_tests_simple() -> str: 
+        This method will execute the pytest in simple mode with some
+"""
+
 import subprocess
 import logging
 import os
@@ -5,7 +20,6 @@ import json
 from typing import List, Dict
 
 logger = logging.getLogger("TestRunner")
-
 
 class TestRunner:
     """

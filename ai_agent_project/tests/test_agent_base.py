@@ -1,3 +1,16 @@
+"""
+
+This module contains a mock implementation of the AgentBase class from the agents.core.utilities package. 
+This mock agent is used for unit testing various methods of the AgentBase class like initialization, 
+solve_task, describe_capabilities and shutdown.
+
+MockAgent is the mock class derived from AgentBase with necessary methods to execute the task and describe 
+the capabilities of the agent. 
+
+TestAgentBase class contains all the necessary unit tests for the AgentBase class. setUp method 
+initializes the necessary object required for
+"""
+
 import unittest
 
 from agents.core.utilities.AgentBase import AgentBase

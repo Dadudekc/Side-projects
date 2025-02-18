@@ -1,3 +1,18 @@
+"""
+
+This Python module contains the TradingAgent class that utilizes Alpaca API to execute trades. The TradingAgent is derived from the AgentBase class.
+
+Module level imports:
+os: Provides a portable way of using operating system dependent functionality.
+logging: Provides a flexible framework for emitting log messages from Python programs.
+alpaca_trade_api: API that enables interactions with Alpaca's trading platform. (optional)
+        
+AgentBase class is imported as base class for the TradingAgent.
+
+Attributes:
+ALP
+"""
+
 import os
 import logging
 from typing import Dict, Any

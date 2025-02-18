@@ -1,3 +1,17 @@
+"""
+
+This module contains a suite of unit tests for the DebuggerCLI class. 
+
+The DebuggerCLI class is used for creating a Command Line Interface (CLI) for debugging artificial intelligence (AI) models. 
+
+The tests cover the following functionalities: 
+- Loading existing AI performance data from a file.
+- Loading an empty file when no AI performance data exists.
+- Running a debugger for a specific file and for a full debugging process.
+- Displaying debugging logs.
+- Rolling back fixes both when modifications exist
+"""
+
 import argparse
 import json
 import os
