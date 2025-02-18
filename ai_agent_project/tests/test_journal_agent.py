@@ -3,7 +3,7 @@ import os
 import unittest
 from unittest.mock import MagicMock, patch
 
-from agents.core.JournalAgent import JournalAgent  # Use JournalAgent directly
+from agents.core.journal_agent import JournalAgent  # Use JournalAgent directly
 
 
 class TestJournalAgent(unittest.TestCase):

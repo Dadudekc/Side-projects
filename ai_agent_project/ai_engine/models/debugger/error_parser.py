@@ -15,7 +15,8 @@ class ErrorParser:
         Initializes the ErrorParser with a compiled regex pattern for efficiency.
         """
         self.failure_pattern = re.compile(
-            r"FAILED\s+([^\s:]+)::([^\s:]+)\s*-\s*(.+)", re.MULTILINE
+            r"FAILED\s*-?\s*([\w./]+)\s*(::|\s*:\s*)([\w\[\]<>]+)\s*[-:]\s*(.+)", 
+            re.MULTILINE
         )
 
     def parse_test_failures(self, test_output: str) -> List[Dict[str, str]]:
@@ -40,8 +41,8 @@ class ErrorParser:
 
         for match in self.failure_pattern.finditer(test_output):
             file_name = match.group(1).strip()
-            test_name = match.group(2).strip()
-            error_msg = match.group(3).strip()
+            test_name = match.group(3).strip()
+            error_msg = match.group(4).strip()
 
             failure = {"file": file_name, "test": test_name, "error": error_msg}
             logger.debug(f"✅ Detected failure: {failure}")

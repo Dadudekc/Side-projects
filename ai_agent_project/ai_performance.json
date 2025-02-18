@@ -2,17 +2,5 @@
     "DeepSeek": {
         "success": 3,
         "fail": 2
-    },
-    "Mistral": {
-        "success": 2,
-        "fail": 0
-    },
-    "OpenAI": {
-        "success": 9,
-        "fail": 8
-    },
-    "OpenAIModel": {
-        "success": 7,
-        "fail": 7
     }
 }

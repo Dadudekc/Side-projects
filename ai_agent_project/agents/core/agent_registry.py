@@ -1,55 +1,99 @@
-from typing import Dict, Any, List
-from typing import Dict, List
-import os
 import logging
-import importlib
-from agents.core.AgentBase import AgentBase  # ✅ Use AgentBase instead of IAgent
+from agents.core.AgentBase import AgentBase
+from agents.core.professor_synapse_agent import ProfessorSynapseAgent
+from agents.core.journal_agent import JournalAgent
+from agents.core.memory_engine import MemoryEngine
+from agents.core.gpt_forecasting import GPTForecaster
+from agents.core.graph_memory import GraphMemory
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 class AgentRegistry:
     """
-    Manages the registration and retrieval of AI agents.
+    📌 Manages the registration, retrieval, and lifecycle of AI agents dynamically.
     """
 
-    def __init__(self, agents_dir="agents.core"):
+    def __init__(self):
+        """Initializes and registers available agents."""
+        self.agents = {
+            "professor": ProfessorSynapseAgent(),
+            "forecasting": GPTForecaster(),
+            "memory": MemoryEngine(),
+            "graph": GraphMemory(),
+            "JournalAgent": JournalAgent(),
+        }
+        logger.info(f"✅ AgentRegistry initialized with agents: {list(self.agents.keys())}")
+
+    def register_agent(self, name: str, agent_instance: AgentBase):
         """
-        Initializes the agent registry and loads agents from the specified directory.
+        Dynamically registers a new agent.
+
+        Args:
+            name (str): The unique name of the agent.
+            agent_instance (AgentBase): The agent instance.
+
+        Returns:
+            bool: True if registered successfully, False if agent already exists.
         """
-        self.agents = {}
-        self.agents_dir = agents_dir
-        self.load_agents()
+        if name in self.agents:
+            logger.warning(f"⚠️ Agent '{name}' is already registered.")
+            return False
 
-    def load_agents(self):
-        """Dynamically loads agent modules."""
-        try:
-            base_module = self.agents_dir.replace("/", ".")
-            agent_files = ["JournalAgent", "TradingAgent", "DebuggerAgent"]  # ✅ Add DebuggerAgent
+        self.agents[name] = agent_instance
+        logger.info(f"✅ Agent '{name}' registered successfully.")
+        return True
 
-            for agent_name in agent_files:
-                try:
-                    module_path = f"{base_module}.{agent_name}"
-                    module = importlib.import_module(module_path)
-                    agent_class = getattr(module, agent_name)
-                    
-                    # ✅ Ensure the loaded class is a valid subclass of AgentBase
-                    if issubclass(agent_class, AgentBase) and agent_class is not AgentBase:
-                        self.agents[agent_name] = agent_class()
-                        logger.info(f"Loaded agent: {agent_name}")
-                    else:
-                        logger.warning(f"Skipping {agent_name}, as it is not a subclass of AgentBase.")
+    def unregister_agent(self, name: str):
+        """
+        Removes an agent from the registry.
 
-                except Exception as e:
-                    logger.error(f"Failed to load agent module {module_path}: {e}")
+        Args:
+            name (str): The name of the agent to remove.
 
-        except Exception as e:
-            logger.error(f"Error loading agents: {e}")
+        Returns:
+            bool: True if removed successfully, False if agent not found.
+        """
+        if name in self.agents:
+            del self.agents[name]
+            logger.info(f"🗑️ Agent '{name}' unregistered successfully.")
+            return True
+        logger.warning(f"⚠️ Attempted to remove non-existent agent '{name}'.")
+        return False
 
-    def get_agent(self, name):
-        """Retrieves an agent by name."""
-        return self.agents.get(name)
+    def get_agent(self, name: str) -> AgentBase:
+        """
+        Retrieves an agent by name.
+
+        Args:
+            name (str): The name of the agent.
+
+        Returns:
+            AgentBase: The agent instance or None if not found.
+        """
+        agent = self.agents.get(name)
+        if agent:
+            return agent
+        logger.warning(f"❌ Agent '{name}' not found in registry.")
+        return None
+
+    def agent_exists(self, name: str) -> bool:
+        """
+        Checks if an agent exists in the registry.
+
+        Args:
+            name (str): The agent's name.
+
+        Returns:
+            bool: True if the agent exists, False otherwise.
+        """
+        return name in self.agents
 
     def list_agents(self):
-        """Returns a list of registered agents."""
+        """
+        Lists all registered agent names.
+
+        Returns:
+            list: A list of available agent names.
+        """
         return list(self.agents.keys())

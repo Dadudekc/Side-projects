@@ -4,9 +4,11 @@ import random
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ai_engine.models.mistral_model import MistralModel  # Adjust the path if needed
+from ai_engine.models.mistral_model import MistralModel  # Ensure correct import path
 
-AI_PERFORMANCE_TRACKER_FILE = "path/to/tracker/file"
+# Define the correct AI performance tracking file
+TRACKER_DIR = "tracking_data"
+AI_PERFORMANCE_TRACKER_FILE = os.path.join(TRACKER_DIR, "ai_performance.json")
 
 
 class TestMistralModel(unittest.TestCase):
@@ -19,12 +21,17 @@ class TestMistralModel(unittest.TestCase):
         self.code_context = "def test_function():\n    pass\n    print('Hello, World!')"
         self.test_file = "test_script.py"
 
+        # Ensure AI performance tracking file exists before testing
+        if not os.path.exists(AI_PERFORMANCE_TRACKER_FILE):
+            with open(AI_PERFORMANCE_TRACKER_FILE, "w", encoding="utf-8") as f:
+                json.dump({}, f)
+
     def tearDown(self):
         """Cleanup after tests by removing AI performance tracking file if created."""
         if os.path.exists(AI_PERFORMANCE_TRACKER_FILE):
             os.remove(AI_PERFORMANCE_TRACKER_FILE)
 
-    @patch("agents.core.core.subprocess.run")
+    @patch("subprocess.run")
     def test_generate_with_mistral(self, mock_subprocess):
         """Test calling Mistral AI for patch generation."""
         mock_subprocess.return_value = MagicMock(
@@ -35,7 +42,7 @@ class TestMistralModel(unittest.TestCase):
 
         self.assertIn("diff --git", patch_result)
 
-    @patch("agents.core.core.openai.ChatCompletion.create")
+    @patch("openai.ChatCompletion.create")
     def test_generate_with_openai(self, mock_openai):
         """Test OpenAI GPT-4 fallback."""
         mock_openai.return_value = {
@@ -66,19 +73,27 @@ class TestMistralModel(unittest.TestCase):
 
     @patch.object(MistralModel, "_generate_with_mistral")
     @patch.object(MistralModel, "_generate_with_openai")
-    def test_generate_patch(self, mock_openai, mock_mistral):
+    @patch("random.uniform", return_value=0.9)  # Mock confidence to always be high enough
+    def test_generate_patch(self, mock_random, mock_openai, mock_mistral):
         """Test patch generation with fallback and validation."""
+        # Ensure enough retries to match self.MAX_RETRIES
         mock_mistral.side_effect = [
-            None,
-            "diff --git patch",
-        ]  # First attempt fails, second succeeds
-        mock_openai.return_value = None  # Fallback should be used only if Mistral fails
+            None,  # 1st attempt fails
+            None,  # 2nd attempt fails
+            None,  # 3rd attempt fails
+            "diff --git patch",  # 4th attempt succeeds
+        ]
+        mock_openai.return_value = None  # OpenAI should only be used if Mistral fails
 
         patch_result = self.model.generate_patch(
             self.error_message, self.code_context, self.test_file
         )
 
+        # Assert that a valid patch was returned
+        self.assertIsNotNone(patch_result)
         self.assertIn("diff --git", patch_result)
+
+
 
     @patch("random.uniform", return_value=0.8)
     def test_validate_patch(self, mock_random):

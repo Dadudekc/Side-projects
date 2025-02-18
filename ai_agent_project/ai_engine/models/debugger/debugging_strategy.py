@@ -2,20 +2,20 @@
 """
 debugging_strategy.py
 
-Handles automated debugging using a mix of:
-- AST-based patching (for structured fixes like missing methods).
-- AI-generated patches (fallback via AIModelManager).
-- Learning DB for storing known fixes.
-- Patch validation and application.
-- Detecting import errors.
+Automated debugging using:
+- AST-based fixes for structured issues (e.g., missing methods).
+- AI-generated patches for complex issues.
+- A learning DB to store and reuse successful patches.
+- Patch validation, application, and rollback.
+- Import error detection.
 
-Features:
-  - Detects missing methods and auto-generates method stubs via AST.
-  - Uses AI to generate fixes when structured fixes don't apply.
-  - Saves successful patches for future reuse.
+Capabilities:
+  - Detects missing methods & generates method stubs automatically.
+  - Uses AI as a fallback when structured fixes don't apply.
+  - Saves successful fixes for future use.
   - Validates patches before applying.
-  - Supports rollback if a fix makes things worse.
-  - Detects import errors and extracts details to help with resolution.
+  - Supports rollback if a patch worsens the issue.
+  - Detects import errors and extracts resolution hints.
 """
 
 import ast
@@ -28,9 +28,9 @@ import hashlib
 from tempfile import NamedTemporaryFile
 from typing import Dict, Any, Optional, List
 
-from ai_engine.models.ai_model_manager import AIModelManager  # AI-powered debugging
-from ai_engine.models.debugger.debugger_logger import DebuggerLogger         # Tracks debugging attempts
-from ai_engine.models.debugger.project_context_analyzer import ProjectContextAnalyzer  # Analyze project structure
+from ai_engine.models.ai_model_manager import AIModelManager
+from ai_engine.models.debugger.debugger_logger import DebuggerLogger
+from ai_engine.models.debugger.project_context_analyzer import ProjectContextAnalyzer
 
 # Configure logging
 logger = logging.getLogger("DebuggingStrategy")
@@ -40,7 +40,7 @@ logger.setLevel(logging.DEBUG)
 def find_class_in_file(source_file: str, class_name: str) -> Optional[int]:
     """
     Parses `source_file` using AST and returns the line number where a missing
-    method stub could be inserted within the specified class.
+    method stub should be inserted within the specified class.
     """
     try:
         with open(source_file, "r", encoding="utf-8") as f:
@@ -53,7 +53,6 @@ def find_class_in_file(source_file: str, class_name: str) -> Optional[int]:
             if isinstance(node, ast.ClassDef) and node.name == class_name:
                 class_node = node
             elif class_node and isinstance(node, ast.FunctionDef):
-                # Track the last method in that class
                 last_method_line = getattr(node, 'end_lineno', node.lineno)
 
         if class_node:
@@ -61,6 +60,7 @@ def find_class_in_file(source_file: str, class_name: str) -> Optional[int]:
     except Exception as e:
         logger.error(f"❌ Error parsing {source_file}: {e}")
     return None
+
 
 class DebuggingStrategy:
     """
@@ -82,10 +82,9 @@ class DebuggingStrategy:
     def __init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.debugger_logger = DebuggerLogger()
-        self.ai_manager = AIModelManager()  # Unified AI model manager
+        self.ai_manager = AIModelManager()
         self.learning_db = self._load_learning_db()
-        self.project_info = ProjectContextAnalyzer(project_root=os.getcwd())  # ✅ Fixed
-
+        self.project_info = ProjectContextAnalyzer(project_root=os.getcwd())
 
     def _load_learning_db(self) -> Dict[str, Any]:
         """Loads the learning database from a JSON file."""
@@ -136,12 +135,10 @@ class DebuggingStrategy:
         - Falls back to AI-generated patches if needed.
         - Saves successful fixes in a learning database.
         """
-        # --- AST-based patching for missing methods ---
         missing_method_match = re.search(r"no attribute '(\w+)'", error_message)
         if missing_method_match:
             missing_method = missing_method_match.group(1)
             self.logger.info(f"🔍 Detected missing method: {missing_method}")
-            # Derive the source file from the test filename by stripping 'test_' or '_test'
             source_file = test_file.replace("test_", "").replace("_test", "")
             if os.path.exists(source_file):
                 insertion_line = find_class_in_file(source_file, "AgentActor")
@@ -158,19 +155,16 @@ class DebuggingStrategy:
                 else:
                     self.logger.warning("⚠️ Could not determine insertion point for missing method.")
 
-        # --- AI-powered patch generation ---
         error_sig = self._compute_error_signature(error_message, code_context)
         if error_sig in self.learning_db:
             self.logger.info(f"✅ Using stored fix for error signature: {error_sig}")
             return self.learning_db[error_sig].get("patch")
 
-        # Request a patch via AIModelManager
         patch = self.ai_manager.generate_patch(error_message, code_context, test_file)
         if not patch:
             self.logger.warning(f"⚠️ AI was unable to generate a patch for error: {error_message}")
             return None
 
-        # Save patch to learning DB
         self.learning_db[error_sig] = {"patch": patch, "attempts": 1}
         self._save_learning_db()
         return patch
@@ -180,12 +174,10 @@ class DebuggingStrategy:
         if not patch:
             return False
 
-        # Write patch to a temporary file
         with NamedTemporaryFile(mode="w", delete=False, suffix=".patch") as temp_patch:
             patch_file = temp_patch.name
             temp_patch.write(patch)
 
-        # Parse the patch header to determine the target file
         file_target_match = re.search(r"^--- (.+?)\n\+\+\+ (.+?)\n", patch, flags=re.MULTILINE)
         if not file_target_match:
             self.logger.error("❌ Cannot determine file target from patch header.")
@@ -204,13 +196,3 @@ class DebuggingStrategy:
             return False
         finally:
             os.remove(patch_file)
-
-    def re_run_tests(self) -> bool:
-        """Re-runs the test suite to verify that the applied patch fixes the issue."""
-        result = subprocess.run(["pytest", "tests", "--disable-warnings"],
-                                capture_output=True, text=True)
-        if result.returncode == 0:
-            self.logger.info("✅ Tests passed after applying fixes.")
-            return True
-        self.logger.error(f"❌ Tests still failing:\n{result.stdout}")
-        return False

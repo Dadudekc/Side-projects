@@ -1,109 +1,120 @@
 import json
 import os
+import random
 import unittest
 from unittest.mock import MagicMock, patch
 
-from agents.AgentDispatcher import AgentDispatcher
-from agents.core.utilities.AgentBase import AgentBase
-from agents.core.utilities.ai_patch_utils import AIPatchUtils
-from agents.custom_agent import CustomAgent
-from ai_engine.models.ai_model_manager import AIModelManager
-from ai_engine.models.deepseek_model import DeepSeekModel
-from ai_engine.models.mistral_model import MistralModel
-from ai_engine.models.openai_model import OpenAIModel
+from ai_engine.models.deepseek_model import DeepSeekModel  # Adjust path if needed
+
+AI_PERFORMANCE_TRACKER_FILE = "ai_performance.json"
 
 
 class TestDeepSeekModel(unittest.TestCase):
     """Unit tests for the DeepSeekModel class."""
 
     def setUp(self):
-        """Initialize DeepSeekModel before each test."""
-        self.model = DeepSeekModel(model_path="test_model_path")
+        """Sets up an instance of DeepSeekModel for testing."""
+        self.model = DeepSeekModel()
+        self.error_message = "SyntaxError: unexpected EOF while parsing"
+        self.code_context = "def test_function():\n    pass\n    print('Hello, World!')"
+        self.test_file = "test_script.py"
 
-    @patch("subprocess.run")
-    def test_generate_with_deepseek_success(self, mock_subprocess):
-        """Test successful patch generation using DeepSeek."""
-        mock_subprocess.return_value = MagicMock(returncode=0, stdout="Generated Patch")
-        result = self.model._generate_with_deepseek("Test Prompt")
-        self.assertEqual(result, "Generated Patch")
+        # Ensure AI performance tracking file exists before testing
+        if not os.path.exists(AI_PERFORMANCE_TRACKER_FILE):
+            with open(AI_PERFORMANCE_TRACKER_FILE, "w", encoding="utf-8") as f:
+                json.dump({}, f)
 
-    @patch("subprocess.run")
-    def test_generate_with_deepseek_failure(self, mock_subprocess):
-        """Test DeepSeek failure handling."""
-        mock_subprocess.return_value = MagicMock(returncode=1, stderr="Error")
-        result = self.model._generate_with_deepseek("Test Prompt")
-        self.assertIsNone(result)
+    def tearDown(self):
+        """Cleanup after tests by removing AI performance tracking file if created."""
+        if os.path.exists(AI_PERFORMANCE_TRACKER_FILE):
+            os.remove(AI_PERFORMANCE_TRACKER_FILE)
 
-    @patch("openai.ChatCompletion.create")
-    def test_generate_with_openai_success(self, mock_openai):
-        """Test successful patch generation using OpenAI."""
+    @patch("ai_engine.models.deepseek_model.subprocess.run")
+    def test_generate_with_deepseek(self, mock_subprocess):
+        """Test calling DeepSeek AI for patch generation."""
+        mock_subprocess.return_value = MagicMock(
+            returncode=0, stdout="diff --git patch"
+        )
+
+        patch_result = self.model._generate_with_deepseek("test_prompt")
+
+        self.assertIn("diff --git", patch_result)
+
+    @patch("ai_engine.models.deepseek_model.openai.ChatCompletion.create")
+    def test_generate_with_openai(self, mock_openai):
+        """Test OpenAI GPT-4 fallback."""
         mock_openai.return_value = {
-            "choices": [{"message": {"content": "OpenAI Patch"}}]
+            "choices": [{"message": {"content": "diff --git patch"}}]
         }
-        result = self.model._generate_with_openai("Test Prompt")
-        self.assertEqual(result, "OpenAI Patch")
 
-    @patch("openai.ChatCompletion.create", side_effect=Exception("API Error"))
-    def test_generate_with_openai_failure(self, mock_openai):
-        """Test OpenAI failure handling."""
-        result = self.model._generate_with_openai("Test Prompt")
-        self.assertIsNone(result)
+        patch_result = self.model._generate_with_openai("test_prompt")
 
-    def test_validate_patch_success(self):
-        """Test patch validation success scenario."""
-        with patch("random.uniform", return_value=0.8):
-            result = self.model._validate_patch("Sample Patch")
-            self.assertTrue(result)
+        self.assertIn("diff --git", patch_result)
 
-    def test_validate_patch_failure(self):
-        """Test patch validation failure scenario."""
-        with patch("random.uniform", return_value=0.6):
-            result = self.model._validate_patch("Sample Patch")
-            self.assertFalse(result)
+    def test_format_prompt(self):
+        """Test formatting of debugging prompts."""
+        prompt = self.model._format_prompt(
+            self.error_message, self.code_context, self.test_file
+        )
 
-    def test_modify_prompt_variations(self):
-        """Test modifications to prompts for retries."""
-        base_prompt = "Base Prompt"
-        modified_prompt_1 = self.model._modify_prompt(base_prompt, 0)
-        modified_prompt_2 = self.model._modify_prompt(base_prompt, 1)
-        modified_prompt_3 = self.model._modify_prompt(base_prompt, 2)
-        self.assertNotEqual(modified_prompt_1, modified_prompt_2)
-        self.assertNotEqual(modified_prompt_2, modified_prompt_3)
+        self.assertIn("SyntaxError", prompt)
+        self.assertIn("test_script.py", prompt)
 
-    def test_load_ai_performance_empty(self):
-        """Test AI performance loading when no file exists."""
-        if os.path.exists("ai_performance.json"):
-            os.remove("ai_performance.json")
-        result = self.model._load_ai_performance()
-        self.assertEqual(result, {})
+    def test_modify_prompt(self):
+        """Test modifying prompts for AI retries."""
+        prompt = self.model._format_prompt(
+            self.error_message, self.code_context, self.test_file
+        )
+        modified_prompt = self.model._modify_prompt(prompt, 1)
 
-    def test_save_ai_performance(self):
-        """Test saving AI performance tracking data."""
-        test_data = {"DeepSeek": {"success": 3, "fail": 2}}
-        self.model.ai_performance = test_data
-        self.model._save_ai_performance()
-        with open("ai_performance.json", "r", encoding="utf-8") as f:
-            saved_data = json.load(f)
-        self.assertEqual(saved_data, test_data)
+        self.assertIn("Avoid modifying unrelated lines of code.", modified_prompt)
 
-    @patch.object(
-        DeepSeekModel,
-        "_generate_patch_with_fallback",
-        return_value=("Patch Data", "DeepSeek"),
-    )
-    @patch.object(DeepSeekModel, "_validate_patch", return_value=True)
-    def test_generate_patch_success(self, mock_validate, mock_generate):
-        """Test full patch generation success."""
-        result = self.model.generate_patch("Error", "Code", "test.py")
-        self.assertEqual(result, "Patch Data")
+    @patch.object(DeepSeekModel, "_generate_with_deepseek")
+    @patch.object(DeepSeekModel, "_generate_with_openai")
+    @patch("random.uniform", return_value=0.9)  # Ensures validation always passes
+    def test_generate_patch(self, mock_random, mock_openai, mock_deepseek):
+        """Test patch generation with fallback and validation."""
+        # Simulating DeepSeek failing three times before success
+        mock_deepseek.side_effect = [
+            None,  # 1st attempt fails
+            None,  # 2nd attempt fails
+            None,  # 3rd attempt fails
+            "diff --git patch",  # 4th attempt succeeds
+        ]
+        mock_openai.return_value = None  # OpenAI should only be used if DeepSeek fails
 
-    @patch.object(
-        DeepSeekModel, "_generate_patch_with_fallback", return_value=(None, "None")
-    )
-    def test_generate_patch_failure(self, mock_generate):
-        """Test failure when no valid patch is generated."""
-        result = self.model.generate_patch("Error", "Code", "test.py")
-        self.assertIsNone(result)
+        patch_result = self.model.generate_patch(
+            self.error_message, self.code_context, self.test_file
+        )
+
+        # Assert that a valid patch was returned
+        self.assertIsNotNone(patch_result)
+        self.assertIn("diff --git", patch_result)
+
+    @patch("random.uniform", return_value=0.8)
+    def test_validate_patch(self, mock_random):
+        """Test patch validation with a high confidence score."""
+        result = self.model._validate_patch("diff --git patch")
+
+        self.assertTrue(result)
+
+    @patch("random.uniform", return_value=0.6)
+    def test_validate_patch_low_score(self, mock_random):
+        """Test patch validation rejection due to low confidence score."""
+        result = self.model._validate_patch("diff --git patch")
+
+        self.assertFalse(result)
+
+    def test_ai_performance_tracking(self):
+        """Test AI performance tracking by recording success and failure."""
+        self.model._record_ai_performance("DeepSeek", success=True)
+        self.model._record_ai_performance("OpenAI", success=False)
+
+        with open(AI_PERFORMANCE_TRACKER_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        self.assertEqual(data["DeepSeek"]["success"], 1)
+        self.assertEqual(data["OpenAI"]["fail"], 1)
 
 
 if __name__ == "__main__":

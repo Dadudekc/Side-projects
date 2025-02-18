@@ -8,6 +8,7 @@ from agents.core.professor_synapse_agent import ProfessorSynapseAgent
 from agents.core.memory_engine import MemoryEngine
 from agents.core.gpt_forecasting import GPTForecaster
 from agents.core.graph_memory import GraphMemory
+from agents.core.journal_agent import JournalAgent  # ✅ Ensuring JournalAgent is available
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -28,6 +29,7 @@ class AgentDispatcher:
             "forecasting": GPTForecaster(),
             "memory": MemoryEngine(),
             "graph": GraphMemory(),
+            "JournalAgent": JournalAgent(),  # ✅ Registered JournalAgent
         }
 
         self._validate_agents()
@@ -78,5 +80,5 @@ if __name__ == "__main__":
         "tags": ["test", "registry"],
     }
 
-    result = dispatcher.dispatch_task("professor", sample_task)
+    result = dispatcher.dispatch_task("JournalAgent", sample_task)
     print(result)

@@ -4,46 +4,48 @@ import requests
 import logging
 from ai_engine.models.apis.api_client import APIClient  # Handles real-time lookups
 from ai_engine.reasoning_engine.reasoning_engine import ReasoningEngine  # Manages dynamic reasoning
-from agents.core.agent_registry import AgentRegistry  # Enables agent collaboration
 from bs4 import BeautifulSoup  # Web scraping for Yahoo Finance & Google News
 from agents.core.memory_engine import MemoryEngine
 from agents.core.gpt_forecasting import GPTForecaster
 from agents.core.graph_memory import GraphMemory
+from agents.core.AgentBase import AgentBase  # ✅ Now inherits from AgentBase
 
-class ProfessorSynapseAgent:
+class ProfessorSynapseAgent(AgentBase):  # ✅ Now extends AgentBase
     """
     🧙🏾‍♂️ Professor Synapse - A reasoning AI that evolves through learning,
     forecasting, and knowledge-based reasoning.
     """
 
     def __init__(self):
-        self.name = "Professor Synapse"
+        super().__init__(name="ProfessorSynapseAgent", project_name="AI_Reasoning_Agent")
         self.memory_engine = MemoryEngine()
         self.forecaster = GPTForecaster()
         self.knowledge_graph = GraphMemory()
         self.api_client = APIClient()
 
+    def describe_capabilities(self) -> str:
+        """Return a description of this agent's responsibilities."""
+        return "Handles knowledge reasoning, forecasting, and real-time lookups."
+
     def respond(self, user_input: str) -> str:
-        """Handles real-time reasoning, forecasting, and memory-based learning."""
-        # Step 1: Check memory for past interactions
-        past_response = self.memory_engine.retrieve_similar_query(user_input)
-        if past_response:
-            return f"🧙🏾‍♂️ (Memory Recall) {past_response}"
+        """Generates a response by processing the query through reasoning, logic, and real-time data."""
+        reasoning_schema = {
+            "Reasoning": {
+                "wm": {"g": "Answer Query", "sg": user_input, "pr": {"completed": [], "current": ["Processing"]}, "ctx": "User Inquiry"},
+                "kg": {"tri": []},
+                "logic": {"propositions": [], "proofs": [], "critiques": [], "doubts": []},
+                "chain": {"steps": [], "reflect": "", "err": [], "note": [], "warn": []},
+                "exp": [],
+                "se": []
+            }
+        }
 
-        # Step 2: Fetch real-time data
-        real_time_data = self.api_client.fetch_data(user_input)
+        real_time_data = self.fetch_data(user_input)
         if real_time_data:
-            self.memory_engine.store_interaction(user_input, real_time_data)
-            return f"🧙🏾‍♂️ (Live Data) {real_time_data}"
+            return f"🧙🏾‍♂️ Professor Synapse: {real_time_data}"
 
-        # Step 3: Use AI forecasting for insights
-        forecast = self.forecaster.generate_forecast(user_input)
-        self.memory_engine.store_interaction(user_input, forecast)
-        return f"🧙🏾‍♂️ (AI Forecast) {forecast}"
-
-    def learn_knowledge(self, subject: str, relation: str, obj: str):
-        """Teaches Professor Synapse a new piece of knowledge."""
-        self.knowledge_graph.add_knowledge(subject, relation, obj)
+        reasoning_response = ReasoningEngine.analyze_query(user_input, reasoning_schema)
+        return f"🧙🏾‍♂️ Professor Synapse: {reasoning_response}"
 
     def fetch_data(self, query: str) -> str:
         """Fetches real-time data based on query type (market data, news, etc.)."""
@@ -65,6 +67,10 @@ class ProfessorSynapseAgent:
 
         return "No relevant data found."
 
+    def learn_knowledge(self, subject: str, relation: str, obj: str):
+        """Teaches Professor Synapse a new piece of knowledge."""
+        self.knowledge_graph.add_knowledge(subject, relation, obj)
+
     def collaborate_with_agents(self, task: str, data: dict) -> str:
         """Engages other agents to solve complex tasks."""
         best_agent = AgentRegistry().find_best_agent(task)
@@ -73,22 +79,27 @@ class ProfessorSynapseAgent:
             return f"🤝 Collaboration: {best_agent.name} handled this task → {response}"
         return "No suitable agent found for collaboration."
 
-    def respond(self, user_input: str) -> str:
-        """Generates a response by processing the query through reasoning, logic, and real-time data."""
-        reasoning_schema = {
-            "Reasoning": {
-                "wm": {"g": "Answer Query", "sg": user_input, "pr": {"completed": [], "current": ["Processing"]}, "ctx": "User Inquiry"},
-                "kg": {"tri": []},
-                "logic": {"propositions": [], "proofs": [], "critiques": [], "doubts": []},
-                "chain": {"steps": [], "reflect": "", "err": [], "note": [], "warn": []},
-                "exp": [],
-                "se": []
-            }
-        }
+    def solve_task(self, task: str, **kwargs) -> dict:  # ✅ Required by AgentBase
+        """
+        Handles various tasks related to reasoning, forecasting, and collaboration.
+        Returns structured dictionary responses for test clarity.
 
-        real_time_data = self.fetch_data(user_input)
-        if real_time_data:
-            return f"🧙🏾‍♂️ Professor Synapse: {real_time_data}"
+        Args:
+            task (str): Action to be performed.
+            **kwargs: Additional parameters.
 
-        reasoning_response = ReasoningEngine.analyze_query(user_input, reasoning_schema)
-        return f"🧙🏾‍♂️ Professor Synapse: {reasoning_response}"
+        Returns:
+            dict: Result of the operation.
+        """
+        if task == "reason":
+            return {"status": "success", "response": self.respond(kwargs.get("query", ""))}
+        elif task == "fetch_data":
+            return {"status": "success", "data": self.fetch_data(kwargs.get("query", ""))}
+        elif task == "collaborate":
+            return {"status": "success", "response": self.collaborate_with_agents(kwargs.get("task", ""), kwargs)}
+        else:
+            return {"status": "error", "message": f"Invalid task '{task}'"}
+
+    def shutdown(self) -> None:
+        """Logs a shutdown message."""
+        logging.info("ProfessorSynapseAgent is shutting down.")

@@ -115,11 +115,13 @@ class OpenAIModel:
         for attempt in range(self.MAX_RETRIES + 1):
             modified_prompt = self._modify_prompt(prompt, attempt) if attempt > 0 else prompt
             patch = self._generate_with_openai(modified_prompt)
-            if patch:
+            
+            if patch:  # ✅ Ensure we return a valid patch
+                logger.info(f"✅ Patch generated successfully on attempt {attempt + 1}")
                 return patch, "OpenAI"
 
-        logger.warning("⚠️ Patch generation failed after retries.")
-        return "", "None"
+        logger.warning("⚠️ Patch generation failed after all retries.")
+        return None, "None"  # ❌ Previously returned empty string, now correctly returning None
 
     def _modify_prompt(self, prompt: str, attempt: int) -> str:
         """Modifies the prompt slightly to encourage AI variation."""

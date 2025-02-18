@@ -7,7 +7,7 @@ from typing import Dict, List, Union
 logger = logging.getLogger("PatchTrackingManager")
 logger.setLevel(logging.DEBUG)
 
-# Constants for patch storage
+# Constants for Patch Storage
 PATCH_STORAGE_DIR = "patch_data"
 os.makedirs(PATCH_STORAGE_DIR, exist_ok=True)
 
@@ -30,13 +30,13 @@ class PatchTrackingManager:
 
     def __init__(self):
         """Initialize patch tracking with persistent storage."""
-        self.failed_patches = self._load_patch_data(FAILED_PATCHES_FILE)
-        self.successful_patches = self._load_patch_data(SUCCESSFUL_PATCHES_FILE)
-        self.import_fixes = self._load_patch_data(IMPORT_FIXES_FILE)
-        self.ai_feedback = self._load_patch_data(AI_FEEDBACK_FILE)
-        self.ai_performance = self._load_patch_data(AI_PERFORMANCE_FILE)
+        self.failed_patches = self._load_patch_data(FAILED_PATCHES_FILE, default={})
+        self.successful_patches = self._load_patch_data(SUCCESSFUL_PATCHES_FILE, default={})
+        self.import_fixes = self._load_patch_data(IMPORT_FIXES_FILE, default={})
+        self.ai_feedback = self._load_patch_data(AI_FEEDBACK_FILE, default={})
+        self.ai_performance = self._load_patch_data(AI_PERFORMANCE_FILE, default={})
 
-    def _load_patch_data(self, file_path: str) -> Dict[str, Union[Dict, List]]:
+    def _load_patch_data(self, file_path: str, default: Dict) -> Dict:
         """Loads JSON patch data, ensuring valid dictionary format."""
         if os.path.exists(file_path):
             try:
@@ -46,11 +46,11 @@ class PatchTrackingManager:
                         return data  # ✅ Valid dictionary
                     else:
                         logger.warning(f"⚠️ Invalid format in {file_path}. Resetting.")
-                        return {}  # 🔄 Reset corrupted structure
+                        return default  # 🔄 Reset corrupted structure
             except json.JSONDecodeError:
                 logger.error(f"⚠️ Corrupt JSON detected in {file_path}. Resetting.")
-                return {}
-        return {}
+                return default
+        return default
 
     def _save_patch_data(self, file_path: str, data: Dict):
         """Safely writes patch tracking data to a JSON file."""
@@ -63,8 +63,7 @@ class PatchTrackingManager:
     # ✅ **Failed Patch Handling**
     def record_failed_patch(self, error_signature: str, patch: str):
         """Records a failed patch, preventing duplicate entries."""
-        if error_signature not in self.failed_patches:
-            self.failed_patches[error_signature] = []
+        self.failed_patches.setdefault(error_signature, [])
         if patch not in self.failed_patches[error_signature]:  
             self.failed_patches[error_signature].append(patch)
             self._save_patch_data(FAILED_PATCHES_FILE, self.failed_patches)
@@ -73,18 +72,16 @@ class PatchTrackingManager:
     # ✅ **Successful Patch Handling**
     def record_successful_patch(self, error_signature: str, patch: str):
         """Logs a successful patch to track AI debugging progress."""
-        if error_signature not in self.successful_patches:
-            self.successful_patches[error_signature] = []
+        self.successful_patches.setdefault(error_signature, [])
         if patch not in self.successful_patches[error_signature]:
             self.successful_patches[error_signature].append(patch)
             self._save_patch_data(SUCCESSFUL_PATCHES_FILE, self.successful_patches)
             logger.info(f"🟢 Successful patch recorded for error: {error_signature}")
 
-    # ✅ **Import Fix Tracking (Fixed)**
+    # ✅ **Import Fix Tracking**
     def record_import_fix(self, module_name: str, fix_success: bool):
         """Tracks AI-generated import fixes separately to assess performance."""
-        if module_name not in self.import_fixes:
-            self.import_fixes[module_name] = {"fixed": 0, "failed": 0}  # ✅ Ensure dictionary structure
+        self.import_fixes.setdefault(module_name, {"fixed": 0, "failed": 0})
 
         if fix_success:
             self.import_fixes[module_name]["fixed"] += 1
@@ -105,7 +102,7 @@ class PatchTrackingManager:
         self._save_patch_data(AI_FEEDBACK_FILE, self.ai_feedback)
         logger.info(f"📊 AI Feedback Stored: {error_signature} -> Score: {quality_score}")
 
-    # ✅ **AI Debugging Performance Analytics (Fixed)**
+    # ✅ **AI Debugging Performance Analytics**
     def track_ai_performance(self):
         """Tracks AI debugging success rates and import fix performance."""
         today = datetime.now().strftime("%Y-%m-%d")
@@ -128,11 +125,11 @@ class PatchTrackingManager:
     # ✅ **Review & Rollback**
     def get_failed_patches(self, error_signature: str) -> List[str]:
         """Retrieves failed patches for a specific error."""
-        return sorted(set(self.failed_patches.get(error_signature, [])))
+        return self.failed_patches.get(error_signature, [])
 
     def get_successful_patches(self, error_signature: str) -> List[str]:
         """Retrieves successful patches for a specific error."""
-        return sorted(set(self.successful_patches.get(error_signature, [])))
+        return self.successful_patches.get(error_signature, [])
 
     def undo_last_fix(self, error_signature: str):
         """Rolls back the last fix for a given error signature."""

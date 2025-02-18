@@ -2,7 +2,7 @@ import os
 import json
 import argparse
 import logging
-from ai_engine.models.debugger.debugger_core import DebuggerCore 
+from ai_engine.models.debugger.debugger_core import DebugAgent 
 from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -21,7 +21,7 @@ class DebuggerCLI:
         """
         Initializes the DebuggerCLI with the necessary debugging components.
         """
-        self.debugger_core = DebuggerCore()
+        self.debugger_core = DebugAgent()
         self.patch_tracker = PatchTrackingManager()
 
     def load_ai_performance(self) -> dict:

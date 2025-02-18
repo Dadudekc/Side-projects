@@ -65,8 +65,13 @@ def test_parse_test_failures_malformed(parser):
 
     failures = parser.parse_test_failures(pytest_output)
 
-    # Expected to capture only the correctly formatted failures
-    assert len(failures) == 1
-    assert failures[0]["file"] == "tests/test_math.py"
-    assert failures[0]["test"] == "test_divide_by_zero"
-    assert "ZeroDivisionError" in failures[0]["error"]
+    # Expected to capture both correctly formatted failures
+    assert len(failures) == 2
+
+    assert failures[0]["file"] == "tests/test_example.py"
+    assert failures[0]["test"] == "test_addition"
+    assert failures[0]["error"] == "AssertionError"
+
+    assert failures[1]["file"] == "tests/test_math.py"
+    assert failures[1]["test"] == "test_divide_by_zero"
+    assert failures[1]["error"] == "ZeroDivisionError division by zero"

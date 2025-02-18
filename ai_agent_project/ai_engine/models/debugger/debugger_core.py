@@ -1,91 +1,71 @@
 import logging
-from typing import Optional, List, Dict, Any
 from ai_engine.models.debugger.test_runner import TestRunner
-from ai_engine.models.debugger.test_parser import TestParser
-from ai_engine.models.debugger.patch_manager import PatchManager
-from ai_engine.models.debugger.learning_db import LearningDB
+from ai_engine.models.debugger.error_parser import ErrorParser
+from ai_engine.models.debugger.auto_fix_manager import AutoFixManager
+from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
 from ai_engine.models.debugger.rollback_manager import RollbackManager
-from ai_engine.models.debugger.debugger_reporter import DebuggerReporter
-from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
-from ai_engine.models.debugger.report_manager import ReportManager
-logger = logging.getLogger("DebuggerCore")
-logger.setLevel(logging.DEBUG)
+from ai_engine.models.debugger.debug_agent_auto_fixer import DebugAgentAutoFixer
 
+logger = logging.getLogger("DebugAgent")
 
-class DebuggerCore:
+class DebugAgent:
     """
-    Main controller for the debugging system.
-    Handles both simple and advanced debugging modes.
+    🚀 AI-driven debugging agent that detects, fixes, and verifies code issues automatically.
     """
 
-    MAX_ATTEMPTS = 3
-
-    def __init__(self, debug_strategy: Optional[DebuggingStrategy] = None):
-        self.mode = "advanced" if debug_strategy else "simple"
-        self.debug_strategy = debug_strategy
-
-        # Modular Components
+    def __init__(self):
         self.test_runner = TestRunner()
-        self.test_parser = TestParser()
-        self.patch_manager = PatchManager(debug_strategy)
-        self.learning_db = LearningDB()
+        self.error_parser = ErrorParser()
+        self.auto_fixer = AutoFixManager()
+        self.patch_tracker = PatchTrackingManager()
         self.rollback_manager = RollbackManager()
-        self.report_manager = ReportManager()
+        self.pre_debug_fixer = DebugAgentAutoFixer()  # Runs fixes before debugging
 
-    def debug(self, max_retries: int = 3):
-        """
-        Entry point for debugging session.
-        """
-        if self.mode == "simple":
-            return self._debug_simple(max_retries)
-        else:
-            return self._debug_advanced()
+    def debug(self):
+        """Runs the debugging workflow: Detect errors → Fix issues → Re-run tests."""
+        logger.info("🚀 Running DebugAgent...")
 
-    def _debug_simple(self, max_retries: int = 3):
-        """
-        Runs debugging in simple mode.
-        """
-        logger.info("🚀 Running simple debugging mode...")
+        # Run all pre-debugging fixes before checking for errors
+        self.pre_debug_fixer.auto_fix_before_debugging()
 
-        for attempt in range(1, max_retries + 1):
-            test_output = self.test_runner.run_tests_simple()
-            failures = self.test_parser.parse_simple_failures(test_output)
+        # Run initial tests
+        test_output = self.test_runner.run_tests_simple()
+        failures = self.error_parser.parse_test_failures(test_output)
 
-            if not failures:
-                return {"status": "success", "message": "All tests passed!"}
+        if not failures:
+            logger.info("✅ No issues found! Exiting DebugAgent.")
+            return
 
-            for failure in failures:
-                fix_success = self.patch_manager.apply_fix(failure)
-                self.report_manager.log_attempt(failure, fix_success)
+        logger.info(f"⚠️ {len(failures)} test failures detected. Attempting fixes...")
 
-                if not fix_success:
-                    self.rollback_manager.rollback(failure["file"])
-                    return {"status": "error", "message": f"Could not fix {failure['file']} automatically."}
+        # Apply automatic fixes
+        for failure in failures:
+            success = self.auto_fixer.apply_fix(failure)
+            if success:
+                logger.info(f"✅ Fix applied for {failure['file']}")
+            else:
+                logger.warning(f"❌ Failed to fix {failure['file']} - Adding to rollback queue.")
+                self.rollback_manager.backup_file(failure["file"])
 
-        return {"status": "error", "message": "Max retries reached. Debugging failed."}
+        # Re-run tests to verify fixes
+        self.verify_fixes()
 
-    def _debug_advanced(self):
-        """
-        Runs debugging in advanced mode with a learning database.
-        """
-        logger.info("🚀 Running advanced debugging mode...")
+    def verify_fixes(self):
+        """Re-runs tests to validate fixes."""
+        logger.info("🔄 Re-running tests after applying fixes...")
+        test_output = self.test_runner.run_tests_simple()
+        failures = self.error_parser.parse_test_failures(test_output)
 
-        errors = self.test_runner.run_tests_advanced()
-        if not errors:
-            return {"status": "success", "message": "All tests passed!"}
+        if not failures:
+            logger.info("✅ All issues resolved!")
+            return
 
-        for err in errors:
-            error_sig = self.learning_db.get_signature(err)
-            patch = self.learning_db.get_known_fix(error_sig) or self.patch_manager.generate_patch(err)
+        logger.warning(f"⚠️ {len(failures)} tests still failing. Applying rollbacks...")
 
-            if not patch:
-                logger.error("No patch generated for error: %s", err["error_message"])
-                continue
+        # Rollback failed fixes
+        for failure in failures:
+            self.rollback_manager.restore_backup(failure["file"])
 
-            success = self.patch_manager.apply_patch(patch)
-            self.learning_db.update(error_sig, patch, success)
-
-            if success and self.test_runner.re_run_tests():
-                return {"status": "success", "message": "Patch successfully applied!"}
-
-        return {"status": "error", "message": "Advanced debugging failed."}
+if __name__ == "__main__":
+    agent = DebugAgent()
+    agent.debug()

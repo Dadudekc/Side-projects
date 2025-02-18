@@ -67,14 +67,15 @@ class TestOpenAIModel(unittest.TestCase):
         )
         modified_prompt = self.model._modify_prompt(prompt, 1)
         self.assertIn("Avoid modifying unrelated lines of code.", modified_prompt)
-
+        
     @patch.object(OpenAIModel, "_generate_with_openai")
-    def test_generate_patch(self, mock_openai):
+    @patch("random.uniform", return_value=0.9)  # Mock confidence to always be high enough
+    def test_generate_patch(self, mock_random, mock_openai):
         """Test patch generation with retries and validation."""
         mock_openai.side_effect = [
-            None,
-            "diff --git patch",
-        ]  # First attempt fails, second succeeds
+            None,  # First attempt fails
+            "diff --git patch",  # Second attempt succeeds
+        ]  
 
         patch_result = self.model.generate_patch(
             self.error_message, self.code_context, self.test_file
@@ -84,6 +85,7 @@ class TestOpenAIModel(unittest.TestCase):
             self.fail("❌ Patch generation returned an empty result unexpectedly.")
 
         self.assertIn("diff --git", patch_result)
+
 
     @patch("random.uniform", return_value=0.8)
     def test_validate_patch(self, mock_random):

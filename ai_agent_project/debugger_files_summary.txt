@@ -1,0 +1,1031 @@
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\ai_patch_retry_manager.py
+================================================================================
+import logging
+from typing import Dict, List
+from ai_engine.patch_analyzer import AIPatchAnalyzer
+from ai_engine.confidence_manager import AIConfidenceManager
+from ai_engine.models.debugger.auto_fix_manager import AutoFixManager
+
+logger = logging.getLogger("AIPatchRetryManager")
+logger.setLevel(logging.DEBUG)
+
+class AIPatchRetryManager:
+    """
+    Manages AI-assisted patch retries before rollback.
+
+    - AI explains why a patch failed.
+    - AI suggests modifications if confidence improves.
+    - Automatically retries modified patches.
+    - If all fails, marks patch for manual review.
+    """
+
+    CONFIDENCE_THRESHOLD = 0.2  # Minimum confidence to attempt retry
+    MAX_AI_PATCH_ATTEMPTS = 2   # AI gets two additional tries before rollback
+
+    def __init__(self):
+        self.retry_manager = AutoFixManager()
+        self.ai_analyzer = AIPatchAnalyzer()
+        self.confidence_manager = AIConfidenceManager()
+
+    def retry_failed_patches(self, failed_patches: Dict[str, List[str]]):
+        """
+        AI reviews failed patches and decides whether to retry or flag them.
+        """
+        for error_signature, patches in failed_patches.items():
+            for patch in patches:
+                # Analyze the failed patch
+                reason, confidence_boost = self.ai_analyzer.analyze_failed_patch(error_signature, patch)
+                
+                # Retrieve current confidence and update
+                current_confidence = self.confidence_manager.get_confidence(error_signature)
+                new_confidence = min(1.0, current_confidence + confidence_boost)  # Ensure confidence ≤ 1.0
+                
+                logger.info(f"🔄 Confidence updated: {current_confidence:.2f} ➡ {new_confidence:.2f} for {error_signature}")
+
+                if new_confidence >= self.CONFIDENCE_THRESHOLD:
+                    logger.info(f"🛠️ AI suggests retrying patch for {error_signature}.")
+                    modified_patch = self.ai_analyzer.modify_failed_patch(error_signature, patch)
+                    patch_success = self.retry_manager.debugging_strategy.apply_patch(modified_patch)
+
+                    if patch_success:
+                        logger.info(f"✅ AI-modified patch for {error_signature} worked!")
+                        self.retry_manager.debugging_strategy.learning_db[error_signature] = {
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\auto_fixer.py
+================================================================================
+import logging
+import os
+import re
+import shutil
+from typing import Dict, Optional
+from ai_engine.models.debugger.learning_db import LearningDB
+from agents.core.utilities.debug_agent_utils import DebugAgentUtils
+
+logger = logging.getLogger(__name__)
+
+class AutoFixer:
+    """
+    Applies quick fixes for known error patterns and advanced LLM-based patches.
+    """
+
+    def __init__(self):
+        self.learning_db = LearningDB()
+
+    def apply_fix(self, failure: Dict[str, str]) -> bool:
+        """
+        Attempts to fix the provided test failure.
+        """
+        logger.info(f"🔧 Fixing: {failure['file']} - {failure['test']}")
+
+        if self._apply_known_pattern(failure):
+            logger.info(f"✅ Quick fix applied successfully for {failure['file']}")
+            return True
+        
+        learned_fix = self.learning_db.search_learned_fix(failure["error"])
+        if learned_fix:
+            logger.info(f"✅ Applying learned fix for {failure['file']}")
+            return self._apply_learned_fix(failure, learned_fix)
+
+        logger.info(f"🔍 Attempting LLM-based fix for {failure['file']}")
+        return self._apply_llm_fix(failure)
+
+    def _apply_llm_fix(self, failure: Dict[str, str]) -> bool:
+        """
+        Uses DebugAgentUtils to generate and apply an LLM-based patch.
+        """
+        file_path = os.path.join("tests", failure["file"])
+        if not os.path.exists(file_path):
+            logger.error(f"❌ File not found: {file_path}")
+            return False
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            file_content = f.read()
+
+        chunks = DebugAgentUtils.deepseek_chunk_code(file_content)
+        logger.info(f"🔍 Generated {len(chunks)} chunks for LLM analysis.")
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\auto_fix_manager.py
+================================================================================
+import os
+import shutil
+import subprocess
+import logging
+import re
+from typing import Dict, Any, List
+from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
+from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
+
+logger = logging.getLogger("AutoFixManager")
+logger.setLevel(logging.DEBUG)
+
+
+class AutoFixManager:
+    """
+    Handles automated test retries, patching failed tests, and rollback if necessary.
+    
+    Features:
+    - Tracks multiple failed patches per error.
+    - Attempts multiple AI-generated patches before rollback.
+    - Stores successful patches in the learning DB.
+    - Maintains a history of failed patches for later review.
+    """
+
+    MAX_PATCH_ATTEMPTS = 3  # Tries multiple AI patches before rollback
+
+    def __init__(self):
+        self.debugging_strategy = DebuggingStrategy()
+        self.patch_tracker = PatchTrackingManager()
+
+    def run_tests(self) -> List[Dict[str, Any]]:
+        """
+        Runs tests and captures failures.
+
+        Returns:
+            List[Dict[str, Any]]: A list of failed test cases with file paths and errors.
+        """
+        logger.info("🚀 Running tests...")
+        result = subprocess.run(["pytest", "tests", "--disable-warnings"], capture_output=True, text=True)
+        logger.debug(f"📝 Test Output:\n{result.stdout}")
+
+        if result.returncode == 0:
+            logger.info("✅ All tests passed! No debugging needed.")
+            return []
+
+        return self._parse_test_failures(result.stdout)
+
+    def _parse_test_failures(self, test_output: str) -> List[Dict[str, Any]]:
+        """
+        Extracts failing test information from pytest output.
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\debugger_cli.py
+================================================================================
+import os
+import json
+import argparse
+import logging
+from ai_engine.models.debugger.debugger_core import DebuggerCore 
+from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+logger = logging.getLogger("DebuggerCLI")
+
+# AI Performance Report File
+AI_PERFORMANCE_FILE = "ai_performance.json"
+
+
+class DebuggerCLI:
+    """
+    Command-line interface for managing and executing debugging operations.
+    """
+
+    def __init__(self):
+        """
+        Initializes the DebuggerCLI with the necessary debugging components.
+        """
+        self.debugger_core = DebuggerCore()
+        self.patch_tracker = PatchTrackingManager()
+
+    def load_ai_performance(self) -> dict:
+        """Loads AI debugging performance report from a JSON file."""
+        if os.path.exists(AI_PERFORMANCE_FILE):
+            try:
+                with open(AI_PERFORMANCE_FILE, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception as e:
+                logger.error(f"❌ Error loading AI performance file: {e}")
+        return {}
+
+    def show_ai_performance(self):
+        """Displays AI debugging performance analytics."""
+        performance_data = self.load_ai_performance()
+        if not performance_data:
+            logger.info("📊 No AI performance data available yet.")
+            return
+
+        logger.info("\n📈 **AI Debugging Performance Report** 📈")
+        for date, stats in sorted(performance_data.items(), reverse=True):
+            logger.info(f"\n📅 **Date:** {date}")
+            logger.info(f"🔹 Total Fixes: {stats['total_fixes']}")
+            logger.info(f"✅ Success Rate: {stats['success_rate']}%")
+            logger.info(f"🛠️ AI Patch Quality Scores: {stats['ai_feedback']}")
+
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\debugger_core.py
+================================================================================
+import logging
+from typing import Optional, List, Dict, Any
+from ai_engine.models.debugger.test_runner import TestRunner
+from ai_engine.models.debugger.test_parser import TestParser
+from ai_engine.models.debugger.patch_manager import PatchManager
+from ai_engine.models.debugger.learning_db import LearningDB
+from ai_engine.models.debugger.rollback_manager import RollbackManager
+from ai_engine.models.debugger.debugger_reporter import DebuggerReporter
+from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
+from ai_engine.models.debugger.report_manager import ReportManager
+logger = logging.getLogger("DebuggerCore")
+logger.setLevel(logging.DEBUG)
+
+
+class DebuggerCore:
+    """
+    Main controller for the debugging system.
+    Handles both simple and advanced debugging modes.
+    """
+
+    MAX_ATTEMPTS = 3
+
+    def __init__(self, debug_strategy: Optional[DebuggingStrategy] = None):
+        self.mode = "advanced" if debug_strategy else "simple"
+        self.debug_strategy = debug_strategy
+
+        # Modular Components
+        self.test_runner = TestRunner()
+        self.test_parser = TestParser()
+        self.patch_manager = PatchManager(debug_strategy)
+        self.learning_db = LearningDB()
+        self.rollback_manager = RollbackManager()
+        self.report_manager = ReportManager()
+
+    def debug(self, max_retries: int = 3):
+        """
+        Entry point for debugging session.
+        """
+        if self.mode == "simple":
+            return self._debug_simple(max_retries)
+        else:
+            return self._debug_advanced()
+
+    def _debug_simple(self, max_retries: int = 3):
+        """
+        Runs debugging in simple mode.
+        """
+        logger.info("🚀 Running simple debugging mode...")
+
+        for attempt in range(1, max_retries + 1):
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\debugger_logger.py
+================================================================================
+import os
+import json
+import logging
+from datetime import datetime
+from typing import Dict, Any, List
+
+logger = logging.getLogger("DebuggerLogger")
+logger.setLevel(logging.DEBUG)
+
+LOG_FILE = "debugger_attempts.log"
+
+class DebuggerLogger:
+    """
+    Logs debugging attempts including patch attempts, failures, and successes.
+    
+    Logs are stored in-memory and appended to a log file.
+    """
+
+    def __init__(self):
+        self.logs: List[Dict[str, Any]] = []
+
+    def log_attempt(self, failure: Dict[str, str], patch_description: str, success: bool):
+        """
+        Logs a debugging attempt.
+        
+        Args:
+            failure (Dict[str, str]): Dictionary containing details about the failure.
+                Expected keys: "file", "error".
+            patch_description (str): A description of the patch attempted.
+            success (bool): True if the patch was successfully applied; otherwise False.
+        """
+        log_entry = {
+            "timestamp": datetime.now().isoformat(),
+            "file": failure.get("file", "Unknown"),
+            "error": failure.get("error", "No error message provided"),
+            "patch": patch_description,
+            "success": success
+        }
+        self.logs.append(log_entry)
+        self._write_log(log_entry)
+        logger.info(f"Logged debugging attempt: {log_entry}")
+
+    def _write_log(self, log_entry: Dict[str, Any]):
+        """
+        Appends a single log entry to the log file.
+        """
+        try:
+            with open(LOG_FILE, "a", encoding="utf-8") as f:
+                f.write(json.dumps(log_entry) + "\n")
+        except Exception as e:
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\debugger_reporter.py
+================================================================================
+import logging
+import json
+import os
+from typing import Dict
+from collections import defaultdict
+from ai_engine.models.debugger.email_reporter import EmailReporter
+
+logger = logging.getLogger("DebuggerReporter")
+logger.setLevel(logging.DEBUG)
+
+REPORT_FILE = "debugging_report.json"
+
+
+class DebuggerReporter:
+    """
+    Generates detailed debugging session reports with AI analysis.
+    - Logs failed patches and AI explanations.
+    - Saves and merges reports for debugging history tracking.
+    - Optionally sends an email summary.
+    """
+
+    def __init__(self):
+        self.report_data = self.load_existing_report()
+
+    def load_existing_report(self) -> Dict[str, Dict[str, str]]:
+        """Loads the existing debugging report or initializes a new one."""
+        if os.path.exists(REPORT_FILE):
+            try:
+                with open(REPORT_FILE, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception as e:
+                logger.error(f"❌ Failed to load existing report: {e}")
+        return {"failed_patches": {}, "ai_explanations": {}}
+
+    def log_failed_patch(self, error_signature: str, reason: str):
+        """
+        Logs a failed patch attempt with a reason.
+        
+        Args:
+            error_signature (str): Unique hash of the error.
+            reason (str): Explanation of why the patch failed.
+        """
+        self.report_data["failed_patches"][error_signature] = reason
+        logger.warning(f"❌ Patch failed for {error_signature}: {reason}")
+
+    def log_ai_explanation(self, error_signature: str, explanation: str):
+        """
+        Logs an AI-generated explanation for debugging insights.
+        
+        Args:
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\debugger_runner.py
+================================================================================
+import logging
+import subprocess
+import os
+from ai_engine.models.debugger.error_parser import ErrorParser
+from ai_engine.models.debugger.auto_fixer import AutoFixer
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+class DebuggerRunner:
+    """
+    Coordinates running tests, parsing failures, applying fixes, and retrying until success.
+    """
+
+    def __init__(self):
+        self.parser = ErrorParser()
+        self.fixer = AutoFixer()
+
+    def run_tests(self) -> str:
+        """
+        Runs all tests using pytest and returns the combined output.
+        """
+        logger.info("🚀 Running pytest to execute tests...")
+        try:
+            result = subprocess.run(
+                ["pytest", "tests", "--maxfail=5", "--tb=short", "-q"],
+                capture_output=True, text=True
+            )
+            return result.stdout + result.stderr
+        except Exception as e:
+            logger.error(f"Failed to run tests: {e}")
+            return f"Error: {e}"
+
+    def retry_tests(self, max_retries: int = 3) -> bool:
+        """
+        Retries tests up to max_retries, applying fixes as needed.
+        """
+        for attempt in range(1, max_retries + 1):
+            logger.info(f"🔄 Attempt {attempt} of {max_retries}")
+            output = self.run_tests()
+            failures = self.parser.parse_test_failures(output)
+            if not failures:
+                logger.info("✅ All tests passed!")
+                return True
+            logger.info(f"📉 {len(failures)} tests failed. Attempting to fix...")
+            any_fixed = False
+            for failure in failures:
+                if self.fixer.apply_fix(failure):
+                    any_fixed = True
+                    logger.info(f"✅ Fix applied for {failure['file']}")
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\debugging_strategy.py
+================================================================================
+#!/usr/bin/env python
+"""
+debugging_strategy.py
+
+Automated debugging using:
+- AST-based fixes for structured issues (e.g., missing methods).
+- AI-generated patches for complex issues.
+- A learning DB to store and reuse successful patches.
+- Patch validation, application, and rollback.
+- Import error detection.
+
+Capabilities:
+  - Detects missing methods & generates method stubs automatically.
+  - Uses AI as a fallback when structured fixes don't apply.
+  - Saves successful fixes for future use.
+  - Validates patches before applying.
+  - Supports rollback if a patch worsens the issue.
+  - Detects import errors and extracts resolution hints.
+"""
+
+import ast
+import re
+import logging
+import os
+import subprocess
+import json
+import hashlib
+from tempfile import NamedTemporaryFile
+from typing import Dict, Any, Optional, List
+
+from ai_engine.models.ai_model_manager import AIModelManager
+from ai_engine.models.debugger.debugger_logger import DebuggerLogger
+from ai_engine.models.debugger.project_context_analyzer import ProjectContextAnalyzer
+
+# Configure logging
+logger = logging.getLogger("DebuggingStrategy")
+logger.setLevel(logging.DEBUG)
+
+
+def find_class_in_file(source_file: str, class_name: str) -> Optional[int]:
+    """
+    Parses `source_file` using AST and returns the line number where a missing
+    method stub should be inserted within the specified class.
+    """
+    try:
+        with open(source_file, "r", encoding="utf-8") as f:
+            source = f.read()
+        tree = ast.parse(source)
+
+        class_node, last_method_line = None, None
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\debug_agent_auto_fixer.py
+================================================================================
+import os
+import re
+import json
+import shutil
+import logging
+from typing import List, Dict, Optional
+from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
+from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
+
+logger = logging.getLogger("DebugAgentAutoFixer")
+logger.setLevel(logging.DEBUG)
+
+# Project Paths
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+AGENTS_CORE_PATH = os.path.join(PROJECT_ROOT, "agents", "core")
+TESTS_PATH = os.path.join(PROJECT_ROOT, "tests")
+BACKUP_DIR = os.path.join(PROJECT_ROOT, "rollback_backups")
+
+# Required Modules
+REQUIRED_MODULES = [
+    "AIConfidenceManager",
+    "AIPatchOptimizer",
+    "AIPatchRetryManager",
+    "AIPatchReviewManager",
+    "AIRollbackAnalysis",
+    "AutoFixer",
+    "DebuggerCLI",
+    "DebuggerCore",
+    "debugger_reporter",
+    "debugger_runner",
+    "debugging_strategy",
+    "AutoFixManager"
+]
+
+
+class DebugAgentAutoFixer:
+    """
+    **Automates error fixing in DebugAgent before AI intervention.**
+    
+    Features:
+    ✅ **Ensures required modules exist**  
+    ✅ **Fixes broken imports in test files**  
+    ✅ **Reattempts previously failed patches before AI generates new fixes**  
+    ✅ **Detects and corrects unterminated string literals**  
+    ✅ **Checks for syntax errors before debugging**  
+    ✅ **Backs up & restores files if fixes introduce more errors**
+    """
+
+    def __init__(self):
+        self.debugging_strategy = DebuggingStrategy()
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\email_reporter.py
+================================================================================
+import smtplib
+import logging
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+logger = logging.getLogger("EmailReporter")
+
+class EmailReporter:
+    """Handles sending email notifications for test failures."""
+    
+    def __init__(self, smtp_server="smtp.gmail.com", smtp_port=587, sender_email=None, sender_password=None, recipient_email=None):
+        """
+        Initializes EmailReporter with SMTP settings.
+        
+        Args:
+            smtp_server (str): SMTP server address (default: Gmail SMTP).
+            smtp_port (int): SMTP port number (default: 587 for TLS).
+            sender_email (str): Sender's email address.
+            sender_password (str): Sender's email password or app-specific password.
+            recipient_email (str): Recipient's email address.
+        """
+        self.smtp_server = smtp_server
+        self.smtp_port = smtp_port
+        self.sender_email = sender_email
+        self.sender_password = sender_password
+        self.recipient_email = recipient_email
+
+    def send_email(self, subject, message):
+        """
+        Sends an email notification.
+        
+        Args:
+            subject (str): Email subject.
+            message (str): Email body content.
+        """
+        if not all([self.sender_email, self.sender_password, self.recipient_email]):
+            logger.error("EmailReporter is missing required credentials or recipient email.")
+            return
+
+        try:
+            # Create email message
+            msg = MIMEMultipart()
+            msg["From"] = self.sender_email
+            msg["To"] = self.recipient_email
+            msg["Subject"] = subject
+            msg.attach(MIMEText(message, "plain"))
+
+            # Connect to SMTP server and send email
+            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+                server.starttls()  # Secure the connection
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\error_parser.py
+================================================================================
+import re
+import logging
+from typing import List, Dict
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+class ErrorParser:
+    """
+    Parses pytest output to extract test failure details.
+    """
+
+    def __init__(self):
+        """
+        Initializes the ErrorParser with a compiled regex pattern for efficiency.
+        """
+        self.failure_pattern = re.compile(
+            r"FAILED\s*-?\s*([\w./]+)\s*(::|\s*:\s*)([\w\[\]<>]+)\s*[-:]\s*(.+)", 
+            re.MULTILINE
+        )
+
+    def parse_test_failures(self, test_output: str) -> List[Dict[str, str]]:
+        """
+        Parses pytest output and extracts structured failure details.
+
+        Args:
+            test_output (str): The raw pytest output.
+
+        Returns:
+            List[Dict[str, str]]: A list of failure details, each containing:
+                - "file": Test file where the failure occurred.
+                - "test": Name of the failing test function.
+                - "error": The error message or reason for failure.
+        """
+        if not test_output or not isinstance(test_output, str):
+            logger.warning("⚠️ Invalid or empty test output received for parsing.")
+            return []
+
+        logger.info("🔍 Parsing test failures from output...")
+        failures = []
+
+        for match in self.failure_pattern.finditer(test_output):
+            file_name = match.group(1).strip()
+            test_name = match.group(3).strip()
+            error_msg = match.group(4).strip()
+
+            failure = {"file": file_name, "test": test_name, "error": error_msg}
+            logger.debug(f"✅ Detected failure: {failure}")
+
+            failures.append(failure)
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\learning_db.py
+================================================================================
+import json
+import os
+import logging
+from typing import Optional, List, Dict, Any
+
+logger = logging.getLogger("LearningDB")
+
+
+class LearningDB:
+    """
+    Stores previously encountered errors and fixes.
+    """
+
+    DB_FILE = "learning_db.json"
+
+    def __init__(self):
+        self.data = self.load_db()
+
+    def load_db(self) -> Dict[str, Any]:
+        """Loads the learning database."""
+        if os.path.exists(self.DB_FILE):
+            with open(self.DB_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {}
+
+    def get_signature(self, error: Dict[str, str]) -> str:
+        """Creates a hash signature for the error."""
+        return hash(error["error_message"])
+
+    def get_known_fix(self, error_sig: str) -> Optional[str]:
+        """Returns a known fix for an error signature if available."""
+        return self.data.get(error_sig, {}).get("patch")
+
+    def update(self, error_sig: str, patch: str, success: bool):
+        """Updates the learning database."""
+        self.data[error_sig] = {"patch": patch, "success": success}
+        with open(self.DB_FILE, "w", encoding="utf-8") as f:
+            json.dump(self.data, f, indent=4)
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\patch_manager.py
+================================================================================
+import logging
+from typing import Optional, Dict, Any
+from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
+
+logger = logging.getLogger("PatchManager")
+
+
+class PatchManager:
+    """
+    Manages patch generation and application.
+    """
+
+    def __init__(self, debug_strategy: Optional[DebuggingStrategy] = None):
+        self.debug_strategy = debug_strategy
+
+    def apply_fix(self, failure: Dict[str, str]) -> bool:
+        """Applies a fix for a test failure."""
+        if self.debug_strategy:
+            patch = self.debug_strategy.generate_patch(failure["error"], failure["file"])
+            return self.debug_strategy.apply_patch(patch)
+        return False
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\patch_tracking_manager.py
+================================================================================
+import os
+import json
+import logging
+from datetime import datetime
+from typing import Dict, List, Union
+
+logger = logging.getLogger("PatchTrackingManager")
+logger.setLevel(logging.DEBUG)
+
+# Constants for patch storage
+PATCH_STORAGE_DIR = "patch_data"
+os.makedirs(PATCH_STORAGE_DIR, exist_ok=True)
+
+FAILED_PATCHES_FILE = os.path.join(PATCH_STORAGE_DIR, "failed_patches.json")
+SUCCESSFUL_PATCHES_FILE = os.path.join(PATCH_STORAGE_DIR, "successful_patches.json")
+IMPORT_FIXES_FILE = os.path.join(PATCH_STORAGE_DIR, "import_fixes.json")
+AI_FEEDBACK_FILE = os.path.join(PATCH_STORAGE_DIR, "ai_feedback.json")
+AI_PERFORMANCE_FILE = os.path.join(PATCH_STORAGE_DIR, "ai_performance.json")
+
+
+class PatchTrackingManager:
+    """
+    Manages AI debugging patch tracking, including:
+    - Failed patches
+    - Successful patches
+    - Import fixes tracking
+    - AI feedback storage
+    - AI performance analytics
+    """
+
+    def __init__(self):
+        """Initialize patch tracking with persistent storage."""
+        self.failed_patches = self._load_patch_data(FAILED_PATCHES_FILE)
+        self.successful_patches = self._load_patch_data(SUCCESSFUL_PATCHES_FILE)
+        self.import_fixes = self._load_patch_data(IMPORT_FIXES_FILE)
+        self.ai_feedback = self._load_patch_data(AI_FEEDBACK_FILE)
+        self.ai_performance = self._load_patch_data(AI_PERFORMANCE_FILE)
+
+    def _load_patch_data(self, file_path: str) -> Dict[str, Union[Dict, List]]:
+        """Loads JSON patch data, ensuring valid dictionary format."""
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, dict):  
+                        return data  # ✅ Valid dictionary
+                    else:
+                        logger.warning(f"⚠️ Invalid format in {file_path}. Resetting.")
+                        return {}  # 🔄 Reset corrupted structure
+            except json.JSONDecodeError:
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\project_context_analyzer.py
+================================================================================
+import os
+import json
+import logging
+from typing import Dict, Any
+
+logger = logging.getLogger("ProjectContextAnalyzer")
+logger.setLevel(logging.INFO)
+
+class ProjectContextAnalyzer:
+    def __init__(self, project_root: str):
+        self.project_root = project_root
+        self.context_data = {"modules": {}, "dependencies": {}, "summary": {}}
+
+    def scan_directories(self):
+        """Scans the project directory for Python files."""
+        logger.info("📂 Scanning project directories...")
+        for root, _, files in os.walk(self.project_root):
+            for file in files:
+                if file.endswith(".py"):
+                    rel_path = os.path.relpath(os.path.join(root, file), self.project_root)
+                    self.context_data["modules"][rel_path.replace("\\", "/")] = {"dependencies": []}
+
+    def extract_code_context(self):
+        """Extracts module-level docstrings and other metadata."""
+        logger.info("📜 Extracting docstrings and code context...")
+        for file_path in self.context_data["modules"].keys():
+            abs_path = os.path.join(self.project_root, file_path)
+            with open(abs_path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+            
+            # Extract the first docstring (if present)
+            docstring = None
+            if lines and lines[0].startswith('"""'):
+                docstring = lines[0].strip().strip('"""')
+
+            self.context_data["modules"][file_path]["purpose"] = docstring if docstring else "No docstring found."
+
+    def map_dependencies(self):
+        """Parses each file and extracts module dependencies."""
+        import ast
+
+        logger.info("🔗 Mapping module dependencies...")
+        for file_path in self.context_data["modules"].keys():
+            abs_path = os.path.join(self.project_root, file_path)
+            with open(abs_path, "r", encoding="utf-8") as f:
+                tree = ast.parse(f.read(), filename=file_path)
+
+            dependencies = set()
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\report_manager.py
+================================================================================
+import json
+import logging
+import os
+import shutil
+from datetime import datetime
+from typing import Dict, List, Optional
+
+class ReportManager:
+    """Manages structured reports for debugging, test results, and analytics."""
+
+    REPORTS_DIR = "reports/"
+    LOG_FILE = "reports/report_manager.log"
+    MAX_LOG_SIZE = 5 * 1024 * 1024  # 5MB
+    MAX_BACKUP_LOGS = 3
+
+    def __init__(self):
+        os.makedirs(self.REPORTS_DIR, exist_ok=True)
+        self.logger = self._setup_logging()
+
+    def _setup_logging(self):
+        """Configures structured logging with log rotation while preventing test locks."""
+        self._release_log_handlers()
+
+        # During tests, log to console instead of file
+        if "pytest" in os.environ.get("_", "") or "unittest" in os.environ.get("_", ""):
+            handler = logging.StreamHandler()
+        else:
+            if os.path.exists(self.LOG_FILE) and os.path.getsize(self.LOG_FILE) > self.MAX_LOG_SIZE:
+                self._rotate_logs()
+            handler = logging.FileHandler(self.LOG_FILE, encoding="utf-8")
+
+        logger = logging.getLogger("ReportManager")
+        logger.setLevel(logging.INFO)
+
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+
+        if not logger.handlers:
+            logger.addHandler(handler)
+
+        return logger
+
+    def _release_log_handlers(self):
+        """Releases all log handlers to prevent file locking issues."""
+        logger = logging.getLogger("ReportManager")
+        for handler in logger.handlers[:]:
+            handler.close()
+            logger.removeHandler(handler)
+
+    def _rotate_logs(self):
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\rollback_manager.py
+================================================================================
+import os
+import json
+import logging
+import shutil
+from typing import Dict, List, Optional
+
+from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
+from ai_engine.models.debugger.debugging_strategy import DebuggingStrategy
+
+logger = logging.getLogger("RollbackManager")
+logger.setLevel(logging.DEBUG)
+
+# Max retries per failed patch before resorting to AI
+MAX_PATCH_RETRIES = 3
+BACKUP_DIR = "rollback_backups"
+
+
+class RollbackManager:
+    """
+    Automates the rollback and retry process for failed patches.
+    
+    🔹 How it Works:
+      ✅ Re-applies **previously failed patches** before generating new AI fixes.
+      ✅ If multiple failed patches exist, **tries different orders** before resorting to AI.
+      ✅ Backs up original files before making changes.
+      ✅ Ensures **no infinite loops** by limiting patch retries.
+    """
+
+    def __init__(self):
+        self.patch_tracker = PatchTrackingManager()
+        self.debugging_strategy = DebuggingStrategy()
+        self.failed_attempts = {}  # Tracks retry attempts per error signature
+
+    def backup_file(self, file_path: str):
+        """Creates a backup of the file before applying patches."""
+        if not os.path.exists(BACKUP_DIR):
+            os.makedirs(BACKUP_DIR)
+
+        backup_path = os.path.join(BACKUP_DIR, os.path.basename(file_path))
+        if not os.path.exists(backup_path):
+            shutil.copy(file_path, backup_path)
+            logger.info(f"📁 Backed up {file_path} -> {backup_path}")
+        return backup_path
+
+    def restore_backup(self, file_path: str):
+        """Restores a file from backup in case of rollback."""
+        backup_path = os.path.join(BACKUP_DIR, os.path.basename(file_path))
+        if os.path.exists(backup_path):
+            shutil.copy(backup_path, file_path)
+            logger.warning(f"🔄 Rolled back {file_path} from backup.")
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\test_parser.py
+================================================================================
+import logging
+from typing import List, Dict
+
+logger = logging.getLogger("TestParser")
+
+
+class TestParser:
+    """
+    Parses test failures from pytest output.
+    """
+
+    def parse_simple_failures(self, test_output: str) -> List[Dict[str, str]]:
+        """Extracts failure details from simple pytest output."""
+        failures = []
+        for line in test_output.splitlines():
+            if "FAILED" in line:
+                parts = line.split(" - ")
+                if len(parts) >= 2:
+                    failures.append({"file": parts[0].strip(), "error": parts[1].strip()})
+        return failures
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\test_runner.py
+================================================================================
+import subprocess
+import logging
+import os
+import json
+from typing import List, Dict
+
+logger = logging.getLogger("TestRunner")
+
+
+class TestRunner:
+    """
+    Handles running tests in simple and advanced mode.
+    """
+
+    def run_tests_simple(self) -> str:
+        """Runs pytest in simple mode and returns output."""
+        try:
+            result = subprocess.run(["pytest", "tests", "--maxfail=5", "--tb=short", "-q"],
+                                    capture_output=True, text=True)
+            return result.stdout
+        except Exception as e:
+            logger.error(f"Failed to run tests: {e}")
+            return ""
+
+    def run_tests_advanced(self) -> List[Dict[str, str]]:
+        """Runs pytest with JSON report enabled and extracts failures."""
+        report_file = "report.json"
+        if os.path.exists(report_file):
+            os.remove(report_file)
+
+        subprocess.run(["pytest", "tests", "--json-report", f"--json-report-file={report_file}"], capture_output=True)
+
+        if not os.path.exists(report_file):
+            logger.error("JSON report file not found.")
+            return []
+
+        with open(report_file, "r", encoding="utf-8") as f:
+            report_data = json.load(f)
+
+        return report_data.get("tests", [])
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\__init__.py
+================================================================================
+# Auto-generated __init__.py
+
+
+================================================================================
+📌 D:\side_projects\Side-projects\ai_agent_project\ai_engine\models\debugger\temp_test_folder\__init__.py
+================================================================================
+# Init file to make the directory a package
+
