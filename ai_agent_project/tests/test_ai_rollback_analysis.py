@@ -1,90 +1,144 @@
+"""
+tests/test_ai_rollback_analysis.py
+
+Pytest-based tests for AIRollbackAnalysis.
+"""
 import json
 import os
-import unittest
-from unittest.mock import MagicMock, patch
+import pytest
+from unittest.mock import patch, MagicMock
 
-from ai_engine.rollback_analysis import (
-    AI_DECISIONS_LOG,
-    FAILED_PATCHES_FILE,
-    HUMAN_REVIEW_FILE,
-    PATCH_HISTORY_FILE,
-    REFINED_PATCHES_FILE,
+from agents.core.utilities.ai_rollback_analysis import (
     AIRollbackAnalysis,
+    FAILED_PATCHES_FILE,
+    REFINED_PATCHES_FILE,
+    HUMAN_REVIEW_FILE,
+    AI_DECISIONS_LOG,
+    PATCH_HISTORY_FILE,
 )
-from agents.core.utilities.ai_client import AIClient
-
-class TestAIRollbackAnalysis(unittest.TestCase):
-    """Unit tests for the AIRollbackAnalysis class."""
-
-    def setUp(self):
-        """Sets up an instance of AIRollbackAnalysis for testing."""
-        self.manager = AIRollbackAnalysis()
-        self.error_signature = "example_error_signature"
-        self.test_patch = """--- a/code.py
-+++ b/code.py
-@@ -1 +1 @@
-- old code
-+ fixed code"""
-
-    def tearDown(self):
-        """Cleanup after tests by removing any created test files."""
-        for file in [
-            FAILED_PATCHES_FILE,
-            REFINED_PATCHES_FILE,
-            HUMAN_REVIEW_FILE,
-            AI_DECISIONS_LOG,
-            PATCH_HISTORY_FILE,
-        ]:
-            if os.path.exists(file):
-                os.remove(file)
-
-    def test_track_patch_history(self):
-        """Test logging of patch history."""
-        self.manager.track_patch_history(self.error_signature, self.test_patch, "Failed")
-
-        with open(PATCH_HISTORY_FILE, "r", encoding="utf-8") as f:
-            logs = json.load(f)
-
-        self.assertIn(self.error_signature, logs)
-        self.assertEqual(logs[self.error_signature][0]["status"], "Failed")
-
-    @patch("agents.core.utilities.ai_client.AIClient.evaluate_patch_with_reason")
-    def test_analyze_failed_patches(self, mock_evaluate_patch):
-        """Test AI-based classification of failed patches."""
-        mock_evaluate_patch.side_effect = lambda patch: {"score": 80, "reason": "Good structure"}
-        self.manager.patch_tracker.get_failed_patches = MagicMock(return_value=[self.test_patch])
-
-        refinable, bad, uncertain = self.manager.analyze_failed_patches(self.error_signature)
-
-        self.assertIn(self.test_patch, refinable)
-        self.assertEqual(bad, [])
-        self.assertEqual(uncertain, [])
-
-    @patch("agents.core.utilities.ai_client.AIClient.refine_patch", return_value="--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ refined code")
-    @patch("agents.core.utilities.ai_rollback_analysis.AIRollbackAnalysis.analyze_failed_patches", return_value=(["test_patch"], [], []))
-    def test_refine_patches_success(self, mock_analyze_patches, mock_refine_patch):
-        """Test refinement of AI-correctable patches."""
-        result = self.manager.refine_patches(self.error_signature)
-        self.assertTrue(result)
-
-    @patch("agents.core.utilities.ai_rollback_analysis.AIRollbackAnalysis.analyze_failed_patches", return_value=([], [], []))
-    def test_refine_patches_no_refinable(self, mock_analyze_patches):
-        """Test refinement process when no refinable patches exist."""
-        result = self.manager.refine_patches(self.error_signature)
-        self.assertFalse(result)
-
-    @patch("agents.core.utilities.ai_rollback_analysis.AIRollbackAnalysis.refine_patches", return_value=True)
-    def test_process_failed_patches_success(self, mock_refine_patches):
-        """Test full failed patch processing when refinement succeeds."""
-        result = self.manager.process_failed_patches(self.error_signature)
-        self.assertTrue(result)
-
-    @patch("agents.core.utilities.ai_rollback_analysis.AIRollbackAnalysis.refine_patches", return_value=False)
-    def test_process_failed_patches_failure(self, mock_refine_patches):
-        """Test full failed patch processing when no refinements are possible."""
-        result = self.manager.process_failed_patches(self.error_signature)
-        self.assertFalse(result)
 
 
-if __name__ == "__main__":
-    unittest.main()
+@pytest.fixture
+def cleanup_files():
+    """Removes test-related JSON files after each test."""
+    yield
+    for file_path in [
+        FAILED_PATCHES_FILE,
+        REFINED_PATCHES_FILE,
+        HUMAN_REVIEW_FILE,
+        AI_DECISIONS_LOG,
+        PATCH_HISTORY_FILE,
+    ]:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+
+def test_track_patch_history(cleanup_files):
+    """Test that track_patch_history stores patch data correctly."""
+    # Instantiate normally (no mocking needed here).
+    rollback_analysis = AIRollbackAnalysis()
+
+    rollback_analysis.track_patch_history("error123", "sample patch", "Failed")
+    # Confirm data written to patch_history file
+    with open(PATCH_HISTORY_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert "error123" in data
+    assert len(data["error123"]) == 1
+    assert data["error123"][0]["patch"] == "sample patch"
+    assert data["error123"][0]["status"] == "Failed"
+
+
+@patch.object(AIRollbackAnalysis, "_save_patch_data")  # Prevent file writes
+@patch("agents.core.utilities.ai_rollback_analysis.PatchTrackingManager")
+@patch("agents.core.utilities.ai_rollback_analysis.AIClient")
+def test_analyze_failed_patches(mock_ai_client, mock_patch_manager, mock_save, cleanup_files):
+    """
+    Test that analyze_failed_patches classifies patches correctly
+    based on AIClient evaluations.
+    """
+    # Set up mocks before instantiating AIRollbackAnalysis
+    mock_manager_instance = mock_patch_manager.return_value
+    mock_manager_instance.get_failed_patches.return_value = ["patch1", "patch2", "patch3"]
+
+    mock_ai_instance = mock_ai_client.return_value
+    mock_ai_instance.evaluate_patch_with_reason.side_effect = [
+        {"score": 80, "reason": "Looks refinable."},  # refinable
+        {"score": 30, "reason": "Totally off."},      # bad
+        {"score": 60, "reason": "Uncertain fix."},    # uncertain
+    ]
+
+    # Now create the instance so it uses the mocked classes
+    ra = AIRollbackAnalysis()
+
+    refinable, bad, uncertain = ra.analyze_failed_patches("errorXYZ")
+    assert refinable == ["patch1"]
+    assert bad == ["patch2"]
+    assert uncertain == ["patch3"]
+
+
+@patch.object(AIRollbackAnalysis, "_save_patch_data")
+@patch("agents.core.utilities.ai_rollback_analysis.PatchTrackingManager")
+@patch("agents.core.utilities.ai_rollback_analysis.AIClient")
+def test_refine_patches_success(mock_ai_client, mock_patch_manager, mock_save, cleanup_files):
+    """
+    Test that refine_patches successfully refines patches with a high score
+    and moves uncertain patches to human review.
+    """
+    mock_patch_manager.return_value.get_failed_patches.return_value = ["patch1", "patch2"]
+
+    mock_ai = mock_ai_client.return_value
+    # patch1 is refinable, patch2 is uncertain
+    mock_ai.evaluate_patch_with_reason.side_effect = [
+        {"score": 80, "reason": "Good."},
+        {"score": 60, "reason": "Uncertain."},
+    ]
+    mock_ai.refine_patch.side_effect = ["patch1-refined", ""]
+
+    ra = AIRollbackAnalysis()
+    result = ra.refine_patches("errorXYZ")
+    assert result is True
+
+    # patch1 => refined_patches
+    assert "errorXYZ" in ra.refined_patches
+    assert ra.refined_patches["errorXYZ"] == ["patch1-refined"]
+
+    # patch2 => human_review
+    assert "errorXYZ" in ra.human_review
+    assert ra.human_review["errorXYZ"] == ["patch2"]
+
+
+@patch.object(AIRollbackAnalysis, "_save_patch_data")
+@patch("agents.core.utilities.ai_rollback_analysis.PatchTrackingManager")
+@patch("agents.core.utilities.ai_rollback_analysis.AIClient")
+def test_refine_patches_none(mock_ai_client, mock_patch_manager, mock_save, cleanup_files):
+    """Test that refine_patches returns False if no patches are refinable."""
+    mock_patch_manager.return_value.get_failed_patches.return_value = ["patchA"]
+    mock_ai = mock_ai_client.return_value
+    # Score is too low, so it's "bad"
+    mock_ai.evaluate_patch_with_reason.return_value = {
+        "score": 30,
+        "reason": "Bad patch."
+    }
+
+    ra = AIRollbackAnalysis()
+    result = ra.refine_patches("errorXYZ")
+    assert result is False
+    # No refined patches
+    assert "errorXYZ" not in ra.refined_patches
+
+
+@patch.object(AIRollbackAnalysis, "refine_patches", return_value=True)
+def test_process_failed_patches_success(mock_refine, cleanup_files):
+    """Test process_failed_patches returns True if refinement was done."""
+    ra = AIRollbackAnalysis()
+    out = ra.process_failed_patches("error123")
+    assert out is True
+
+
+@patch.object(AIRollbackAnalysis, "refine_patches", return_value=False)
+def test_process_failed_patches_failure(mock_refine, cleanup_files):
+    """Test process_failed_patches returns False if no refinements occurred."""
+    ra = AIRollbackAnalysis()
+    out = ra.process_failed_patches("error456")
+    assert out is False
