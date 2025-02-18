@@ -1,9 +1,0 @@
-{
-    "test_name": "AI Model Test",
-    "status": "passed",
-    "timestamp": "2025-02-17T12:30:51.803943",
-    "details": {
-        "accuracy": 0.95,
-        "time_elapsed": "3.2s"
-    }
-}

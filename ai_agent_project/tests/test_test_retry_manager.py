@@ -4,7 +4,7 @@ import unittest
 from datetime import datetime
 from unittest.mock import patch, MagicMock
 from ai_engine.models.debugger.report_manager import ReportManager
-
+import logging
 
 class TestReportManager(unittest.TestCase):
     """Unit tests for ReportManager."""
@@ -22,10 +22,22 @@ class TestReportManager(unittest.TestCase):
         self.test_filepath = os.path.join(self.manager.REPORTS_DIR, self.test_filename)
 
     def tearDown(self):
-        """Cleanup generated test reports."""
+        """Cleanup generated test reports and release file locks."""
+        # Ensure all handlers are removed after each test
+        for handler in self.manager.logger.handlers[:]:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
+                self.manager.logger.removeHandler(handler)
+
+        # Now delete the files safely
         if os.path.exists(self.manager.REPORTS_DIR):
             for file in os.listdir(self.manager.REPORTS_DIR):
-                os.remove(os.path.join(self.manager.REPORTS_DIR, file))
+                file_path = os.path.join(self.manager.REPORTS_DIR, file)
+                try:
+                    os.remove(file_path)
+                except PermissionError:
+                    print(f"Warning: Could not delete {file_path} (file in use)")
+
             os.rmdir(self.manager.REPORTS_DIR)
 
     def test_save_report(self):
@@ -64,12 +76,31 @@ class TestReportManager(unittest.TestCase):
 
     def test_search_reports(self):
         """Test searching reports by keyword."""
-        self.manager.save_report("ai_test_report", self.test_report_data)
-        self.manager.save_report("debug_log", self.test_report_data)
+        ai_report = {
+            "test_name": "AI Model Evaluation",
+            "status": "passed",
+            "timestamp": datetime.now().isoformat(),
+            "details": {"accuracy": 0.95, "time_elapsed": "3.2s", "summary": "AI performed well."}
+        }
+        debug_report = {
+            "test_name": "System Debugging",
+            "status": "passed",
+            "timestamp": datetime.now().isoformat(),
+            "details": {"issues_found": 2, "resolved": True, "summary": "Debugging complete."}
+        }
+
+        self.manager.save_report("ai_test_report", ai_report)
+        self.manager.save_report("debug_log", debug_report)
 
         search_results = self.manager.search_reports("AI")
-        self.assertEqual(len(search_results), 1)
-        self.assertTrue(any("ai_test_report" in filename for filename in search_results))
+        
+        # ✅ Check if any file in search_results starts with "ai_test_report"
+        self.assertTrue(any(filename.startswith("ai_test_report") for filename in search_results))
+
+        # ✅ Ensure "debug_log" is excluded
+        self.assertFalse(any(filename.startswith("debug_log") for filename in search_results))
+
+
 
     @patch("os.remove")
     def test_delete_old_reports(self, mock_remove):

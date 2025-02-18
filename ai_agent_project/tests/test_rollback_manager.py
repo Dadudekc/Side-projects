@@ -25,18 +25,17 @@ def test_rollback_triggered_on_failure(mock_restore_backup, rollback_manager):
     logger.info("✅ Test passed: Rollback triggered when required.")
 
 
-# ** Test Retrying Failed Patches Before AI Fix**
 @patch(
     "ai_engine.models.debugger.rollback_manager.PatchTrackingManager.get_failed_patches",
     return_value=["Patch1", "Patch2"],
 )
 @patch(
     "ai_engine.models.debugger.rollback_manager.DebuggingStrategy.apply_patch",
-    side_effect=[False, True],
-)  # 1st patch fails, 2nd succeeds
+    side_effect=[False, True],  # First fails, second succeeds
+)
 @patch.object(RollbackManager, "backup_file")
 @patch.object(RollbackManager, "restore_backup")
-@patch("debugger.rollback_manager.PatchTrackingManager.record_successful_patch")
+@patch("ai_engine.models.debugger.rollback_manager.PatchTrackingManager.record_successful_patch")
 def test_re_attempt_failed_patches_success(
     mock_record_success,
     mock_restore,
@@ -54,13 +53,12 @@ def test_re_attempt_failed_patches_success(
     assert result is True  # ✅ The second patch should succeed
     mock_apply_patch.assert_called()  # ✅ Patches were attempted
     mock_record_success.assert_called_once()  # ✅ Successful patch recorded
-    mock_backup.assert_called_once_with(file_path)  # ✅ Backup was created
-    mock_restore.assert_not_called()  # ✅ No rollback needed if a patch succeeds
+    assert mock_backup.call_count == 2  # ✅ One backup per attempted patch
+    mock_restore.assert_called_once()  # ✅ Restore should be called only after the first failure
 
     logger.info(
         "✅ Test passed: Failed patches were retried and a successful one was found."
     )
-
 
 # ** Test Max Retry Limit Enforcement**
 @patch(

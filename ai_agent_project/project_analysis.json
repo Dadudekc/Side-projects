@@ -172,7 +172,7 @@
                 "logging",
                 "datetime",
                 "typing",
-                "agents.core.core"
+                "agents.core.AgentBase"
             ],
             "purpose": "No docstring provided"
         },
@@ -478,7 +478,8 @@
                 "ai_engine.models.debugger.learning_db",
                 "ai_engine.models.debugger.rollback_manager",
                 "ai_engine.models.debugger.debugger_reporter",
-                "ai_engine.models.debugger.debugging_strategy"
+                "ai_engine.models.debugger.debugging_strategy",
+                "ai_engine.models.debugger.report_manager"
             ],
             "purpose": "No docstring provided"
         },
@@ -598,6 +599,17 @@
             ],
             "purpose": "No docstring provided"
         },
+        "ai_engine\\models\\debugger\\report_manager.py": {
+            "dependencies": [
+                "json",
+                "logging",
+                "os",
+                "shutil",
+                "datetime",
+                "typing"
+            ],
+            "purpose": "No docstring provided"
+        },
         "ai_engine\\models\\debugger\\rollback_manager.py": {
             "dependencies": [
                 "os",
@@ -630,10 +642,6 @@
         "ai_engine\\models\\debugger\\__init__.py": {
             "dependencies": [],
             "purpose": "No docstring provided"
-        },
-        "ai_engine\\models\\debugger\\rollback_backups\\test_backup.py": {
-            "dependencies": [],
-            "purpose": "Unknown"
         },
         "ai_engine\\models\\debugger\\temp_test_folder\\__init__.py": {
             "dependencies": [],
@@ -939,7 +947,10 @@
                 "os",
                 "unittest",
                 "unittest.mock",
-                "ai_engine.models.debugger.debugger_cli"
+                "ai_engine.models.debugger.debugger_cli",
+                "ai_engine.models.debugger.report_manager",
+                "ai_engine.models.debugger.debugger_core",
+                "ai_engine.models.debugger.patch_tracking_manager"
             ],
             "purpose": "No docstring provided"
         },
@@ -951,7 +962,8 @@
                 "unittest",
                 "unittest.mock",
                 "ai_engine.models.debugger.debugger_core",
-                "agents.core.logger"
+                "agents.core.logger",
+                "ai_engine.models.debugger.report_manager"
             ],
             "purpose": "No docstring provided"
         },
@@ -1041,13 +1053,6 @@
             ],
             "purpose": "No docstring provided"
         },
-        "tests\\test_dummy.py": {
-            "dependencies": [
-                "agents.core.DebuggerCore",
-                "agents.core.DebuggerCLI"
-            ],
-            "purpose": "No docstring provided"
-        },
         "tests\\test_error_parser.py": {
             "dependencies": [
                 "logging",
@@ -1062,9 +1067,7 @@
                 "os",
                 "unittest",
                 "unittest.mock",
-                "agents.core.AgentBase",
-                "agents.custom_agent",
-                "ai_engine.models.ai_model_manager"
+                "agents.core.JournalAgent"
             ],
             "purpose": "No docstring provided"
         },
@@ -1095,10 +1098,6 @@
             ],
             "purpose": "No docstring provided"
         },
-        "tests\\test_patch.py": {
-            "dependencies": [],
-            "purpose": "No docstring provided"
-        },
         "tests\\test_patch_tracking_manager.py": {
             "dependencies": [
                 "json",
@@ -1127,6 +1126,18 @@
             ],
             "purpose": "No docstring provided"
         },
+        "tests\\test_report_manager.py": {
+            "dependencies": [
+                "os",
+                "json",
+                "unittest",
+                "logging",
+                "datetime",
+                "unittest.mock",
+                "ai_engine.models.debugger.report_manager"
+            ],
+            "purpose": "No docstring provided"
+        },
         "tests\\test_rollback_manager.py": {
             "dependencies": [
                 "logging",
@@ -1136,16 +1147,14 @@
             ],
             "purpose": "No docstring provided"
         },
-        "tests\\test_syntax_error.py": {
-            "dependencies": [],
-            "purpose": "Unknown"
-        },
         "tests\\test_test_retry_manager.py": {
             "dependencies": [
-                "logging",
+                "os",
+                "json",
+                "unittest",
+                "datetime",
                 "unittest.mock",
-                "pytest",
-                "ai_engine.models.debugger.auto_fix_manager"
+                "ai_engine.models.debugger.report_manager"
             ],
             "purpose": "No docstring provided"
         },
@@ -1153,17 +1162,9 @@
             "dependencies": [
                 "unittest",
                 "unittest.mock",
-                "agents.core.AgentBase",
-                "agents.core.utilities.ai_model_manager",
-                "agents.core.utilities.ai_patch_utils",
-                "agents.core.utilities.CustomAgent",
                 "agents.core.trading_agent"
             ],
             "purpose": "No docstring provided"
-        },
-        "tests\\test_unterminated.py": {
-            "dependencies": [],
-            "purpose": "Unknown"
         },
         "tests\\__init__.py": {
             "dependencies": [],
@@ -1557,10 +1558,6 @@
             ],
             "purpose": "No docstring provided"
         },
-        "tests_backup\\test_syntax_error.py": {
-            "dependencies": [],
-            "purpose": "Unknown"
-        },
         "tests_backup\\test_test_retry_manager.py": {
             "dependencies": [
                 "logging",
@@ -1642,6 +1639,7 @@
             "ai_engine\\models\\debugger\\learning_db.py",
             "ai_engine\\models\\debugger\\patch_tracking_manager.py",
             "ai_engine\\models\\debugger\\project_context_analyzer.py",
+            "ai_engine\\models\\debugger\\report_manager.py",
             "ai_engine\\models\\debugger\\rollback_manager.py",
             "ai_engine\\models\\debugger\\test_runner.py",
             "ai_engine\\models\\memory\\memory_manager.py",
@@ -1663,6 +1661,8 @@
             "tests\\test_openai_model.py",
             "tests\\test_patch_tracking_manager.py",
             "tests\\test_project_context_analyzer.py",
+            "tests\\test_report_manager.py",
+            "tests\\test_test_retry_manager.py",
             "tests_backup\\conftest.py",
             "tests_backup\\test_ai_agent_utils.py",
             "tests_backup\\test_ai_confidence_manager.py",
@@ -1698,6 +1698,7 @@
             "ai_engine\\models\\debugger\\auto_fixer.py",
             "ai_engine\\models\\debugger\\auto_fix_manager.py",
             "ai_engine\\models\\debugger\\debug_agent_auto_fixer.py",
+            "ai_engine\\models\\debugger\\report_manager.py",
             "ai_engine\\models\\debugger\\rollback_manager.py",
             "tests\\test_auto_fixer.py",
             "tests\\test_debug_agent_auto_fixer.py",
@@ -1758,6 +1759,7 @@
             "ai_engine\\models\\debugger\\patch_manager.py",
             "ai_engine\\models\\debugger\\patch_tracking_manager.py",
             "ai_engine\\models\\debugger\\project_context_analyzer.py",
+            "ai_engine\\models\\debugger\\report_manager.py",
             "ai_engine\\models\\debugger\\rollback_manager.py",
             "ai_engine\\models\\debugger\\test_parser.py",
             "ai_engine\\models\\debugger\\test_runner.py",
@@ -1775,8 +1777,8 @@
             "tests\\test_debugger_runner.py",
             "tests\\test_debugging_strategy.py",
             "tests\\test_error_parser.py",
+            "tests\\test_report_manager.py",
             "tests\\test_rollback_manager.py",
-            "tests\\test_test_retry_manager.py",
             "tests_backup\\test_agent_dispatcher.py",
             "tests_backup\\test_custom_agent.py",
             "tests_backup\\test_debugger_runner.py",
@@ -1819,6 +1821,7 @@
             "ai_engine\\models\\debugger\\learning_db.py",
             "ai_engine\\models\\debugger\\patch_tracking_manager.py",
             "ai_engine\\models\\debugger\\project_context_analyzer.py",
+            "ai_engine\\models\\debugger\\report_manager.py",
             "ai_engine\\models\\debugger\\rollback_manager.py",
             "ai_engine\\models\\debugger\\test_runner.py",
             "ai_engine\\models\\memory\\context_manager.py",
@@ -1839,6 +1842,8 @@
             "tests\\test_openai_model.py",
             "tests\\test_patch_tracking_manager.py",
             "tests\\test_project_context_analyzer.py",
+            "tests\\test_report_manager.py",
+            "tests\\test_test_retry_manager.py",
             "tests_backup\\test_ai_agent_utils.py",
             "tests_backup\\test_ai_confidence_manager.py",
             "tests_backup\\test_ai_patch_review_manager.py",
@@ -1927,6 +1932,7 @@
             "ai_engine\\models\\debugger\\patch_manager.py",
             "ai_engine\\models\\debugger\\patch_tracking_manager.py",
             "ai_engine\\models\\debugger\\project_context_analyzer.py",
+            "ai_engine\\models\\debugger\\report_manager.py",
             "ai_engine\\models\\debugger\\rollback_manager.py",
             "ai_engine\\models\\debugger\\test_parser.py",
             "ai_engine\\models\\debugger\\test_runner.py",
@@ -1955,6 +1961,7 @@
             "agents\\AgentDispatcher.py",
             "agents\\core\\agent_dispatcher.py",
             "agents\\core\\agent_registry.py",
+            "agents\\core\\JournalAgent.py",
             "agents\\core\\trading_agent.py",
             "agents\\core\\utilities\\CustomAgent.py",
             "tests\\test_agent_dispatcher.py",
@@ -1962,9 +1969,7 @@
             "tests\\test_debugger_agent.py",
             "tests\\test_debug_agent_utils.py",
             "tests\\test_dispatcher.py",
-            "tests\\test_journal_agent.py",
             "tests\\test_openai_model.py",
-            "tests\\test_trading_agent.py",
             "tests_backup\\test_agent_dispatcher.py",
             "tests_backup\\test_custom_agent.py",
             "tests_backup\\test_debugger_agent.py",
@@ -2026,6 +2031,7 @@
         "ai_engine.models.debugger.debugger_core": [
             "agents\\debugger_agent.py",
             "ai_engine\\models\\debugger\\debugger_cli.py",
+            "tests\\test_debugger_cli.py",
             "tests\\test_debugger_core.py",
             "tests_backup\\test_debugger_core.py"
         ],
@@ -2058,6 +2064,7 @@
             "ai_engine\\models\\debugger\\rollback_manager.py",
             "tests\\test_ai_patch_optimizer.py",
             "tests\\test_ai_patch_review_manager.py",
+            "tests\\test_debugger_cli.py",
             "tests\\test_debug_agent_auto_fixer.py",
             "tests\\test_patch_tracking_manager.py",
             "tests_backup\\test_ai_patch_optimizer.py",
@@ -2106,7 +2113,6 @@
         ],
         "agents.core.core": [
             "agents\\core\\DebuggerAgent.py",
-            "agents\\core\\JournalAgent.py",
             "scripts\\run_debugger.py",
             "scripts\\run_debugger.py"
         ],
@@ -2143,7 +2149,10 @@
             "agents\\core\\JournalAgent.py",
             "ai_engine\\models\\debugger\\debugger_logger.py",
             "ai_engine\\models\\debugger\\patch_tracking_manager.py",
+            "ai_engine\\models\\debugger\\report_manager.py",
             "tests\\test_patch_tracking_manager.py",
+            "tests\\test_report_manager.py",
+            "tests\\test_test_retry_manager.py",
             "tests_backup\\test_patch_tracking_manager.py"
         ],
         "logging.handlers": [
@@ -2216,7 +2225,6 @@
             "ai_engine\\models\\debugger\\debugging_strategy.py",
             "tests\\test_deepseek_model.py",
             "tests\\test_dispatcher.py",
-            "tests\\test_journal_agent.py",
             "tests\\test_openai_model.py",
             "tests_backup\\test_deepseek_model.py",
             "tests_backup\\test_dispatcher.py",
@@ -2249,7 +2257,6 @@
         "ai_engine.models.debugger.auto_fix_manager": [
             "ai_engine\\models\\debugger\\ai_patch_retry_manager.py",
             "tests\\test_ai_patch_retry_manager.py",
-            "tests\\test_test_retry_manager.py",
             "tests_backup\\test_ai_patch_retry_manager.py",
             "tests_backup\\test_test_retry_manager.py"
         ],
@@ -2272,6 +2279,13 @@
         ],
         "ai_engine.models.debugger.patch_manager": [
             "ai_engine\\models\\debugger\\debugger_core.py"
+        ],
+        "ai_engine.models.debugger.report_manager": [
+            "ai_engine\\models\\debugger\\debugger_core.py",
+            "tests\\test_debugger_cli.py",
+            "tests\\test_debugger_core.py",
+            "tests\\test_report_manager.py",
+            "tests\\test_test_retry_manager.py"
         ],
         "ai_engine.models.debugger.email_reporter": [
             "ai_engine\\models\\debugger\\debugger_reporter.py",
@@ -2375,6 +2389,8 @@
             "tests\\test_mistral_model.py",
             "tests\\test_openai_model.py",
             "tests\\test_registry.py",
+            "tests\\test_report_manager.py",
+            "tests\\test_test_retry_manager.py",
             "tests\\test_trading_agent.py",
             "tests_backup\\test_AgentActor.py",
             "tests_backup\\test_agent_base.py",
@@ -2427,6 +2443,7 @@
             "tests\\test_mistral_model.py",
             "tests\\test_openai_model.py",
             "tests\\test_patch_tracking_manager.py",
+            "tests\\test_report_manager.py",
             "tests\\test_rollback_manager.py",
             "tests\\test_test_retry_manager.py",
             "tests\\test_trading_agent.py",
@@ -2490,7 +2507,6 @@
             "tests\\test_custom_agent.py",
             "tests\\test_debugger_agent.py",
             "tests\\test_debug_agent_utils.py",
-            "tests\\test_trading_agent.py",
             "tests_backup\\test_agent_dispatcher.py",
             "tests_backup\\test_ai_patch_optimizer.py",
             "tests_backup\\test_custom_agent.py",
@@ -2505,7 +2521,6 @@
             "tests\\test_deepseek_model.py",
             "tests\\test_dispatcher.py",
             "tests\\test_openai_model.py",
-            "tests\\test_trading_agent.py",
             "tests_backup\\test_agent_dispatcher.py",
             "tests_backup\\test_ai_patch_utils.py",
             "tests_backup\\test_custom_agent.py",
@@ -2517,7 +2532,6 @@
         "agents.core.utilities.CustomAgent": [
             "tests\\test_agent_dispatcher.py",
             "tests\\test_custom_agent.py",
-            "tests\\test_trading_agent.py",
             "tests_backup\\test_agent_dispatcher.py",
             "tests_backup\\test_custom_agent.py",
             "tests_backup\\test_trading_agent.py"
@@ -2605,7 +2619,6 @@
             "tests\\test_patch_tracking_manager.py",
             "tests\\test_project_context_analyzer.py",
             "tests\\test_rollback_manager.py",
-            "tests\\test_test_retry_manager.py",
             "tests_backup\\test_debugger_reporter.py",
             "tests_backup\\test_debugger_runner.py",
             "tests_backup\\test_debugging_strategy.py",
@@ -2627,24 +2640,24 @@
         "agents.custom_agent": [
             "tests\\test_deepseek_model.py",
             "tests\\test_dispatcher.py",
-            "tests\\test_journal_agent.py",
             "tests\\test_openai_model.py",
             "tests_backup\\test_deepseek_model.py",
             "tests_backup\\test_dispatcher.py",
             "tests_backup\\test_journal_agent.py",
             "tests_backup\\test_openai_model.py"
         ],
-        "agents.core.DebuggerCore": [
-            "tests\\test_dummy.py",
-            "tests_backup\\test_dummy.py"
-        ],
-        "agents.core.DebuggerCLI": [
-            "tests\\test_dummy.py",
-            "tests_backup\\test_dummy.py"
+        "agents.core.JournalAgent": [
+            "tests\\test_journal_agent.py"
         ],
         "agents.core.trading_agent": [
             "tests\\test_trading_agent.py",
             "tests_backup\\test_trading_agent.py"
+        ],
+        "agents.core.DebuggerCore": [
+            "tests_backup\\test_dummy.py"
+        ],
+        "agents.core.DebuggerCLI": [
+            "tests_backup\\test_dummy.py"
         ],
         "PyQt5.QtCore": [
             "ui\\debugger_dashboard.py"

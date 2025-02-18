@@ -18,24 +18,30 @@ class TestReportManager(unittest.TestCase):
             "status": "success",  # Fixed expected value
             "timestamp": datetime.now().isoformat()
         }
-        cls.test_filename = "test_report.json"
 
     def setUp(self):
-        """Prepare a clean test environment before each test."""
+        """Ensure 'reports/' directory exists and save an initial report."""
+        os.makedirs(self.manager.REPORTS_DIR, exist_ok=True)
         self.manager.save_report("test_report", self.test_data)
 
     def tearDown(self):
-        """Clean up test artifacts after each test."""
-        # Close the logger to prevent file locks
-        logging.shutdown()
+        """Safely remove reports and log handlers after tests."""
+        for handler in self.manager.logger.handlers[:]:
+            handler.close()
+            self.manager.logger.removeHandler(handler)
 
-        for file in os.listdir(self.manager.REPORTS_DIR):
-            file_path = os.path.join(self.manager.REPORTS_DIR, file)
-            if os.path.isfile(file_path):
+        if os.path.exists(self.manager.REPORTS_DIR):
+            for file in os.listdir(self.manager.REPORTS_DIR):
+                file_path = os.path.join(self.manager.REPORTS_DIR, file)
                 try:
                     os.remove(file_path)
                 except PermissionError:
-                    print(f"⚠️ Could not delete {file_path}, skipping...")
+                    print(f"⚠️ Warning: Could not delete {file_path} (file in use).")
+
+        try:
+            os.rmdir(self.manager.REPORTS_DIR)
+        except OSError:
+            print(f"⚠️ Warning: Could not remove {self.manager.REPORTS_DIR} (not empty).")
 
     def test_save_report(self):
         """Test saving a JSON report."""
@@ -51,7 +57,7 @@ class TestReportManager(unittest.TestCase):
 
         loaded_data = self.manager.load_report(reports[0])
         self.assertIsInstance(loaded_data, dict, "Loaded report should be a dictionary.")
-        self.assertEqual(loaded_data.get("status"), "success", "Report content mismatch.")  # Fixed expected value
+        self.assertEqual(loaded_data.get("status"), "success", "Report content mismatch.")
 
     def test_list_reports(self):
         """Test listing available reports."""
@@ -68,24 +74,35 @@ class TestReportManager(unittest.TestCase):
         matches = self.manager.search_reports("Sample Report")
         self.assertGreaterEqual(len(matches), 1, "Search should return at least one match.")
 
-    @patch("os.remove")
-    def test_delete_old_reports(self, mock_remove):
+    @patch("ai_engine.models.debugger.report_manager.os.remove")
+    @patch("ai_engine.models.debugger.report_manager.os.path.getmtime")
+    def test_delete_old_reports(self, mock_getmtime, mock_remove):
         """Test deleting reports older than a certain threshold."""
-        mock_remove.return_value = None
+        mock_getmtime.return_value = 0  # Simulate old reports
         self.manager.delete_old_reports(days=0)
-        mock_remove.assert_called()
+        self.assertTrue(mock_remove.called, "Old reports were not deleted.")
 
-    @patch("report_manager.logging.FileHandler")
-    def test_log_entry(self, mock_file_handler):
+    @patch.object(logging, "getLogger")
+    def test_log_entry(self, mock_get_logger):
         """Test logging system with different levels."""
+        mock_logger = MagicMock()
+        mock_get_logger.return_value = mock_logger  # Mock the logger instance
+
+        self.manager.logger = mock_logger  # Replace the instance's logger with the mock
+
         self.manager.log_entry("Test INFO log")
         self.manager.log_entry("Test ERROR log", level="error")
 
-        self.assertTrue(mock_file_handler.called, "Log file handler was not initialized.")
+        # ✅ Validate that the correct logging calls were made
+        mock_logger.info.assert_any_call("Test INFO log")
+        mock_logger.error.assert_any_call("Test ERROR log")
+
 
     def test_log_rotation(self):
         """Test log rotation mechanism to prevent oversized log files."""
         log_file = self.manager.LOG_FILE
+        os.makedirs(self.manager.REPORTS_DIR, exist_ok=True)  # Ensure directory exists
+
         with open(log_file, "w") as f:
             f.write("X" * (self.manager.MAX_LOG_SIZE + 1))  # Simulate oversized log
         
@@ -94,6 +111,7 @@ class TestReportManager(unittest.TestCase):
 
         rotated_log = f"{log_file}.1"
         self.assertTrue(os.path.exists(rotated_log), "Log rotation did not occur.")
+
 
 if __name__ == "__main__":
     unittest.main()

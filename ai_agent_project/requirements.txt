@@ -1,3 +1,38 @@
-pytest
-pytest-asyncio
+# Standard Python Modules (No need to install via pip)
+# os
+# time
+# shutil
+# logging
+# json
+# sys
+# re
+# subprocess
+# argparse
+# datetime
+# hashlib
+# typing
+# tempfile
+# random
+# email
+# smtplib
+# collections
+# difflib
+# unittest
+# unittest.mock
+
+# Third-party Libraries
+watchdog
+psutil
+openai
+networkx
+alpaca-trade-api
 requests
+beautifulsoup4
+nltk
+tqdm
+unidiff
+pandas
+matplotlib
+PyQt5
+schedule
+pytest

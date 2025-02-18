@@ -11,8 +11,7 @@ from ai_engine.models.deepseek_model import DeepSeekModel
 from ai_engine.models.mistral_model import MistralModel
 from ai_engine.models.openai_model import OpenAIModel
 
-AI_PERFORMANCE_TRACKER_FILE = "path/to/tracker/file.json"
-
+AI_PERFORMANCE_TRACKER_FILE = "tracking_data/ai_performance.json"
 
 class TestOpenAIModel(unittest.TestCase):
     """Unit tests for the OpenAIModel class."""
@@ -23,6 +22,21 @@ class TestOpenAIModel(unittest.TestCase):
         self.error_message = "SyntaxError: unexpected EOF while parsing"
         self.code_context = "def test_function():\n    print('Hello, World!')\n"
         self.test_file = "test_script.py"
+
+        # Ensure AI performance tracking file exists before testing
+        if not os.path.exists(AI_PERFORMANCE_TRACKER_FILE):
+            with open(AI_PERFORMANCE_TRACKER_FILE, "w", encoding="utf-8") as f:
+                json.dump({}, f)  # Ensure an empty dictionary is written
+        else:
+            # If file exists but is empty or corrupt, reset it
+            try:
+                with open(AI_PERFORMANCE_TRACKER_FILE, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if not isinstance(data, dict):  # Ensure it's a valid dictionary
+                    raise ValueError
+            except (json.JSONDecodeError, ValueError):
+                with open(AI_PERFORMANCE_TRACKER_FILE, "w", encoding="utf-8") as f:
+                    json.dump({}, f)
 
     def tearDown(self):
         """Cleanup after tests by removing AI performance tracking file if created."""
@@ -61,9 +75,14 @@ class TestOpenAIModel(unittest.TestCase):
             None,
             "diff --git patch",
         ]  # First attempt fails, second succeeds
+
         patch_result = self.model.generate_patch(
             self.error_message, self.code_context, self.test_file
         )
+
+        if not patch_result:
+            self.fail("❌ Patch generation returned an empty result unexpectedly.")
+
         self.assertIn("diff --git", patch_result)
 
     @patch("random.uniform", return_value=0.8)
@@ -80,14 +99,14 @@ class TestOpenAIModel(unittest.TestCase):
 
     def test_ai_performance_tracking(self):
         """Test AI performance tracking by recording success and failure."""
-        self.model._record_ai_performance("OpenAI", success=True)
-        self.model._record_ai_performance("OpenAI", success=False)
+        self.model._record_ai_performance("OpenAIModel", success=True)
+        self.model._record_ai_performance("OpenAIModel", success=False)
 
         with open(AI_PERFORMANCE_TRACKER_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        self.assertEqual(data["OpenAI"]["success"], 1)
-        self.assertEqual(data["OpenAI"]["fail"], 1)
+        self.assertEqual(data["OpenAIModel"]["success"], 1)
+        self.assertEqual(data["OpenAIModel"]["fail"], 1)
 
 
 if __name__ == "__main__":

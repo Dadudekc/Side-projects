@@ -1,27 +1,70 @@
 import os
 import json
-import ast
-import re
 import logging
-from typing import Dict, List, Any
+from typing import Dict, Any
 
-# Setup Logging
 logger = logging.getLogger("ProjectContextAnalyzer")
 logger.setLevel(logging.INFO)
 
 class ProjectContextAnalyzer:
-    """
-    Analyzes the project structure and extracts high-level insights.
-    """
-
     def __init__(self, project_root: str):
         self.project_root = project_root
         self.context_data = {"modules": {}, "dependencies": {}, "summary": {}}
 
+    def scan_directories(self):
+        """Scans the project directory for Python files."""
+        logger.info("📂 Scanning project directories...")
+        for root, _, files in os.walk(self.project_root):
+            for file in files:
+                if file.endswith(".py"):
+                    rel_path = os.path.relpath(os.path.join(root, file), self.project_root)
+                    self.context_data["modules"][rel_path.replace("\\", "/")] = {"dependencies": []}
+
+    def extract_code_context(self):
+        """Extracts module-level docstrings and other metadata."""
+        logger.info("📜 Extracting docstrings and code context...")
+        for file_path in self.context_data["modules"].keys():
+            abs_path = os.path.join(self.project_root, file_path)
+            with open(abs_path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+            
+            # Extract the first docstring (if present)
+            docstring = None
+            if lines and lines[0].startswith('"""'):
+                docstring = lines[0].strip().strip('"""')
+
+            self.context_data["modules"][file_path]["purpose"] = docstring if docstring else "No docstring found."
+
+    def map_dependencies(self):
+        """Parses each file and extracts module dependencies."""
+        import ast
+
+        logger.info("🔗 Mapping module dependencies...")
+        for file_path in self.context_data["modules"].keys():
+            abs_path = os.path.join(self.project_root, file_path)
+            with open(abs_path, "r", encoding="utf-8") as f:
+                tree = ast.parse(f.read(), filename=file_path)
+
+            dependencies = set()
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                    for alias in node.names:
+                        dependencies.add(alias.name)
+                elif isinstance(node, ast.ImportFrom) and node.module:
+                    for alias in node.names:
+                        dependencies.add(f"{node.module}.{alias.name}")
+
+            self.context_data["modules"][file_path]["dependencies"] = sorted(dependencies)
+
+    def save_analysis(self):
+        """Saves the analysis results to a JSON file."""
+        output_path = os.path.join(self.project_root, "project_analysis.json")
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(self.context_data, f, indent=4)
+        logger.info(f"📄 Analysis saved to {output_path}")
+
     def analyze_project(self):
-        """
-        Runs a full project analysis.
-        """
+        """Runs a full project analysis."""
         logger.info("📊 Analyzing project structure...")
         self.scan_directories()
         self.extract_code_context()
@@ -29,69 +72,11 @@ class ProjectContextAnalyzer:
         self.save_analysis()
         logger.info("✅ Project analysis completed!")
 
-    def scan_directories(self):
-        """
-        Scans the project structure and categorizes files.
-        """
-        logger.info("🔍 Scanning project directories...")
-        for root, _, files in os.walk(self.project_root):
-            for file in files:
-                if file.endswith(".py"):
-                    rel_path = os.path.relpath(os.path.join(root, file), self.project_root)
-                    self.context_data["modules"][rel_path] = {"dependencies": [], "purpose": "Unknown"}
 
-    def extract_code_context(self):
-        """
-        Reads Python files and extracts docstrings & module-level comments.
-        """
-        logger.info("📖 Extracting docstrings and metadata...")
-        for rel_path in self.context_data["modules"]:
-            abs_path = os.path.join(self.project_root, rel_path)
-            try:
-                with open(abs_path, "r", encoding="utf-8") as f:
-                    content = f.read()
-                parsed_tree = ast.parse(content)
-
-                # Extract module-level docstring
-                docstring = ast.get_docstring(parsed_tree)
-                self.context_data["modules"][rel_path]["purpose"] = docstring if docstring else "No docstring provided"
-
-            except Exception as e:
-                logger.warning(f"⚠️ Failed to analyze {rel_path}: {e}")
-
-    def map_dependencies(self):
-        """
-        Maps dependencies between project modules by analyzing imports.
-        """
-        logger.info("🔗 Mapping dependencies...")
-        import_pattern = re.compile(r'^\s*(?:from|import)\s+([\w\d_.]+)', re.MULTILINE)
-
-        for rel_path in self.context_data["modules"]:
-            abs_path = os.path.join(self.project_root, rel_path)
-            try:
-                with open(abs_path, "r", encoding="utf-8") as f:
-                    content = f.read()
-                imports = import_pattern.findall(content)
-
-                self.context_data["modules"][rel_path]["dependencies"] = imports
-                for imp in imports:
-                    self.context_data["dependencies"].setdefault(imp, []).append(rel_path)
-
-            except Exception as e:
-                logger.warning(f"⚠️ Failed to parse dependencies in {rel_path}: {e}")
-
-    def save_analysis(self):
-        """
-        Saves the project context analysis as a JSON file.
-        """
-        output_file = os.path.join(self.project_root, "project_analysis.json")
-        with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(self.context_data, f, indent=4)
-        logger.info(f"📂 Project analysis saved to {output_file}")
-
+# **Wrapper Function to Run Analysis Without Instantiating the Class**
 def analyze_project(project_root: str = None) -> Dict[str, Any]:
     """
-    Wrapper function to perform project analysis without instantiating the class.
+    Runs a full project analysis without explicitly creating an instance.
     """
     if project_root is None:
         project_root = os.path.dirname(os.path.abspath(__file__))
@@ -100,7 +85,8 @@ def analyze_project(project_root: str = None) -> Dict[str, Any]:
     analyzer.analyze_project()
     return analyzer.context_data  # Returns analysis result as a dictionary
 
+
+# **Example Usage**
 if __name__ == "__main__":
-    project_root = os.path.dirname(os.path.abspath(__file__))
-    analyzer = ProjectContextAnalyzer(project_root)
-    analyzer.analyze_project()
+    project_data = analyze_project()
+    print(json.dumps(project_data, indent=4))
