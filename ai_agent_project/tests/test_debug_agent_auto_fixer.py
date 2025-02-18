@@ -1,19 +1,25 @@
 """
+test_debug_agent_auto_fixer.py
 
-This module is designed to perform multiple tests on the 'DebugAgentAutoFixer' and 'PatchTrackingManager' classes. 
+Test suite for DebugAgentAutoFixer and PatchTrackingManager.
 
-Tests include:
+Key Tests:
+- Module existence enforcement
+- Fixing import issues in test files
+- Detecting and fixing unterminated strings
+- Detecting syntax errors
+- Backup and restore functionality
+- Re-attempting failed patches before AI intervention
 
-(1) auto_fixer: Fixture to provide a DebugAgentAutoFixer instance for the tests.
-(2) fix_function: Fixture that runs after each test to ensure a clean test environment by removing test artifacts.
-(3) test_ensure_modules_exist: Test if auto_fixer can create required modules if they don't exist.
-(4
+Updates:
+- More detailed docstrings
+- Ensures tests do not permanently wipe files
+- Leverages fixture-based cleanup to remove artifacts
 """
 
 import json
 import os
 import shutil
-
 import pytest
 
 from ai_engine.models.debugger.debug_agent_auto_fixer import DebugAgentAutoFixer
@@ -44,36 +50,44 @@ REQUIRED_MODULES = [
 
 @pytest.fixture
 def auto_fixer():
-    """Fixture to provide a DebugAgentAutoFixer instance."""
+    """
+    Fixture to provide a fresh DebugAgentAutoFixer instance.
+    If needed, you can pass `needed_files` to its constructor
+    for selective copying from project_files -> test_workspace.
+    """
     return DebugAgentAutoFixer()
 
 
 @pytest.fixture(autouse=True)
 def fix_function():
-    """Ensures clean test runs by removing test artifacts."""
-    yield
+    """
+    Ensures clean test runs by removing any test artifacts created 
+    during each test (like newly created modules or backup dirs).
+    """
+    yield  # Run the actual test
+
+    # Clean up all created modules
     for module in REQUIRED_MODULES:
         module_path = os.path.join(AGENTS_CORE_PATH, f"{module}.py")
         if os.path.exists(module_path):
             os.remove(module_path)
 
+    # Clean up any rollback backups
     if os.path.exists(BACKUP_DIR):
         shutil.rmtree(BACKUP_DIR)
 
 
-# 🟢 Test: Ensure Missing Modules Are Created
 def test_ensure_modules_exist(auto_fixer):
-    """Test if missing required modules are created."""
+    """Test if missing required modules are created successfully by auto_fixer."""
     auto_fixer.ensure_modules_exist()
 
     for module in REQUIRED_MODULES:
         module_path = os.path.join(AGENTS_CORE_PATH, f"{module}.py")
-        assert os.path.exists(module_path), f"❌ {module} was not created!"
+        assert os.path.exists(module_path), f"❌ {module} module was not created!"
 
 
-# 🟢 Test: Fix Import Issues in Test Files
 def test_fix_test_imports(auto_fixer):
-    """Test if auto_fixer can correct import issues in test files."""
+    """Test if auto_fixer can correct broken imports in test files."""
     test_file_path = os.path.join(TESTS_PATH, "test_dummy.py")
 
     # Create a dummy test file with broken imports
@@ -86,15 +100,14 @@ def test_fix_test_imports(auto_fixer):
     with open(test_file_path, "r", encoding="utf-8") as file:
         content = file.read()
 
-    assert "import DebuggerCore" in content, "❌ DebuggerCore import not fixed!"
-    assert "import DebuggerCLI" in content, "❌ DebuggerCLI import not fixed!"
+    assert "import DebuggerCore" in content, "❌ DebuggerCore import was not fixed!"
+    assert "import DebuggerCLI" in content, "❌ DebuggerCLI import was not fixed!"
 
     os.remove(test_file_path)
 
 
-# 🟢 Test: Detect and Fix Unterminated Strings
 def test_fix_unterminated_strings(auto_fixer):
-    """Test if unterminated strings are fixed properly."""
+    """Test if unterminated strings are correctly detected and fixed."""
     test_file_path = os.path.join(TESTS_PATH, "test_unterminated.py")
 
     with open(test_file_path, "w", encoding="utf-8") as file:
@@ -109,23 +122,22 @@ def test_fix_unterminated_strings(auto_fixer):
     os.remove(test_file_path)
 
 
-# 🟢 Test: Detect Syntax Errors
 def test_check_syntax_errors(auto_fixer):
-    """Test if syntax errors are detected correctly."""
+    """Test if syntax errors are correctly identified by auto_fixer."""
     test_file_path = os.path.join(TESTS_PATH, "test_syntax_error.py")
 
     with open(test_file_path, "w", encoding="utf-8") as file:
         file.write("def bad_syntax(\n")  # Missing closing parenthesis
 
+    # We expect auto_fixer.check_syntax_errors() to raise a SyntaxError
     with pytest.raises(SyntaxError):
         auto_fixer.check_syntax_errors()
 
     os.remove(test_file_path)
 
 
-# 🟢 Test: Backup and Restore Functionality
 def test_backup_and_restore(auto_fixer):
-    """Test if file backup and restore operations work properly."""
+    """Test if file backup and restore operations function correctly."""
     test_file_path = os.path.join(TESTS_PATH, "test_backup.py")
 
     with open(test_file_path, "w", encoding="utf-8") as file:
@@ -146,9 +158,8 @@ def test_backup_and_restore(auto_fixer):
     os.remove(test_file_path)
 
 
-# 🟢 Test: Re-Attempt Failed Patches Before AI
 def test_re_attempt_failed_patches(auto_fixer):
-    """Test if auto_fixer can retry failed patches before AI intervention."""
+    """Test if auto_fixer correctly retries failed patches before AI-based solutions."""
     patch_tracker = PatchTrackingManager()
     error_signature = "test_error_signature"
     file_path = os.path.join(TESTS_PATH, "test_patch.py")
