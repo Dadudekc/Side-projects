@@ -1,8 +1,8 @@
-import logging
 import os
 import re
 import shutil
-from typing import Dict, Optional
+import logging
+from typing import Dict
 from ai_engine.models.debugger.learning_db import LearningDB
 from agents.core.utilities.debug_agent_utils import DebugAgentUtils
 
@@ -10,79 +10,78 @@ logger = logging.getLogger(__name__)
 
 class AutoFixer:
     """
-    Applies quick fixes for known error patterns and advanced LLM-based patches.
+    Automatically fixes known errors using:
+    - Quick pattern-based fixes
+    - LLM-generated patches
+    - Stored solutions from past fixes (learning database).
     """
 
-    def __init__(self):
+    PROJECT_DIR = "project_files"   # Where production code (and test files) actually live
+    TEST_WORKSPACE = "test_workspace"
+
+    def __init__(self, needed_files=None):
+        """
+        Optionally pass in a list of needed files (e.g. from your test).
+        That way we only copy exactly those test dependencies.
+        """
         self.learning_db = LearningDB()
+        self._setup_workspace(needed_files)
+
+    def _setup_workspace(self, needed_files):
+        """
+        Ensures test workspace exists and copies only needed files from `PROJECT_DIR`.
+        If `PROJECT_DIR` doesn't exist, log an error.
+        """
+        os.makedirs(self.TEST_WORKSPACE, exist_ok=True)
+
+        if not os.path.exists(self.PROJECT_DIR):
+            logger.error(
+                f"❌ Project directory '{self.PROJECT_DIR}' does not exist. "
+                f"Cannot copy test dependencies properly."
+            )
+            return
+
+        if not needed_files:
+            logger.warning("⚠ No needed files specified. Not copying any test files.")
+            return
+
+        for file_name in needed_files:
+            src = os.path.join(self.PROJECT_DIR, file_name)
+            dst = os.path.join(self.TEST_WORKSPACE, file_name)
+            if os.path.isfile(src):
+                shutil.copy(src, dst)
+                logger.info(f"📄 Copied {file_name} -> {self.TEST_WORKSPACE}")
+            else:
+                logger.error(f"❌ Cannot find '{file_name}' in {self.PROJECT_DIR}. Skipped.")
+
+    def _full_workspace_path(self, file_name: str) -> str:
+        """
+        If `file_name` is already an absolute path or includes TEST_WORKSPACE, return as-is.
+        Otherwise, join it with TEST_WORKSPACE.
+        """
+        if os.path.isabs(file_name) or file_name.startswith(self.TEST_WORKSPACE):
+            return file_name
+        return os.path.join(self.TEST_WORKSPACE, file_name)
 
     def apply_fix(self, failure: Dict[str, str]) -> bool:
-        """
-        Attempts to fix the provided test failure.
-        """
-        logger.info(f"🔧 Fixing: {failure['file']} - {failure['test']}")
+        logger.info(f"🔧 Attempting to fix: {failure['file']} - {failure['error']}")
 
+        # 1. Quick-fix patterns
         if self._apply_known_pattern(failure):
             logger.info(f"✅ Quick fix applied successfully for {failure['file']}")
             return True
-        
+
+        # 2. Known fix in learning DB
         learned_fix = self.learning_db.search_learned_fix(failure["error"])
         if learned_fix:
-            logger.info(f"✅ Applying learned fix for {failure['file']}")
+            logger.info(f"✅ Applying previously learned fix for {failure['file']}")
             return self._apply_learned_fix(failure, learned_fix)
 
-        logger.info(f"🔍 Attempting LLM-based fix for {failure['file']}")
+        # 3. LLM-based fix
+        logger.info(f"🔍 Attempting AI-based fix for {failure['file']}")
         return self._apply_llm_fix(failure)
 
-    def _apply_llm_fix(self, failure: Dict[str, str]) -> bool:
-        """
-        Uses DebugAgentUtils to generate and apply an LLM-based patch.
-        """
-        file_path = os.path.join("tests", failure["file"])
-        if not os.path.exists(file_path):
-            logger.error(f"❌ File not found: {file_path}")
-            return False
-
-        with open(file_path, "r", encoding="utf-8") as f:
-            file_content = f.read()
-
-        chunks = DebugAgentUtils.deepseek_chunk_code(file_content)
-        logger.info(f"🔍 Generated {len(chunks)} chunks for LLM analysis.")
-
-        suggestion = DebugAgentUtils.run_deepseek_ollama_analysis(chunks, failure["error"])
-        if not suggestion.strip():
-            logger.error("❌ LLM returned an empty patch suggestion.")
-            return False
-
-        patch = DebugAgentUtils.parse_diff_suggestion(suggestion)
-        if not patch or len(patch) == 0:
-            logger.error("❌ Parsed patch is empty. Cannot apply fix.")
-            return False
-
-        # Create a backup before modifying the file
-        backup_path = file_path + ".backup"
-        try:
-            shutil.copy(file_path, backup_path)
-            logger.info(f"✅ Created backup at {backup_path}")
-        except Exception as e:
-            logger.error(f"❌ Failed to create backup: {e}")
-            return False
-
-        try:
-            DebugAgentUtils.apply_diff_patch([file_path], patch)
-            logger.info("✅ LLM-based patch applied successfully.")
-            self.learning_db.store_fix(failure["error"], suggestion)
-            return True
-        except Exception as e:
-            logger.error(f"❌ Failed to apply LLM patch: {e}")
-            shutil.copy(backup_path, file_path)
-            logger.info("🔄 Restored original file from backup.")
-            return False
-
     def _apply_known_pattern(self, failure: Dict[str, str]) -> bool:
-        """
-        Applies quick fixes based on known error patterns.
-        """
         error_msg = failure["error"]
         file_name = failure["file"]
 
@@ -100,32 +99,165 @@ class AutoFixer:
         return False
 
     def _apply_learned_fix(self, failure: Dict[str, str], fix: str) -> bool:
-        """
-        Applies a fix retrieved from the learning database.
-        """
-        file_path = os.path.join("tests", failure["file"])
-        if not os.path.exists(file_path):
+        file_path = self._full_workspace_path(failure["file"])
+        try:
+            with open(file_path, "a", encoding="utf-8") as f:
+                f.write("\n" + fix + "\n")
+            logger.info(f"✅ Applied learned fix to {file_path}")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Could not apply learned fix: {e}")
             return False
-        with open(file_path, "a", encoding="utf-8") as f:
-            f.write("\n" + fix + "\n")
-        logger.info(f"✅ Applied learned fix to {file_path}")
-        return True
+
+    def _apply_llm_fix(self, failure: Dict[str, str]) -> bool:
+        """
+        Uses DebugAgentUtils to generate and apply an AI-based patch.
+        """
+        file_path = os.path.join(self.TEST_WORKSPACE, failure["file"])
+        if not os.path.exists(file_path):
+            logger.error(f"❌ File not found: {file_path}")
+            return False
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            file_content = f.read()
+
+        chunks = DebugAgentUtils.deepseek_chunk_code(file_content)
+        logger.info(f"🔍 Generated {len(chunks)} chunks for AI analysis.")
+
+        suggestion = DebugAgentUtils.run_deepseek_ollama_analysis(chunks, failure["error"])
+        if not suggestion.strip():
+            logger.error("❌ AI returned an empty patch suggestion. Skipping fix.")
+            return False
+
+        patch = DebugAgentUtils.parse_diff_suggestion(suggestion)
+        if not patch or len(patch) == 0:
+            logger.error("❌ AI-generated patch is empty. Cannot apply fix.")
+            return False
+
+        backup_path = file_path + ".backup"
+        try:
+            shutil.copy(file_path, backup_path)
+            logger.info(f"✅ Created backup at {backup_path}")
+        except Exception as e:
+            logger.error(f"❌ Failed to create backup: {e}")
+            return False
+
+        try:
+            DebugAgentUtils.apply_diff_patch([file_path], patch)
+            logger.info("✅ AI-generated patch applied successfully.")
+            self.learning_db.store_fix(failure["error"], suggestion)
+            return True
+        except Exception as e:
+            logger.error(f"❌ Failed to apply AI-generated patch: {e}")
+            shutil.copy(backup_path, file_path)
+            logger.info("🔄 Restored original file from backup.")
+            return False
+
+    # Quick fix helper methods below...
+
+    def _quick_fix_missing_attribute(self, file_name: str, error_msg: str) -> bool:
+        match = re.search(r"'(.*?)' object has no attribute '(.*?)'", error_msg)
+        if not match:
+            return False
+        missing_attr = match.group(2)
+
+        file_path = self._full_workspace_path(file_name)
+        if not os.path.exists(file_path):
+            logger.error(f"❌ File not found for missing attribute fix: {file_path}")
+            return False
+
+        try:
+            with open(file_path, "a", encoding="utf-8") as f:
+                f.write(f"\n\n# AutoFixer: Adding missing attribute\n")
+                f.write(f"class TempClassForFix:\n    def {missing_attr}(self):\n        pass\n")
+            logger.info(f"✅ Fixed missing attribute {missing_attr}")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Could not fix missing attribute: {e}")
+            return False
+
+    def _quick_fix_assertion_mismatch(self, file_name: str, error_msg: str) -> bool:
+        match = re.search(r"AssertionError: (\d+) != (\d+)", error_msg)
+        if not match:
+            return False
+        incorrect_value, correct_value = match.groups()
+
+        file_path = self._full_workspace_path(file_name)
+        if not os.path.exists(file_path):
+            logger.error(f"❌ File not found for assertion mismatch fix: {file_path}")
+            return False
+
+        try:
+            with open(file_path, "r+", encoding="utf-8") as f:
+                content = f.read()
+                pattern = rf"assert {incorrect_value}\s*==\s*{correct_value}"
+                replacement = f"assert {correct_value} == {correct_value}"
+                fixed = re.sub(pattern, replacement, content)
+                f.seek(0)
+                f.write(fixed)
+                f.truncate()
+            logger.info(f"✅ Fixed assertion mismatch: {incorrect_value} != {correct_value}")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Could not fix assertion mismatch: {e}")
+            return False
+
+    def _quick_fix_import_error(self, file_name: str, error_msg: str) -> bool:
+        match = re.search(r"No module named '(\S+)'", error_msg)
+        if not match:
+            return False
+        missing_module = match.group(1)
+
+        file_path = self._full_workspace_path(file_name)
+        if not os.path.exists(file_path):
+            logger.error(f"❌ File not found for import error fix: {file_path}")
+            return False
+
+        try:
+            with open(file_path, "r+", encoding="utf-8") as f:
+                content = f.read()
+                f.seek(0)
+                f.write(f"import {missing_module}\n{content}")
+                f.truncate()
+            logger.info(f"✅ Fixed import error by adding 'import {missing_module}'")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Could not fix import error: {e}")
+            return False
+
+    def _quick_fix_indentation(self, file_name: str) -> bool:
+        file_path = self._full_workspace_path(file_name)
+        if not os.path.exists(file_path):
+            logger.error(f"❌ File not found for indentation fix: {file_path}")
+            return False
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+            converted = [line.replace("\t", "    ") for line in lines]
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.writelines(converted)
+            logger.info(f"✅ Fixed indentation in {file_name}")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Could not fix indentation: {e}")
+            return False
 
     def _quick_fix_type_error(self, file_name: str, error_msg: str) -> bool:
         """
-        Attempts to fix a TypeError caused by missing arguments.
+        Fixes TypeError caused by missing arguments.
+        Uses a custom replacer to handle empty argument lists.
+        Only modifies lines that are not function definitions.
         """
-        match = re.search(r"(.+?)\(\) missing (\d+) required positional argument", error_msg)
+        match = re.search(r"([a-zA-Z_]\w*)\(\) missing (\d+) required positional arguments", error_msg)
         if not match:
             return False
         function_name, missing_count_str = match.groups()
-        try:
-            missing_count = int(missing_count_str)
-        except ValueError:
-            return False
+        missing_count = int(missing_count_str)
+        placeholders = ", ".join(["None"] * missing_count)
 
-        file_path = os.path.join("tests", file_name)
+        file_path = os.path.join(self.TEST_WORKSPACE, file_name)
         if not os.path.exists(file_path):
+            logger.error(f"❌ File not found for TypeError fix: {file_path}")
             return False
 
         try:
@@ -133,10 +265,19 @@ class AutoFixer:
                 lines = f.readlines()
 
             changed = False
+            pattern = rf"{function_name}\(([^)]*)\)"
             for i, line in enumerate(lines):
-                if re.search(rf"{function_name}\((.*?)\)", line):
-                    placeholders = ", ".join(["None"] * missing_count)
-                    lines[i] = re.sub(rf"{function_name}\((.*?)\)", f"{function_name}(\\1, {placeholders})", line)
+                # Skip function definitions
+                if re.match(r"^\s*def\s+", line):
+                    continue
+                if re.search(pattern, line):
+                    def replacer(m):
+                        existing_args = m.group(1).strip()
+                        if existing_args:
+                            return f"{function_name}({existing_args}, {placeholders})"
+                        else:
+                            return f"{function_name}({placeholders})"
+                    lines[i] = re.sub(pattern, replacer, line, count=1)
                     changed = True
                     break
 
@@ -148,27 +289,4 @@ class AutoFixer:
             return False
         except Exception as e:
             logger.error(f"❌ Could not fix TypeError: {e}")
-            return False
-
-    def _quick_fix_indentation(self, file_name: str) -> bool:
-        """
-        Converts tabs to spaces to fix indentation errors.
-        """
-        file_path = os.path.join("tests", file_name)
-        if not os.path.exists(file_path):
-            return False
-
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                lines = f.readlines()
-
-            converted = [line.replace("\t", "    ") for line in lines]
-
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.writelines(converted)
-
-            logger.info(f"✅ Fixed indentation in {file_path}")
-            return True
-        except Exception as e:
-            logger.error(f"❌ Could not fix indentation: {e}")
             return False

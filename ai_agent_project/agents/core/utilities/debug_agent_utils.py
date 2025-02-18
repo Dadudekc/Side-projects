@@ -1,14 +1,12 @@
 from typing import Dict, Any, List
-from typing import Dict, List
 import logging
 import subprocess
 import re
 import os
-from typing import List
 from unidiff import PatchSet
 from tqdm import tqdm
 import openai  # OpenAI API for backup
-import typing 
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -60,8 +58,6 @@ class DebugAgentUtils:
                     f"Error encountered: {error_msg}\n"
                     "Suggest minimal changes in a unified diff format (`diff --git`...)."
                 )
-
-                # Attempt Ollama First (Mistral)
                 try:
                     cmd = ["ollama", "run", model, prompt]
                     logger.info(f"🟢 Sending chunk {i+1}/{len(chunks)} to Ollama ({model})...")
@@ -78,7 +74,6 @@ class DebugAgentUtils:
                 except Exception as e:
                     logger.error(f"❌ Could not call Ollama for chunk {i+1}: {e}")
                     fallback_to_openai = True
-
                 pbar.update(1)
 
         # Fallback 1: DeepSeek (if Ollama fails)
@@ -116,6 +111,7 @@ class DebugAgentUtils:
                 response = openai.ChatCompletion.create(
                     model=OPENAI_MODEL,
                     messages=[{"role": "user", "content": openai_prompt}],
+                    temperature=0.7,
                     max_tokens=1024
                 )
                 openai_suggestion = response["choices"][0]["message"]["content"].strip()
@@ -124,7 +120,7 @@ class DebugAgentUtils:
                     suggestions.append(openai_suggestion)
                 else:
                     logger.warning("⚠️ OpenAI returned an empty response.")
-            except openai.error.OpenAIError as e:
+            except Exception as e:
                 logger.error(f"❌ OpenAI API call failed: {e}")
 
         combined_suggestion = "\n".join(suggestions).strip()

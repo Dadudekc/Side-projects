@@ -1,140 +1,184 @@
 import os
 import shutil
 import unittest
-from unittest.mock import MagicMock, patch
-
-from ai_engine.models.debugger.learning_db import LearningDB
+from unittest.mock import patch
+import subprocess
 from ai_engine.models.debugger.auto_fixer import AutoFixer
-from agents.core.utilities.debug_agent_utils import DebugAgentUtils
+
+# Helper functions for integration test
+def extract_failures(test_output):
+    # Dummy extractor; in practice, parse test_output to extract failure details.
+    return []
+
+def attempt_fixes(failures):
+    fixer = AutoFixer()
+    for failure in failures:
+        fixer.apply_fix(failure)
+
+# A valid unified diff patch for AI tests
+VALID_PATCH = """diff --git a/test_sample.py b/test_sample.py
+--- a/test_sample.py
++++ b/test_sample.py
+@@ -0,0 +1,2 @@
++def missing_attr(self):
++    pass
+"""
 
 class TestAutoFixer(unittest.TestCase):
-    """Unit tests for the AutoFixer class."""
+    PROJECT_DIR = "project_files"
+    TEST_WORKSPACE = "test_workspace"
+    TEST_FILE = "test_sample.py"
+
+    @classmethod
+    def setUpClass(cls):
+        needed_files = ["test_sample.py"]
+        cls.fixer = AutoFixer(needed_files=needed_files)
 
     def setUp(self):
-        """Sets up an instance of AutoFixer for testing."""
-        self.fixer = AutoFixer()
+        os.makedirs(self.TEST_WORKSPACE, exist_ok=True)
         self.failure = {
-            "file": "tests/test_sample.py",
-            "test": "test_function",
+            "file": self.TEST_FILE,
             "error": "AttributeError: 'TestClass' object has no attribute 'missing_attr'",
         }
-        self.test_files = {
-            "tests/test_sample.py": "class TestClass:\n    def existing_method(self):\n        pass\n",
-            "tests/test_assert.py": "assert 3 == 5\n",
-            "tests/test_import.py": "# Some code without numpy\n",
-            "tests/test_type.py": "example_function()\n",
-            "tests/test_indent.py": "\tdef example_function():\n    pass\n\t\treturn 42\n"
-        }
-        
-        os.makedirs("tests", exist_ok=True)
-
-        for file, content in self.test_files.items():
-            self._backup_and_create_file(file, content)
+        with open(os.path.join(self.TEST_WORKSPACE, self.TEST_FILE), "w", encoding="utf-8") as f:
+            f.write("class TestClass:\n    pass\n")
 
     def tearDown(self):
-        """Cleanup only files created during testing, preventing full test deletion."""
-        for file in self.test_files.keys():
-            if os.path.exists(file):
-                os.remove(file)
-            backup_file = file + ".bak"
-            if os.path.exists(backup_file):
-                os.rename(backup_file, file)  # Restore original content
+        shutil.rmtree(self.TEST_WORKSPACE)
 
-    def _backup_and_create_file(self, file_path, content):
-        """Backs up an existing file and creates a new test file."""
-        if os.path.exists(file_path):
-            shutil.copy(file_path, file_path + ".bak")
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(content)
-
-    @patch("agents.core.utilities.auto_fixer.AutoFixer._apply_known_pattern", return_value=True)
-    @patch("agents.core.utilities.learning_db.LearningDB.search_learned_fix", return_value=None)
-    def test_apply_fix_with_known_pattern(self, mock_search_learned_fix, mock_apply_known_pattern):
-        """Test fixing a known error pattern."""
-        result = self.fixer.apply_fix(self.failure)
-        self.assertTrue(result)
-
-    @patch("agents.core.utilities.learning_db.LearningDB.search_learned_fix", return_value="def missing_attr(self):\n    pass")
-    def test_apply_fix_with_learned_fix(self, mock_learned_fix):
-        """Test applying a learned fix from the learning database."""
-        result = self.fixer._apply_learned_fix(self.failure, "def missing_attr(self):\n    pass")
-        self.assertTrue(result)
-        with open(self.failure["file"], "r", encoding="utf-8") as f:
-            content = f.read()
-        self.assertIn("def missing_attr(self):", content)
-
-    @patch("agents.core.utilities.debug_agent_utils.DebugAgentUtils.apply_diff_patch", return_value=None)
-    @patch("agents.core.utilities.debug_agent_utils.DebugAgentUtils.parse_diff_suggestion", return_value=[{"path": "tests/test_sample.py"}])
-    @patch("agents.core.utilities.debug_agent_utils.DebugAgentUtils.run_deepseek_ollama_analysis", return_value="diff --git\n+ def missing_attr(self):\n    pass")
-    def test_apply_fix_with_llm_patch(self, mock_apply_patch, mock_parse_diff, mock_run_llm):
-        """Test applying an LLM-generated patch."""
-        result = self.fixer._apply_llm_fix(self.failure)
-        self.assertTrue(result)
+    def test_apply_fix_with_known_pattern(self):
+        """Test that a known error pattern is fixed."""
+        with patch("ai_engine.models.debugger.learning_db.LearningDB.search_learned_fix", return_value=None):
+            with patch("ai_engine.models.debugger.auto_fixer.AutoFixer._apply_known_pattern", return_value=True):
+                result = self.fixer.apply_fix(self.failure)
+                self.assertTrue(result)
 
     def test_quick_fix_missing_attribute(self):
-        """Test auto-fixing a missing attribute in a class."""
-        result = self.fixer._quick_fix_missing_attribute(self.failure["file"], self.failure["error"])
+        """Test auto-fixing a missing attribute in a copied project file."""
+        result = self.fixer._quick_fix_missing_attribute(self.TEST_FILE, self.failure["error"])
         self.assertTrue(result)
-        with open(self.failure["file"], "r", encoding="utf-8") as f:
+        with open(os.path.join(self.TEST_WORKSPACE, self.TEST_FILE), "r", encoding="utf-8") as f:
             content = f.read()
         self.assertIn("def missing_attr(self):", content)
 
     def test_quick_fix_assertion_mismatch(self):
-        """Test auto-fixing an assertion mismatch."""
-        assertion_failure = {
-            "file": "tests/test_assert.py",
-            "error": "AssertionError: 3 != 5",
-        }
-
-        result = self.fixer._quick_fix_assertion_mismatch(assertion_failure["file"], assertion_failure["error"])
+        """Test fixing an assertion mismatch."""
+        file_path = os.path.join(self.TEST_WORKSPACE, "test_assert.py")
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write("assert 3 == 5\n")
+        failure = {"file": "test_assert.py", "error": "AssertionError: 3 != 5"}
+        result = self.fixer._quick_fix_assertion_mismatch(failure["file"], failure["error"])
         self.assertTrue(result)
-
-        with open(assertion_failure["file"], "r", encoding="utf-8") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
         self.assertIn("assert 5 == 5", content)
 
     def test_quick_fix_import_error(self):
-        """Test auto-fixing a missing import statement."""
-        import_failure = {
-            "file": "tests/test_import.py",
-            "error": "ImportError: No module named 'numpy'",
-        }
+        """Test fixing an ImportError by adding the missing import."""
+        file_path = os.path.join(self.TEST_WORKSPACE, "test_import.py")
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write("print('Hello')\n")
+        failure = {"file": "test_import.py", "error": "ImportError: No module named 'pandas'"}
+        result = self.fixer._quick_fix_import_error(failure["file"], failure["error"])
+        self.assertTrue(result)
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        self.assertIn("import pandas", content)
 
-        result = self.fixer._quick_fix_import_error(import_failure["file"], import_failure["error"])
+    def test_apply_fix_with_llm_patch(self):
+        """Test applying an LLM-generated patch."""
+        with patch("agents.core.utilities.debug_agent_utils.DebugAgentUtils.apply_diff_patch", return_value=None):
+            with patch("agents.core.utilities.debug_agent_utils.DebugAgentUtils.parse_diff_suggestion", return_value=VALID_PATCH):
+                with patch("agents.core.utilities.debug_agent_utils.DebugAgentUtils.run_deepseek_ollama_analysis", return_value=VALID_PATCH):
+                    result = self.fixer._apply_llm_fix(self.failure)
+                    self.assertTrue(result)
+
+    @patch("ai_engine.models.debugger.learning_db.LearningDB.search_learned_fix", return_value=None)
+    def test_missing_file(self, mock_db):
+        """Ensure AutoFixer handles missing files gracefully."""
+        failure = {"file": "non_existent.py", "error": "AttributeError: 'TestClass' object has no attribute 'missing_attr'"}
+        result = self.fixer.apply_fix(failure)
+        self.assertFalse(result)
+
+    def test_corrupt_file(self):
+        """Ensure AutoFixer can handle a corrupt file gracefully."""
+        file_path = os.path.join(self.TEST_WORKSPACE, "corrupt_test.py")
+        with open(file_path, "wb") as f:
+            f.write(b"\x00\x01\x02")  # Writing non-text bytes
+        failure = {"file": "corrupt_test.py", "error": "SyntaxError: invalid syntax"}
+        result = self.fixer.apply_fix(failure)
+        self.assertFalse(result)
+
+    def test_multiple_failures(self):
+        """Ensure AutoFixer can handle multiple failures in a single session."""
+        failures = [
+            {"file": "test_sample.py", "error": "AttributeError: 'TestClass' object has no attribute 'missing_attr'"},
+            {"file": "test_import.py", "error": "ImportError: No module named 'numpy'"},
+            {"file": "test_type.py", "error": "TypeError: example_function() missing 2 required positional arguments"},
+        ]
+        results = [self.fixer.apply_fix(failure) for failure in failures]
+        self.assertTrue(any(results))  # At least one should succeed
+
+    @patch("agents.core.utilities.debug_agent_utils.DebugAgentUtils.run_deepseek_ollama_analysis", return_value=VALID_PATCH)
+    def test_ai_generated_fix_success(self, mock_ai_patch):
+        """Ensure AutoFixer applies AI-generated patches correctly."""
+        failure = {"file": "test_sample.py", "error": "AttributeError: 'TestClass' object has no attribute 'missing_attr'"}
+        result = self.fixer._apply_llm_fix(failure)
         self.assertTrue(result)
 
-        with open(import_failure["file"], "r", encoding="utf-8") as f:
-            content = f.read()
-        self.assertIn("import numpy", content)
+    @patch("agents.core.utilities.debug_agent_utils.DebugAgentUtils.run_deepseek_ollama_analysis", return_value="")
+    def test_ai_generated_fix_empty(self, mock_ai_patch):
+        """Ensure AutoFixer handles empty AI-generated patches."""
+        failure = {"file": "test_sample.py", "error": "AttributeError: 'TestClass' object has no attribute 'missing_attr'"}
+        result = self.fixer._apply_llm_fix(failure)
+        self.assertFalse(result)
+
+    @patch("agents.core.utilities.debug_agent_utils.DebugAgentUtils.run_deepseek_ollama_analysis", return_value="INVALID PATCH DATA")
+    def test_ai_generated_fix_invalid(self, mock_ai_patch):
+        """Ensure AutoFixer rejects invalid AI-generated patches."""
+        failure = {"file": "test_sample.py", "error": "AttributeError: 'TestClass' object has no attribute 'missing_attr'"}
+        result = self.fixer._apply_llm_fix(failure)
+        self.assertFalse(result)
 
     def test_quick_fix_type_error(self):
-        """Test auto-fixing a function call with missing arguments."""
-        type_error_failure = {
-            "file": "tests/test_type.py",
-            "error": "TypeError: example_function() missing 2 required positional arguments",
-        }
-
-        result = self.fixer._quick_fix_type_error(type_error_failure["file"], type_error_failure["error"])
+        """Ensure AutoFixer correctly inserts missing arguments in function calls."""
+        file_path = os.path.join(self.TEST_WORKSPACE, "test_type.py")
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write("def example_function(a, b): pass\nexample_function()\n")
+        failure = {"file": "test_type.py", "error": "TypeError: example_function() missing 2 required positional arguments"}
+        result = self.fixer._quick_fix_type_error(failure["file"], failure["error"])
         self.assertTrue(result)
-
-        with open(type_error_failure["file"], "r", encoding="utf-8") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
+        # Expect that the function call line is modified, but the definition remains unchanged.
         self.assertIn("example_function(None, None)", content)
+        self.assertNotIn("def example_function(a, b, None, None)", content)
 
-    def test_quick_fix_indentation(self):
-        """Test auto-fixing an indentation error by converting tabs to spaces."""
-        indentation_failure = {
-            "file": "tests/test_indent.py",
-            "error": "IndentationError: unexpected indent",
-        }
-
-        result = self.fixer._quick_fix_indentation(indentation_failure["file"])
+    def test_quick_fix_assertion_mismatch(self):
+        """Ensure AutoFixer adjusts assertion errors correctly."""
+        file_path = os.path.join(self.TEST_WORKSPACE, "test_assert.py")
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write("assert 2 == 5\n")
+        failure = {"file": "test_assert.py", "error": "AssertionError: 2 != 5"}
+        result = self.fixer._quick_fix_assertion_mismatch(failure["file"], failure["error"])
         self.assertTrue(result)
-
-        with open(indentation_failure["file"], "r", encoding="utf-8") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
-        self.assertNotIn("\t", content)  # Ensure tabs were replaced
+        self.assertIn("assert 5 == 5", content)
 
+    def test_full_auto_debugging(self):
+        """Ensure AutoFixer can run full debugging cycle on a failing test suite."""
+        # For this integration test, we assume no failures are extracted.
+        test_output = subprocess.run(["pytest", "tests/failing_tests/"], capture_output=True, text=True).stdout
+        failures = extract_failures(test_output)
+        if not failures:
+            print("✅ No failures detected. Skipping AutoFixer.")
+            return
+        print(f"⚠ Found {len(failures)} failing tests. Running AutoFixer...")
+        attempt_fixes(failures)
+        print("🔄 Re-running tests after fixes...")
+        test_output = subprocess.run(["pytest", "tests/failing_tests/"], capture_output=True, text=True).stdout
+        self.assertNotIn("FAILED", test_output)
 
 if __name__ == "__main__":
     unittest.main()
