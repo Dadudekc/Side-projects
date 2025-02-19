@@ -1,27 +1,9 @@
-"""
-
-JournalAgent is derived from the AgentBase class and provides the functionality for managing journal entries.
-Each journal entry is saved as a JSON file that contains the title, content, timestamp of creation and associated tags.
-The JournalAgent can create new journal entries, retrieve existing ones, update their content, delete them, and list all
-journal entries in the directory where they are stored.
-
-    Attributes:
-        journal_directory (str): The directory where journal entries will be stored.
-
-    Methods:
-        __init
-"""
-
 from typing import Dict, Any, List
-from typing import Dict, List
-# agents/core/JournalAgent.py
 import os
 import json
 import logging
 from datetime import datetime
-from typing import List, Dict, Any
 from agents.core.AgentBase import AgentBase
-  # Using AgentBase instead of IAgent
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -174,8 +156,7 @@ class JournalAgent(AgentBase):
 
     def solve_task(self, task: str, **kwargs) -> Dict[str, Any]:
         """
-        Perform a journaling action (create, retrieve, etc.).
-        Returns structured dictionary responses for test clarity.
+        Perform a journaling action (create, retrieve, update, delete, or list).
 
         Args:
             task (str): Action to be performed.
@@ -197,6 +178,25 @@ class JournalAgent(AgentBase):
         else:
             logger.error(f"Invalid task '{task}' requested.")
             return {"status": "error", "message": f"Invalid task '{task}'"}
+
+        def dispatch(self, task: str, **kwargs) -> str:
+    """
+    Dispatches the task and returns the status of the operation.
+
+    Args:
+        task (str): Action to be performed.
+        **kwargs: Additional parameters.
+
+    Returns:
+        str: 'success' if the operation was successful, otherwise 'error'.
+    """
+    try:
+        result = self.solve_task(task, **kwargs)
+        return result.get("status", "error")
+    except Exception as e:
+        logger.error(f"Error dispatching task '{task}': {e}")
+        return "error"
+
 
     def shutdown(self) -> None:
         """

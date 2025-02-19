@@ -16,7 +16,7 @@ import os
 import unittest
 from unittest.mock import MagicMock, patch
 
-from ai_engine.confidence_manager import (
+from ai_engine.models.confidence_manager import (
     AI_CONFIDENCE_FILE, PATCH_HISTORY_FILE, AIConfidenceManager
 )
 

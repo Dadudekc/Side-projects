@@ -117,10 +117,19 @@ class TestVectorMemoryManager(unittest.TestCase):
         self.vector_manager.store_segment(segment1)
         self.vector_manager.store_segment(segment2)
 
+        # Debug: Print stored segments before searching
+        print("\nStored Segments:", [seg["segment"].text for seg in self.vector_manager.vector_memory])
+
         results = self.vector_manager.search_by_text("Text")
-        self.assertEqual(len(results), 2)
+
+        # Debug: Print actual search results
+        print("\nSearch Results:", [res.text for res in results])
+
+        # Assertions
+        self.assertEqual(len(results), 2, f"Expected 2 results, got {len(results)}")
         self.assertEqual(results[0].text, "Text 1")
         self.assertEqual(results[1].text, "Text 2")
+
 
 
 if __name__ == "__main__":

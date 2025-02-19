@@ -1,15 +1,16 @@
 """
-
-A Python class that utilizes various AI models to generate a patch for given code and error. This Class incorporates three AI models: Ollama, DeepSeek, and OpenAI, and uses them in order of preference, cascading down to the next when feedback is not received. 
+A Python class that utilizes various AI models to generate a patch for given code and error.
+This class incorporates three AI models: Ollama, DeepSeek, and OpenAI, and uses them in order of preference,
+cascading down to the next when feedback is not received.
 
 The class methods are as follows:
 
-- `chunk_code`: This method splits a given file content into chunks for Local Language Model(LMM) processing.
-- `query_llm`: This method executes a subprocess call
+- `chunk_code`: This method splits a given file content into chunks for Local Language Model (LLM) processing.
+- `query_llm`: This method executes a subprocess call to run a local LLM (Ollama or DeepSeek).
+- `query_openai`: Queries OpenAI's GPT-4 Turbo for patch suggestions.
+- `generate_patch`: Uses AI models in priority order to generate a patch suggestion.
 """
 
-from typing import Dict, Any, List
-from typing import Dict, List
 import os
 import subprocess
 import logging
@@ -24,6 +25,7 @@ logger.setLevel(logging.DEBUG)
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_MODEL = "gpt-4-turbo"
 
+
 class AIPatchUtils:
     """
     AI-based debugging assistant for generating patch suggestions.
@@ -33,7 +35,7 @@ class AIPatchUtils:
     @staticmethod
     def chunk_code(file_content: str, max_chars: int = 1000) -> List[str]:
         """Splits file content into chunks for LLM processing."""
-        return [file_content[i:i+max_chars] for i in range(0, len(file_content), max_chars)]
+        return [file_content[i : i + max_chars] for i in range(0, len(file_content), max_chars)]
 
     @staticmethod
     def query_llm(prompt: str, model: str) -> Optional[str]:
@@ -43,17 +45,20 @@ class AIPatchUtils:
             if result.returncode == 0 and result.stdout.strip():
                 return result.stdout.strip()
             else:
-                logger.warning(f"⚠️ LLM ({model}) failed: {result.stderr}")
+                logger.warning(f"⚠️ LLM ({model}) failed: {result.stderr.strip()}")
         except FileNotFoundError:
-            logger.warning(f"🚨 {model} not found. Skipping...")
+            logger.warning(f"🚨 Model {model} not found. Skipping...")
+        except subprocess.SubprocessError as e:
+            logger.error(f"⚠️ Error executing subprocess for {model}: {str(e)}")
         return None
 
     @staticmethod
     def query_openai(prompt: str) -> Optional[str]:
         """Queries OpenAI GPT for patch suggestions."""
         if not OPENAI_API_KEY:
-            logger.error("OpenAI API Key not set. Skipping OpenAI fallback.")
+            logger.error("🚨 OpenAI API Key not set. Skipping OpenAI fallback.")
             return None
+
         try:
             response = openai.ChatCompletion.create(
                 model=OPENAI_MODEL,
@@ -61,8 +66,10 @@ class AIPatchUtils:
                 max_tokens=1024
             )
             return response["choices"][0]["message"]["content"].strip()
+        except AttributeError:
+            logger.error("🚨 OpenAI module is missing required attributes.")
         except openai.error.OpenAIError as e:
-            logger.error(f"OpenAI API call failed: {e}")
+            logger.error(f"⚠️ OpenAI API call failed: {e}")
         return None
 
     @classmethod
@@ -80,7 +87,7 @@ class AIPatchUtils:
         Error:
         {error_msg}
 
-        Suggest a minimal fix in unified diff format (`diff --git`...)
+        Suggest a minimal fix in unified diff format (`diff --git`...).
         """
 
         suggestions = []
@@ -89,7 +96,7 @@ class AIPatchUtils:
         with tqdm(total=len(chunks), desc="Processing with Ollama", unit="chunk") as pbar:
             for chunk in chunks:
                 patch = cls.query_llm(prompt, "mistral")
-                if patch:
+                if patch and "diff --git" in patch:
                     suggestions.append(patch)
                 pbar.update(1)
 
@@ -99,7 +106,7 @@ class AIPatchUtils:
             with tqdm(total=len(chunks), desc="Processing with DeepSeek", unit="chunk") as pbar:
                 for chunk in chunks:
                     patch = cls.query_llm(prompt, "deepseek-coder")
-                    if patch:
+                    if patch and "diff --git" in patch:
                         suggestions.append(patch)
                     pbar.update(1)
 
@@ -107,7 +114,7 @@ class AIPatchUtils:
         if not suggestions:
             logger.warning("⚠️ Both Ollama and DeepSeek failed. Trying OpenAI.")
             patch = cls.query_openai(prompt)
-            if patch:
+            if patch and "diff --git" in patch:
                 suggestions.append(patch)
 
         combined_patch = "\n".join(suggestions).strip()

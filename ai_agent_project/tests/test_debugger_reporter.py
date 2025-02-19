@@ -1,30 +1,34 @@
 """
+This script is a test suite for debugging reporter in an AI model. It includes tests to verify the functionality 
+of various aspects such as initialization, logging failed patches and AI explanations, saving the debugging report, 
+and email reporting with mock objects.
 
-This script is a test suite for debugging reporter in an AI model. It includes tests to verify the functionality of various aspects such as initialization and loading, logging failed patches and AI explanations, saving the debugging report and email reporting with the help of mock objects.
-
-Functions:
-reporter(): A fixture to initialise a DebuggerReporter instance.
-temp_report_file(tmp_path): A fixture to create a temporary debugging report file.
+Fixtures:
+- reporter(): Initializes a DebuggerReporter instance.
+- temp_report_file(tmp_path): Creates a temporary debugging report file.
 
 Test Cases:
-test_initialize_report(): Test case to check if a new report is created if
+- test_initialize_report(): Checks if a new report is created when none exists.
+- test_load_existing_report(): Ensures an existing report loads correctly.
+- test_log_failed_patch(): Validates that failed patches are logged properly.
+- test_log_ai_explanation(): Ensures AI explanations are stored.
+- test_save_report(): Tests saving debugging reports.
+- test_send_email_report(): Mocks email sending and validates behavior.
+- test_send_email_invalid_email(): Ensures invalid email logging.
 """
 
 import json
 import os
 from unittest.mock import MagicMock, patch
-
 import pytest
 
 from ai_engine.models.debugger.debugger_reporter import REPORT_FILE, DebuggerReporter
 from ai_engine.models.debugger.email_reporter import EmailReporter
 
-
 @pytest.fixture
 def reporter():
     """Fixture to initialize DebuggerReporter instance."""
     return DebuggerReporter()
-
 
 @pytest.fixture
 def temp_report_file(tmp_path):
@@ -32,7 +36,6 @@ def temp_report_file(tmp_path):
     temp_file = tmp_path / "debugging_report.json"
     temp_file.write_text(json.dumps({"failed_patches": {}, "ai_explanations": {}}))
     return temp_file
-
 
 # ** Test Initialization and Loading **
 def test_initialize_report():
@@ -47,7 +50,6 @@ def test_initialize_report():
     assert "ai_explanations" in reporter.report_data
     assert reporter.report_data["failed_patches"] == {}
 
-
 @patch("os.path.exists", return_value=True)
 @patch("builtins.open", new_callable=MagicMock)
 def test_load_existing_report(mock_open, mock_exists, reporter):
@@ -60,13 +62,11 @@ def test_load_existing_report(mock_open, mock_exists, reporter):
     assert "failed_patches" in data
     assert data["failed_patches"]["hash1234"] == "Some failure"
 
-
 # ** Test Logging of Failed Patches and AI Explanations **
 def test_log_failed_patch(reporter):
     """Test logging a failed patch."""
     reporter.log_failed_patch("hash5678", "Invalid syntax.")
     assert reporter.report_data["failed_patches"]["hash5678"] == "Invalid syntax."
-
 
 def test_log_ai_explanation(reporter):
     """Test logging an AI explanation."""
@@ -75,7 +75,6 @@ def test_log_ai_explanation(reporter):
         reporter.report_data["ai_explanations"]["hash1234"]
         == "Consider adding a missing import."
     )
-
 
 # ** Test Saving the Debugging Report **
 @patch("builtins.open", new_callable=MagicMock)
@@ -87,9 +86,8 @@ def test_save_report(mock_open, reporter):
     mock_open.assert_called_once_with(REPORT_FILE, "w", encoding="utf-8")
     mock_open.return_value.__enter__().write.assert_called()
 
-
 # ** Test Email Reporting with Mocks **
-@patch("ai_engine.models.debugger.email_reporter.EmailReporter.send_debugging_report")
+@patch("ai_engine.models.debugger.email_reporter.EmailReporter.send_report")
 def test_send_email_report(mock_send_email, reporter):
     """Test sending an email report with a valid email."""
     mock_send_email.return_value = True  # Simulate successful email sending
@@ -99,16 +97,14 @@ def test_send_email_report(mock_send_email, reporter):
         reporter.report_data, "debugger@example.com"
     )
 
-
-@patch("ai_engine.models.debugger.email_reporter.EmailReporter.send_debugging_report")
 @patch("ai_engine.models.debugger.debugger_reporter.logger.error")
-def test_send_email_invalid_email(mock_logger_error, mock_send_email, reporter):
+@patch("ai_engine.models.debugger.email_reporter.EmailReporter.send_debugging_report")
+def test_send_email_invalid_email(mock_send_email, mock_logger_error, reporter):
     """Test that an invalid email prevents sending a report and logs an error."""
     reporter.send_email_report("invalid-email")
 
     mock_send_email.assert_not_called()
     mock_logger_error.assert_called_with("Invalid email address provided: invalid-email")
 
-
 # ** Run All Tests with: **
-# pytest test_debugger_reporter.py
+# pytest tests/test_debugger_reporter.py

@@ -15,7 +15,7 @@ from unittest.mock import MagicMock, patch
 from agents.core.AgentBase import AgentBase
 from agents.core.utilities.ai_patch_utils import AIPatchUtils
 from agents.custom_agent import CustomAgent
-from ai_engine.models.ai_model_manager import AIModelManager
+from ai_engine.ai_model_manager import AIModelManager
 from ai_engine.models.deepseek_model import DeepSeekModel
 from ai_engine.models.mistral_model import MistralModel
 from ai_engine.models.openai_model import OpenAIModel

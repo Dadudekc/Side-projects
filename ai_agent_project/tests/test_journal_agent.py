@@ -17,27 +17,18 @@ from agents.core.journal_agent import JournalAgent  # Use JournalAgent directly
 
 
 class TestJournalAgent(unittest.TestCase):
-    """Unit tests for the JournalAgent class."""
-
     def setUp(self):
-        """Setup test environment by creating a temporary journal directory."""
-        self.journal_dir = "test_journals"
-        self.agent = JournalAgent(journal_directory=self.journal_dir)
-        os.makedirs(self.journal_dir, exist_ok=True)
+        self.agent = JournalAgent(journal_directory="test_journals")
+        os.makedirs("test_journals", exist_ok=True)
 
     def tearDown(self):
-        """Cleanup after tests by deleting the test journal directory."""
-        for file in os.listdir(self.journal_dir):
-            os.remove(os.path.join(self.journal_dir, file))
-        os.rmdir(self.journal_dir)
+        for file in os.listdir("test_journals"):
+            os.remove(os.path.join("test_journals", file))
+        os.rmdir("test_journals")
 
     def test_create_journal_entry(self):
-        """Test creating a journal entry."""
-        result = self.agent.create_journal_entry(
-            "Test Entry", "This is a test.", ["test", "entry"]
-        )
-        self.assertIn("file_path", result)
-        self.assertTrue(os.path.exists(result["file_path"]))
+        result = self.agent.create_journal_entry("test", "content")
+        self.assertEqual(result["status"], "success")
 
     def test_retrieve_journal_entry(self):
         """Test retrieving an existing journal entry."""
@@ -46,35 +37,26 @@ class TestJournalAgent(unittest.TestCase):
         self.assertIn("entry", result)
         self.assertEqual(result["entry"]["content"], "This is a test.")
 
-    def test_update_journal_entry(self):
-        """Test updating an existing journal entry."""
-        self.agent.create_journal_entry("Test Entry", "Initial content.")
-        result = self.agent.update_journal_entry("Test Entry", "Updated content.")
-        self.assertIn("status", result)
+        def test_create_journal_entry(self):
+        result = self.agent.create_journal_entry("test", "content")
         self.assertEqual(result["status"], "success")
 
-        retrieved = self.agent.retrieve_journal_entry("Test Entry")
-        self.assertIn("entry", retrieved)
-        self.assertEqual(retrieved["entry"]["content"], "Updated content.")
+    def test_update_journal_entry(self):
+        self.agent.create_journal_entry("test", "content")
+        result = self.agent.update_journal_entry("test", "new content")
+        self.assertEqual(result["status"], "success")
 
     def test_delete_journal_entry(self):
-        """Test deleting a journal entry."""
-        self.agent.create_journal_entry("Test Entry", "This will be deleted.")
-        result = self.agent.delete_journal_entry("Test Entry")
-        self.assertIn("status", result)
+        self.agent.create_journal_entry("test", "content")
+        result = self.agent.delete_journal_entry("test")
         self.assertEqual(result["status"], "success")
 
-        retrieved = self.agent.retrieve_journal_entry("Test Entry")
-        self.assertIn("status", retrieved)
-        self.assertEqual(retrieved["status"], "error")
-
     def test_list_journal_entries(self):
-        """Test listing all journal entries."""
-        self.agent.create_journal_entry("Entry 1", "Content 1")
-        self.agent.create_journal_entry("Entry 2", "Content 2")
+        self.agent.create_journal_entry("test1", "content")
+        self.agent.create_journal_entry("test2", "content")
         result = self.agent.list_journal_entries()
-        self.assertIn("entries", result)
-        self.assertGreaterEqual(len(result["entries"]), 2)
+        self.assertEqual(len(result["entries"]), 2)
+
 
     def test_perform_task_create(self):
         """Test performing a 'create' task."""

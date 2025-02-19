@@ -1,6 +1,5 @@
 """
-
-This module contains unit tests for the AIModelManager class. 
+This module contains unit tests for the AIModelManager class.
 It tests, among other things:
 
 - Setting up an instance of AIModelManager for testing purposes
@@ -9,57 +8,48 @@ It tests, among other things:
 - The correct formatting of debugging prompts
 - The generation of error signatures.
 
-Test cases include class setup, calls to different AI models, patch generation with model priority and confidence
+Test cases include class setup, calls to different AI models, patch generation with model priority and confidence.
 """
 
 import unittest
 from unittest.mock import MagicMock, patch
+import subprocess
+import openai
 
-from agents.core.utilities.AgentBase import AIModelManager  # Fixed import
-
+from ai_engine.ai_model_manager import AIModelManager
+from ai_engine.models.confidence_manager import AIConfidenceManager
 
 class TestAIModelManager(unittest.TestCase):
-    """Unit tests for the AIModelManager class."""
-
     def setUp(self):
-        """Set up an instance of AIModelManager for testing."""
-        self.manager = AIModelManager()
-        self.error_msg = "SyntaxError: unexpected EOF while parsing"
-        self.code_context = """def test_function():
-    pass
-    print('Hello, World!')"""
-        self.test_file = "test_script.py"
+        self.model_manager = AIModelManager()
 
-    @patch("agents.core.utilities.AgentBase.AIModelManager.subprocess.run")
-    def test_generate_with_ollama(self, mock_subprocess):
-        """Test calling a local Ollama model."""
-        mock_subprocess.return_value = MagicMock(returncode=0, stdout="diff --git patch")
-        
-        patch_result = self.manager._generate_with_ollama("mistral", "test_prompt")
-        self.assertIsNotNone(patch_result)
-        self.assertIn("diff --git", patch_result)
+    @patch("ai_engine.ai_model_manager.open", create=True)
+    def test_save_model(self, mock_open):
+        mock_open.return_value.__enter__.return_value.write = MagicMock()
+        self.model_manager.save_model("test_model")
+        mock_open.assert_called_once()
 
-    @patch("agents.core.utilities.AgentBase.AIModelManager.openai.ChatCompletion.create")
-    def test_generate_with_openai(self, mock_openai):
-        """Test OpenAI GPT-4 fallback."""
-        mock_openai.return_value = {
-            "choices": [{"message": {"content": "diff --git patch"}}]
-        }
+    @patch("ai_engine.ai_model_manager.open", create=True)
+    def test_load_model(self, mock_open):
+        mock_open.return_value.__enter__.return_value.read.return_value = "{}"
+        result = self.model_manager.load_model("test_model")
+        self.assertEqual(result, {})
 
         patch_result = self.manager._generate_with_openai("test_prompt")
         self.assertIsNotNone(patch_result)
         self.assertIn("diff --git", patch_result)
 
+    @patch.object(AIConfidenceManager, "get_best_high_confidence_patch")
+    @patch.object(AIConfidenceManager, "assign_confidence_score")
     @patch.object(AIModelManager, "_generate_with_model")
-    @patch.object(AIModelManager, "_compute_error_signature")
-    @patch.object(AIModelManager, "confidence_manager")
-    def test_generate_patch(self, mock_confidence_manager, mock_compute_signature, mock_generate_with_model):
+    def test_generate_patch(self, mock_generate_with_model, mock_assign_confidence, mock_get_best_patch):
         """Test patch generation with model priority and confidence tracking."""
-        mock_compute_signature.return_value = "test_signature"
-        mock_confidence_manager.get_confidence.return_value = 0.5
-        mock_confidence_manager.assign_confidence_score.return_value = (0.8, "Improved confidence")
 
-        # First model succeeds
+        # No pre-existing high-confidence patch
+        mock_get_best_patch.return_value = None
+        mock_assign_confidence.return_value = (0.8, "AI predicts success")  # Assigns high confidence
+
+        # First model generates a successful patch
         mock_generate_with_model.side_effect = ["diff --git patch", None, None]
 
         patch_result = self.manager.generate_patch(self.error_msg, self.code_context, self.test_file)
