@@ -16,14 +16,18 @@ Methods:
 
 import openai
 import os
+from agents.core.AgentBase import AgentBase
 
-class GPTForecaster:
-    """
-    📊 Uses GPT models to generate AI-driven market forecasts.
-    """
-
+class GPTForecaster(AgentBase):
     def __init__(self):
-        openai.api_key = os.getenv("OPENAI_API_KEY")
+        super().__init__(name="GPTForecaster", project_name="ForecastingAgent")
+
+    def solve_task(self, task, **kwargs):
+        return {"status": "success", "forecast": "Predicted value"}
+
+    def describe_capabilities(self) -> str:
+        return "Provides AI-powered market forecasting."
+
 
     def generate_forecast(self, context: str) -> str:
         """Generates insights based on financial or trading context."""

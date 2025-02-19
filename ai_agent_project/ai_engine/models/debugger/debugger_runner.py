@@ -21,7 +21,6 @@ DebuggerRunner Methods:
 
 import logging
 import subprocess
-import os
 from ai_engine.models.debugger.error_parser import ErrorParser
 from ai_engine.models.debugger.auto_fixer import AutoFixer
 
@@ -37,7 +36,6 @@ class DebuggerRunner:
       - Attempting automated fixes with AutoFixer.
       - Retrying tests until they pass or max retries are reached.
     """
-
     def __init__(self):
         """
         Initializes the DebuggerRunner by setting up:
@@ -87,15 +85,15 @@ class DebuggerRunner:
 
             logger.info(f"📉 {len(failures)} test(s) failed. Attempting to apply fixes...")
 
-            any_fixed = False
+            fixes_applied = 0
             for failure in failures:
                 if self.fixer.apply_fix(failure):
-                    any_fixed = True
-                    logger.info(f"✅ Successfully applied fix for {failure['file']}")
+                    fixes_applied += 1
+                    logger.info(f"✅ Fix applied for {failure.get('file', 'unknown file')}")
                 else:
-                    logger.warning(f"⚠️ No fix available for {failure['file']}")
+                    logger.warning(f"⚠️ No fix available for {failure.get('file', 'unknown file')}")
 
-            if not any_fixed:
+            if fixes_applied == 0:
                 logger.error("❌ No fixes were applied in this attempt. Aborting retry process.")
                 return False
 

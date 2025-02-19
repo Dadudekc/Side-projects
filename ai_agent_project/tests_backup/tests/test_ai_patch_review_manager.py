@@ -1,16 +1,3 @@
-"""
-This module provides unit tests for the AIPatchReviewManager class which manages the automatic review, ranking, and application of code patches.
-
-Test Cases:
-- SetUp and TearDown: Configure the test environment before and after each test.
-- test_rank_human_reviewed_patches: Check the AI's ability to rank human-reviewed patches based on evaluation criteria.
-- test_log_patch_attempt: Ensure the module properly logs patch attempts with specified outcomes.
-- test_get_best_patch: Verify retrieval of the highest-ranked patch.
-- test_process_human_reviewed_patches_success: Ensure that when patch application succeeds, the outcome is logged correctly.
-- test_process_human_reviewed_patches_failure: Ensure that when patch application fails, the outcome is logged correctly.
-- test_analyze_patch_failures: Confirm that common failure patterns are correctly analyzed.
-"""
-
 import json
 import os
 import unittest
@@ -47,10 +34,8 @@ class TestAIPatchReviewManager(unittest.TestCase):
     @patch("agents.core.utilities.ai_client.AIClient.evaluate_patch_with_reason")
     def test_rank_human_reviewed_patches(self, mock_evaluate_patch):
         """Test AI ranking of human-reviewed patches."""
-        # Simulate a consistent evaluation from AIClient
         mock_evaluate_patch.side_effect = lambda patch: {"score": 0.8, "reason": "Good fix"}
 
-        # Set up human review data with two patches for the error signature
         self.manager.human_review = {
             self.error_signature: [
                 self.test_patch,
@@ -68,9 +53,7 @@ class TestAIPatchReviewManager(unittest.TestCase):
 
     def test_log_patch_attempt(self):
         """Test logging of patch attempts."""
-        self.manager.log_patch_attempt(
-            self.error_signature, self.test_patch, "Applied Successfully", "Fixed import issue"
-        )
+        self.manager.log_patch_attempt(self.error_signature, self.test_patch, "Applied Successfully", "Fixed import issue")
 
         with open(DETAILED_ERROR_LOG_FILE, "r", encoding="utf-8") as f:
             logs = json.load(f)
@@ -84,8 +67,8 @@ class TestAIPatchReviewManager(unittest.TestCase):
         best_patch = self.manager.get_best_patch(self.error_signature)
         self.assertEqual(best_patch, self.test_patch)
 
-    @patch("ai_engine.models.debugger.patch_review_manager.AIPatchReviewManager.rank_human_reviewed_patches")
-    @patch("ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager.apply_patch", return_value=True)
+    @patch("agents.core.utilities.ai_patch_review_manager.AIPatchReviewManager.rank_human_reviewed_patches")
+    @patch("agents.core.utilities.patch_tracking_manager.PatchTrackingManager.apply_patch", return_value=True)
     def test_process_human_reviewed_patches_success(self, mock_apply_patch, mock_rank_patches):
         """Test processing of human-reviewed patches when application succeeds."""
         self.manager.patch_rankings = {self.error_signature: [self.test_patch]}
@@ -97,8 +80,8 @@ class TestAIPatchReviewManager(unittest.TestCase):
         self.assertIn(self.error_signature, logs)
         self.assertEqual(logs[self.error_signature][0]["outcome"], "Applied Successfully")
 
-    @patch("ai_engine.models.debugger.patch_review_manager.AIPatchReviewManager.rank_human_reviewed_patches")
-    @patch("ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager.apply_patch", return_value=False)
+    @patch("agents.core.utilities.ai_patch_review_manager.AIPatchReviewManager.rank_human_reviewed_patches")
+    @patch("agents.core.utilities.patch_tracking_manager.PatchTrackingManager.apply_patch", return_value=False)
     def test_process_human_reviewed_patches_failure(self, mock_apply_patch, mock_rank_patches):
         """Test processing of human-reviewed patches when application fails."""
         self.manager.patch_rankings = {self.error_signature: [self.test_patch]}

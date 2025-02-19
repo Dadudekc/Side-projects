@@ -1,19 +1,22 @@
 """
-The `AgentBase` class is an abstract base class that forms the foundation for all AI agents. It dictates the structure and shared methods for logging, task execution, and lifecycle management. All subclasses must implement the abstract `solve_task` and `describe_capabilities` methods.
+The `AgentBase` class is an abstract base class that forms the foundation for all AI agents. 
+It dictates the structure and shared methods for logging, task execution, and lifecycle management. 
+All subclasses must implement the abstract `solve_task` and `describe_capabilities` methods.
 
-The class has following methods:
-
-- `__init__(self, name: str, project_name: str)`: This method initializes the base agent with a name and project association.
-- `solve_task(self, task: str,
+Methods:
+- `__init__(self, name: str, project_name: str)`: Initializes the agent with a name and project association.
+- `solve_task(self, task: str, **kwargs)`: Abstract method for executing tasks.
+- `describe_capabilities(self) -> str`: Abstract method for describing the agent’s functions.
+- `shutdown(self) -> None`: Logs shutdown information and performs cleanup if necessary.
 """
 
-from typing import Dict, Any, List
-from typing import Dict, List
+from typing import Dict, Any
 import logging
 from abc import ABC, abstractmethod
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
 
 class AgentBase(ABC):
     """
@@ -33,10 +36,10 @@ class AgentBase(ABC):
         """
         self.name = name
         self.project_name = project_name
-        logger.info(f"Agent '{self.name}' initialized for project '{self.project_name}'.")
+        logger.info(f"✅ Agent '{self.name}' initialized for project '{self.project_name}'.")
 
     @abstractmethod
-    def solve_task(self, task: str, **kwargs):
+    def solve_task(self, task: str, **kwargs) -> Dict[str, Any]:
         """
         Abstract method for task execution.
         Must be implemented by all subclasses.
@@ -46,7 +49,7 @@ class AgentBase(ABC):
             **kwargs: Additional parameters for task execution.
 
         Returns:
-            Any: Result of task execution.
+            Dict[str, Any]: A dictionary containing the task result.
         """
         pass
 
@@ -66,4 +69,4 @@ class AgentBase(ABC):
         Logs a shutdown message, ensuring graceful cleanup.
         Can be overridden in subclasses if additional cleanup is needed.
         """
-        logger.info(f"Shutting down agent '{self.name}' from project '{self.project_name}'.")
+        logger.info(f"⚠️ Shutting down agent '{self.name}' from project '{self.project_name}'.")

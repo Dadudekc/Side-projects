@@ -18,7 +18,7 @@ Raises:
 import json
 import unittest
 
-from agents.AgentDispatcher import AgentDispatcher
+from agents.agent_dispatcher import AgentDispatcher
 from agents.core.AgentBase import AgentBase
 from agents.core.utilities.ai_patch_utils import AIPatchUtils
 from agents.custom_agent import CustomAgent

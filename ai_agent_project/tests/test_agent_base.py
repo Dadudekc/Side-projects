@@ -13,24 +13,21 @@ initializes the necessary object required for
 
 import unittest
 
-from agents.core.utilities.AgentBase import AgentBase
 
+
+from agents.core.AgentBase import AgentBase
 
 class MockAgent(AgentBase):
-    def __init__(self, name="MockAgent"):
-        super().__init__(name)
-
-
-    """A mock implementation of AgentBase for testing purposes."""
-
-    def solve_task(self, task: str, **kwargs):
-        """Solves the given task and returns a confirmation message."""
-        return f"Task '{task}' solved."
+    """Mock agent for testing purposes."""
+    
+    def __init__(self, name="MockAgent", project_name="TestProject"):
+        super().__init__(name=name, project_name=project_name)
 
     def describe_capabilities(self) -> str:
-        """Returns a description of the agent's capabilities."""
-        return "Mock agent capabilities."
+        return "I am a test agent for unit testing purposes."
 
+    def solve_task(self, task: str, **kwargs):
+        return {"status": "success", "task": task}
 
 class TestAgentBase(unittest.TestCase):
     """Unit tests for the AgentBase class."""

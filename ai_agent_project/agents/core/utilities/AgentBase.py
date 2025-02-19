@@ -1,20 +1,7 @@
 """
+Module: AgentBase
 
-This module defines various classes related to agents.
-
-Classes:
-
-    AgentBase: An empty base class to define a common interface for all agents.
-
-    AgentRegistry: An empty class serving as a registry for all agents.
-
-    AIModelManager: An empty class which manages various Artificial Intelligence models.
-
-    CustomAgent: An empty class for defining custom agents as per the user's requirements.
-
-    DebugAgentUtils: An empty class with debugging utilities for an agent.
-
-    DebuggerAgent: An empty class representing
+This Python module serves as a foundational base for various agents and models in a software system. It defines essential classes for managing AI models, custom agents, debugging tools, and specific implementations of AI-driven agents for different functionalities. Primary utilities include agent registration, AI model management, and specialized agents for tasks like trading and journaling. It also includes AI model classes tailored to different purposes or algorithms, such as DeepSeekModel and MistralModel.
 """
 
 # agents/utilities/AgentBase.py

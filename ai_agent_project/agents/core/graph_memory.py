@@ -17,14 +17,16 @@ get_relationships(node: str) -> list:
 """
 
 import networkx as nx
+from agents.core.AgentBase import AgentBase
 
-class GraphMemory:
+class GraphMemory(AgentBase):
     """
-    🧠 Stores structured knowledge in a graph format.
+    Stores structured knowledge in a graph format.
     Used for deep reasoning and knowledge association.
     """
 
     def __init__(self):
+        super().__init__(name="GraphMemory", project_name="KnowledgeGraph")
         self.graph = nx.DiGraph()
 
     def add_knowledge(self, subject: str, relation: str, obj: str):
@@ -34,3 +36,16 @@ class GraphMemory:
     def get_relationships(self, node: str) -> list:
         """Returns relationships for a given node."""
         return list(self.graph.edges(node, data=True))
+
+    def solve_task(self, task: str, **kwargs):
+        """Solves graph-based reasoning tasks."""
+        if task == "add_knowledge":
+            self.add_knowledge(kwargs["subject"], kwargs["relation"], kwargs["obj"])
+            return {"status": "success", "message": "Knowledge added."}
+        elif task == "get_relationships":
+            return {"status": "success", "relationships": self.get_relationships(kwargs["node"])}
+        return {"status": "error", "message": f"Invalid task '{task}'"}
+
+    def describe_capabilities(self) -> str:
+        """Returns the capabilities of GraphMemory."""
+        return "Handles structured knowledge storage and retrieval using a graph-based approach."

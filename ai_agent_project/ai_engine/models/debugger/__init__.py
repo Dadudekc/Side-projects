@@ -3,3 +3,4 @@ This module serves as the initialization for a Python package, setting up namesp
 """
 
 # Auto-generated __init__.py
+from .patch_tracking_manager import PatchTrackingManager
