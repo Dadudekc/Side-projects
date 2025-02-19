@@ -38,12 +38,12 @@ class TestAIModelManager(unittest.TestCase):
         self.model_manager.save_model("test_model")
         mock_open.assert_called_once()
 
-    @patch("builtins.open", create=True)  # Mocking open for model loading
+    @patch("builtins.open", create=True)
     def test_load_model(self, mock_open):
         """Test loading model functionality."""
-        mock_open.return_value.__enter__.return_value.read.return_value = "{}"
+        mock_open.return_value.__enter__.return_value.read.return_value = "{}"  # Simulating empty JSON
         result = self.model_manager.load_model("test_model")
-        self.assertEqual(result, {})  # Ensuring model loads as an empty dictionary
+        self.assertEqual(result, {})  # Ensure it returns an empty dictionary instead of None
 
     @patch.object(AIConfidenceManager, "get_best_high_confidence_patch")
     @patch.object(AIConfidenceManager, "assign_confidence_score")

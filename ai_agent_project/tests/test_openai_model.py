@@ -1,26 +1,27 @@
 """
-
 This module contains the unit test cases for the OpenAIModel class in the 'ai_engine.models.openai_model' module.
 
 During the setup for the test cases, it ensures the existence of the AI performance tracking file and prepares an instance 
 of the OpenAIModel for testing. If the tracking file doesn't exist, it would create it and log an empty dictionary. If it 
-exists but either empty or corrupt, it would reset it. The AI performance tracking file is cleaned up or removed
+exists but either empty or corrupt, it would reset it. The AI performance tracking file is cleaned up or removed.
 """
 
 import json
 import os
 import unittest
 from unittest.mock import MagicMock, patch
+import openai
 
 from agents.core.AgentBase import AgentBase
 from agents.core.utilities.ai_patch_utils import AIPatchUtils
 from agents.custom_agent import CustomAgent
-from ai_engine.models.ai_model_manager import AIModelManager #corrected import
+from ai_engine.models.ai_model_manager import AIModelManager  # Corrected import
 from ai_engine.models.deepseek_model import DeepSeekModel
 from ai_engine.models.mistral_model import MistralModel
 from ai_engine.models.openai_model import OpenAIModel
 
 AI_PERFORMANCE_TRACKER_FILE = "tracking_data/ai_performance.json"
+
 
 class TestOpenAIModel(unittest.TestCase):
     """Unit tests for the OpenAIModel class."""
@@ -76,7 +77,7 @@ class TestOpenAIModel(unittest.TestCase):
         )
         modified_prompt = self.model._modify_prompt(prompt, 1)
         self.assertIn("Avoid modifying unrelated lines of code.", modified_prompt)
-        
+
     @patch.object(OpenAIModel, "_generate_with_openai")
     @patch("random.uniform", return_value=0.9)  # Mock confidence to always be high enough
     def test_generate_patch(self, mock_random, mock_openai):
@@ -84,7 +85,7 @@ class TestOpenAIModel(unittest.TestCase):
         mock_openai.side_effect = [
             None,  # First attempt fails
             "diff --git patch",  # Second attempt succeeds
-        ]  
+        ]
 
         patch_result = self.model.generate_patch(
             self.error_message, self.code_context, self.test_file
@@ -94,7 +95,6 @@ class TestOpenAIModel(unittest.TestCase):
             self.fail("❌ Patch generation returned an empty result unexpectedly.")
 
         self.assertIn("diff --git", patch_result)
-
 
     @patch("random.uniform", return_value=0.8)
     def test_validate_patch(self, mock_random):
@@ -119,6 +119,26 @@ class TestOpenAIModel(unittest.TestCase):
         self.assertEqual(data["OpenAIModel"]["success"], 1)
         self.assertEqual(data["OpenAIModel"]["fail"], 1)
 
+    @patch("ai_engine.models.openai_model.openai.ChatCompletion.create")
+    def test_generate_with_openai_fails_without_api_key(self, mock_openai):
+        """Ensure that OpenAI GPT-4 does not attempt to generate patches if the API key is missing."""
+        with patch.dict(os.environ, {"OPENAI_API_KEY": ""}):  # Simulate missing API key
+            mock_openai.return_value = None  # Explicitly return None for clarity
+            patch_result = self.model._generate_with_openai("test_prompt")
+            self.assertIsNone(patch_result, "OpenAI generation should return None if API key is missing.")
+
+    @patch("ai_engine.models.openai_model.openai.ChatCompletion.create")
+    def test_generate_with_openai_exception_handling(self, mock_openai):
+        """Ensure OpenAI API failures are handled gracefully."""
+        # Correctly setting up the side effect within the test method
+        mock_openai.side_effect = openai.OpenAIError("API Error")
+
+        # Attempt to generate using the OpenAI model
+        patch_result = self.model._generate_with_openai("test_prompt")
+
+        # Assert that the result is None due to the simulated API error
+        self.assertIsNone(patch_result)
+        # Additional logging assertions can be added here if needed
 
 if __name__ == "__main__":
     unittest.main()

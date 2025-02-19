@@ -88,7 +88,10 @@ class DebugAgentUtils:
                 """
                 try:
                     result = subprocess.run(
-                        ["ollama", "run", model, prompt], capture_output=True, text=True, encoding="utf-8"
+                        ["ollama", "run", model, prompt],
+                        capture_output=True,
+                        text=True,
+                        encoding="utf-8",
                     )
                     if result.returncode == 0 and result.stdout.strip():
                         suggestions.append(result.stdout.strip())
@@ -111,7 +114,10 @@ class DebugAgentUtils:
                 for i, chunk in enumerate(chunks):
                     try:
                         result = subprocess.run(
-                            ["deepseek", "run", "deepseek-coder", prompt], capture_output=True, text=True, encoding="utf-8"
+                            ["deepseek", "run", "deepseek-coder", prompt],
+                            capture_output=True,
+                            text=True,
+                            encoding="utf-8",
                         )
                         if result.returncode == 0 and result.stdout.strip():
                             suggestions.append(result.stdout.strip())
@@ -144,7 +150,7 @@ class DebugAgentUtils:
                     model=OPENAI_MODEL,
                     messages=[{"role": "user", "content": openai_prompt}],
                     temperature=0.7,
-                    max_tokens=1024
+                    max_tokens=1024,
                 )
                 openai_suggestion = response["choices"][0]["message"]["content"].strip()
                 if openai_suggestion:
@@ -157,6 +163,74 @@ class DebugAgentUtils:
 
         combined_suggestion = "\n".join(suggestions).strip()
         return combined_suggestion if combined_suggestion else "⚠️ No valid patch data generated."
+
+    @staticmethod
+    def parse_diff_suggestion(suggestion: str) -> Optional[List[Dict[str, Any]]]:
+        """
+        Parses a unified diff suggestion string into a list of patch changes.
+        Utilizes unidiff.PatchSet to parse the diff.
+
+        Returns:
+            Optional[List[Dict[str, Any]]]: A list of changes where each change is a dict,
+            or None if parsing fails.
+        """
+        try:
+            patch_set = PatchSet(suggestion.splitlines(keepends=True))
+            changes = []
+            for patched_file in patch_set:
+                for hunk in patched_file:
+                    for line in hunk:
+                        if line.is_added:
+                            changes.append({
+                                "action": "add",
+                                "line_no": line.target_line_no,
+                                "content": line.value,
+                            })
+                        elif line.is_removed:
+                            changes.append({
+                                "action": "remove",
+                                "line_no": line.source_line_no,
+                                "content": line.value,
+                            })
+            return changes
+        except Exception as e:
+            logger.error(f"❌ Failed to parse diff suggestion: {e}")
+            return None
+
+    @staticmethod
+    def apply_diff_patch(file_paths: List[str], patch: List[Dict[str, Any]]):
+        """
+        Applies a patch to the given files.
+        This naive implementation iterates over the provided patch changes and applies
+        additions or removals to the target files.
+
+        Args:
+            file_paths (List[str]): List of file paths to apply the patch to.
+            patch (List[Dict[str, Any]]): A list of patch changes.
+        """
+        for file_path in file_paths:
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    lines = f.readlines()
+                # Apply each change; here we only demonstrate additions.
+                for change in patch:
+                    if change.get("action") == "add":
+                        line_no = change.get("line_no", len(lines) + 1)
+                        # Insert at the correct position (adjust for 0-index)
+                        if 0 <= line_no - 1 < len(lines):
+                            lines.insert(line_no - 1, change.get("content", ""))
+                        else:
+                            lines.append(change.get("content", ""))
+                    elif change.get("action") == "remove":
+                        line_no = change.get("line_no", None)
+                        if line_no and 0 <= line_no - 1 < len(lines):
+                            # Remove the line if it matches the expected content
+                            if lines[line_no - 1] == change.get("content", ""):
+                                del lines[line_no - 1]
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.writelines(lines)
+            except Exception as e:
+                raise RuntimeError(f"Failed to apply patch on {file_path}: {e}")
 
     @staticmethod
     def rollback_changes(files_modified: List[str]):

@@ -18,6 +18,7 @@ Dependencies:
 import json
 import logging
 import os
+import subprocess
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -91,7 +92,7 @@ def test_generate_patch_ast_based(mock_find_class, strategy):
 
 
 # ** Fix subprocess.run Exception handling in patching **
-@patch("subprocess.run", side_effect=Exception("Patch failed"))
+@patch("subprocess.run", side_effect=subprocess.CalledProcessError(1, "patch"))
 def test_apply_patch_failure(mock_subprocess, strategy):
     """
     Test handling of failed patch application.
@@ -106,3 +107,4 @@ def test_apply_patch_failure(mock_subprocess, strategy):
 
     assert result is False, "apply_patch should return False on failure"
     mock_subprocess.assert_called_once(), "subprocess.run should be called once"
+

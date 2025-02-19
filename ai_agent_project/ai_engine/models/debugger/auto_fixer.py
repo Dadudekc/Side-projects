@@ -10,6 +10,8 @@ Updates:
 - Uses 'r+' or append mode 'a' to avoid deleting file contents.
 - Inserts fixes into specific lines instead of overwriting entire files.
 - Creates backups for risky operations (e.g., AI patch application).
+- Incorporates robust fixes for missing attributes, assertion mismatches, import errors,
+  indentation problems, and TypeErrors (with placeholder arguments).
 """
 
 import os
@@ -27,8 +29,8 @@ class AutoFixer:
     """
     Automatically fixes known errors using:
       - Quick pattern-based fixes,
-      - LLM-generated patches,
-      - Stored solutions from past fixes (learning database).
+      - Known fixes from the learning DB,
+      - LLM-based patch generation.
     """
 
     PROJECT_DIR = "project_files"  # Where production code (and test files) actually live
@@ -45,7 +47,7 @@ class AutoFixer:
     def _setup_workspace(self, needed_files):
         """
         Ensures test workspace exists and copies only needed files from `PROJECT_DIR`.
-        If `PROJECT_DIR` doesn't exist, log an error.
+        If `PROJECT_DIR` doesn't exist, logs an error.
         """
         os.makedirs(self.TEST_WORKSPACE, exist_ok=True)
 
@@ -265,11 +267,9 @@ class AutoFixer:
 
             new_content = re.sub(pattern, replacement, content)
             if new_content == content:
-                # If not replaced, we might do a broader approach or skip
                 logger.warning("⚠ No direct assertion mismatch found to fix.")
                 return False
 
-            # Write updated content
             with open(file_path, "w", encoding="utf-8") as fw:
                 fw.write(new_content)
 
@@ -341,8 +341,9 @@ class AutoFixer:
 
     def _quick_fix_type_error(self, file_name: str, error_msg: str) -> bool:
         """
-        Fixes TypeError caused by missing arguments, by adding placeholders (None).
-        Only modifies the first matching line outside function definitions.
+        Fixes TypeError caused by missing arguments by adding placeholders (None).
+        This method looks for function calls (ignoring definitions) and appends the required number
+        of placeholder arguments.
         """
         match = re.search(r"([a-zA-Z_]\w*)\(\) missing (\d+) required positional arguments", error_msg)
         if not match:
@@ -363,32 +364,43 @@ class AutoFixer:
 
             changed = False
             pattern = rf"{function_name}\(([^)]*)\)"
+            # First attempt: use regex substitution with a lambda to add placeholders
             for i, line in enumerate(lines):
                 # Skip function definitions
                 if re.match(r"^\s*def\s+", line):
                     continue
-                if re.search(pattern, line):
-                    # Replace the call with placeholders appended
-                    def replacer(m):
-                        existing_args = m.group(1).strip()
-                        if existing_args:
-                            return f"{function_name}({existing_args}, {placeholders})"
-                        else:
-                            return f"{function_name}({placeholders})"
-
-                    lines[i] = re.sub(pattern, replacer, line, count=1)
+                new_line = re.sub(
+                    pattern,
+                    lambda m: f"{function_name}({m.group(1).strip() + ',' if m.group(1).strip() else ''}{placeholders})",
+                    line,
+                    count=1
+                )
+                if new_line != line:
+                    lines[i] = new_line
                     changed = True
                     break
 
-            if changed:
-                with open(file_path, "w", encoding="utf-8") as fw:
-                    fw.writelines(lines)
-                logger.info(f"✅ TypeError fix applied to {file_path}")
-                return True
-            else:
-                logger.warning("⚠ No matching function call pattern found to fix.")
+            if not changed:
+                # Alternative approach: search manually for a matching function call
+                for i, line in enumerate(lines):
+                    if re.match(r"^\s*def\s+", line):
+                        continue
+                    m = re.search(pattern, line)
+                    if m:
+                        current_args = m.group(1)
+                        updated_args = current_args + ("," + placeholders if current_args.strip() else placeholders)
+                        lines[i] = line.replace(current_args, updated_args, 1)
+                        changed = True
+                        break
+
+            if not changed:
+                logger.warning(f"⚠ No matching function calls found in {file_name} to fix.")
                 return False
 
+            with open(file_path, "w", encoding="utf-8") as fw:
+                fw.writelines(lines)
+            logger.info(f"✅ Fixed TypeError by adding placeholder arguments in {file_name}")
+            return True
         except Exception as e:
-            logger.error(f"❌ Could not fix TypeError: {e}")
+            logger.error(f"❌ Could not fix TypeError for function {function_name}: {e}")
             return False

@@ -1,8 +1,3 @@
-"""
-
-Python class AIPatchRetryManager is in charge of managing patches that fail initially by analyzing them, suggesting modified ones, and retrying them before rollback. The AI incorporates an AutoFixManager as the `retry_manager`, an AIPatchAnalyzer as the `ai_analyzer`, and an AIConfidenceManager as the `confidence_manager`. The AI attempts to retry patches if the calculated confidence boost warrants retrying the patch. The patch is then modified and applied using the `retry_manager`
-"""
-
 import logging
 from typing import Dict, List
 from ai_engine.patch_analyzer import AIPatchAnalyzer
@@ -25,10 +20,13 @@ class AIPatchRetryManager:
     CONFIDENCE_THRESHOLD = 0.2  # Minimum confidence to attempt retry
     MAX_AI_PATCH_ATTEMPTS = 2   # AI gets two additional tries before rollback
 
-    def __init__(self):
-        self.retry_manager = AutoFixManager()
-        self.ai_analyzer = AIPatchAnalyzer()
-        self.confidence_manager = AIConfidenceManager()
+    def __init__(self, *, confidence_manager: AIConfidenceManager, auto_fix_manager: AutoFixManager, patch_analyzer: AIPatchAnalyzer):
+        """
+        Initializes the retry manager with injected dependencies.
+        """
+        self.confidence_manager = confidence_manager
+        self.retry_manager = auto_fix_manager
+        self.ai_analyzer = patch_analyzer
 
     def retry_failed_patches(self, failed_patches: Dict[str, List[str]]):
         """
@@ -38,24 +36,22 @@ class AIPatchRetryManager:
             for patch in patches:
                 # Analyze the failed patch
                 reason, confidence_boost = self.ai_analyzer.analyze_failed_patch(error_signature, patch)
+                logger.debug(f"Analysis for {error_signature}: {reason} with boost {confidence_boost}")
 
-                # Retrieve current confidence and update
-                current_confidence = self.confidence_manager.get_confidence(error_signature)
-                new_confidence = min(1.0, current_confidence + confidence_boost)  # Ensure confidence ≤ 1.0
-
+                # Retrieve current confidence and update it
+                current_confidence = self.confidence_manager.calculate_confidence(error_signature)
+                new_confidence = min(1.0, current_confidence + confidence_boost)
                 logger.info(f"🔄 Confidence updated: {current_confidence:.2f} ➡ {new_confidence:.2f} for {error_signature}")
 
                 if new_confidence >= self.CONFIDENCE_THRESHOLD:
                     logger.info(f"🛠️ AI suggests retrying patch for {error_signature}.")
                     modified_patch = self.ai_analyzer.modify_failed_patch(error_signature, patch)
-                    patch_success = self.retry_manager.debugging_strategy.apply_patch(modified_patch)
+                    # Use the wrapper method on AutoFixManager to apply the patch.
+                    patch_success = self.retry_manager.apply_patch(modified_patch)
 
                     if patch_success:
                         logger.info(f"✅ AI-modified patch for {error_signature} worked!")
-                        self.retry_manager.debugging_strategy.learning_db[error_signature] = {
-                            "patch": modified_patch, "success": True
-                        }
-                        self.retry_manager.debugging_strategy._save_learning_db()
+                        # Optionally update a learning database or other state here
                     else:
                         logger.warning(f"❌ AI-modified patch failed for {error_signature}.")
                 else:

@@ -163,8 +163,10 @@ class AIModelManager:
                 max_tokens=512
             )
             return response["choices"][0]["message"]["content"].strip()
-        except Exception as e:
+        except openai.error.OpenAIError as e:
             logger.error("❌ OpenAI GPT-4 call failed: %s", e)
+        except Exception as e:
+            logger.error("❌ Unexpected error with OpenAI GPT-4: %s", e)
         return None
 
     def _compute_error_signature(self, error_msg: str, code_context: str) -> str:
@@ -178,7 +180,8 @@ class AIModelManager:
         Returns:
             str: A SHA-256 hash representing the error signature.
         """
-        h = __import__("hashlib").sha256()
+        import hashlib
+        h = hashlib.sha256()
         h.update(error_msg.encode("utf-8"))
         h.update(code_context.encode("utf-8"))
         return h.hexdigest()

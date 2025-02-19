@@ -40,11 +40,11 @@ class AgentRegistry:
     def load_core_agents(self):
         """Registers core AI agents on initialization."""
         core_agents = {
-            "professor": ProfessorSynapseAgent(),
-            "forecasting": GPTForecaster(),
-            "memory": MemoryEngine(),
-            "graph": GraphMemory(),
-            "journal": JournalAgent(),  # Fixed casing issue: "JournalAgent" → "journal"
+            "ProfessorSynapseAgent": ProfessorSynapseAgent(),
+            "GPTForecaster": GPTForecaster(),
+            "MemoryEngine": MemoryEngine(),
+            "GraphMemory": GraphMemory(),
+            "JournalAgent": JournalAgent(),  # ✅ Use "JournalAgent" consistently
         }
 
         for name, agent in core_agents.items():

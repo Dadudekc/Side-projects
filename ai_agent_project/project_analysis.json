@@ -7,6 +7,21 @@
             ],
             "purpose": "No docstring found."
         },
+        "all_stubs.py": {
+            "dependencies": [
+                "hashlib",
+                "json",
+                "logging",
+                "openai",
+                "os",
+                "random",
+                "re",
+                "requests",
+                "shutil",
+                "subprocess"
+            ],
+            "purpose": "No docstring found."
+        },
         "docstring_generator.py": {
             "dependencies": [
                 "argparse",
@@ -85,17 +100,13 @@
             ],
             "purpose": "No docstring found."
         },
-        "agents/AgentDispatcher.py": {
+        "agents/agent_dispatcher.py": {
             "dependencies": [
                 "agents.core.AgentBase.AgentBase",
-                "agents.core.agent_registry.AgentRegistry",
-                "agents.core.gpt_forecasting.GPTForecaster",
-                "agents.core.graph_memory.GraphMemory",
-                "agents.core.journal_agent.JournalAgent",
-                "agents.core.memory_engine.MemoryEngine",
-                "agents.core.professor_synapse_agent.ProfessorSynapseAgent",
+                "importlib",
                 "json",
                 "logging",
+                "pkgutil",
                 "typing.Any",
                 "typing.Dict"
             ],
@@ -103,16 +114,22 @@
         },
         "agents/custom_agent.py": {
             "dependencies": [
-                "ai_engine.models.memory.context_manager.ContextManager"
+                "agents.core.AgentBase.AgentBase",
+                "ai_engine.models.memory.context_manager.ContextManager",
+                "logging"
+            ],
+            "purpose": "No docstring found."
+        },
+        "agents/external_ai_agent.py": {
+            "dependencies": [
+                "agents.core.AgentBase.AgentBase",
+                "json",
+                "requests"
             ],
             "purpose": "No docstring found."
         },
         "agents/__init__.py": {
-            "dependencies": [
-                "typing.Any",
-                "typing.Dict",
-                "typing.List"
-            ],
+            "dependencies": [],
             "purpose": "No docstring found."
         },
         "agents/core/AgentBase.py": {
@@ -121,8 +138,7 @@
                 "abc.abstractmethod",
                 "logging",
                 "typing.Any",
-                "typing.Dict",
-                "typing.List"
+                "typing.Dict"
             ],
             "purpose": "No docstring found."
         },
@@ -149,12 +165,14 @@
                 "agents.core.journal_agent.JournalAgent",
                 "agents.core.memory_engine.MemoryEngine",
                 "agents.core.professor_synapse_agent.ProfessorSynapseAgent",
-                "logging"
+                "logging",
+                "typing.Dict"
             ],
             "purpose": "No docstring found."
         },
         "agents/core/gpt_forecasting.py": {
             "dependencies": [
+                "agents.core.AgentBase.AgentBase",
                 "openai",
                 "os"
             ],
@@ -162,6 +180,7 @@
         },
         "agents/core/graph_memory.py": {
             "dependencies": [
+                "agents.core.AgentBase.AgentBase",
                 "networkx"
             ],
             "purpose": "No docstring found."
@@ -190,6 +209,7 @@
         },
         "agents/core/memory_engine.py": {
             "dependencies": [
+                "agents.core.AgentBase.AgentBase",
                 "json",
                 "os"
             ],
@@ -223,11 +243,7 @@
             "purpose": "No docstring found."
         },
         "agents/core/__init__.py": {
-            "dependencies": [
-                "typing.Any",
-                "typing.Dict",
-                "typing.List"
-            ],
+            "dependencies": [],
             "purpose": "No docstring found."
         },
         "agents/core/utilities/AgentBase.py": {
@@ -239,7 +255,9 @@
                 "collections.deque",
                 "json",
                 "logging",
+                "numpy",
                 "psutil",
+                "sentence_transformers.SentenceTransformer",
                 "time",
                 "typing.Any",
                 "typing.Callable",
@@ -253,7 +271,10 @@
         "agents/core/utilities/ai_client.py": {
             "dependencies": [
                 "logging",
-                "requests"
+                "requests",
+                "typing.Any",
+                "typing.Dict",
+                "typing.Optional"
             ],
             "purpose": "No docstring found."
         },
@@ -266,10 +287,7 @@
                 "openai",
                 "os",
                 "subprocess",
-                "typing.Dict",
-                "typing.List",
-                "typing.Optional",
-                "typing.Tuple"
+                "typing.Optional"
             ],
             "purpose": "No docstring found."
         },
@@ -280,8 +298,6 @@
                 "os",
                 "subprocess",
                 "tqdm.tqdm",
-                "typing.Any",
-                "typing.Dict",
                 "typing.List",
                 "typing.Optional"
             ],
@@ -326,12 +342,12 @@
                 "logging",
                 "openai",
                 "os",
-                "re",
                 "subprocess",
                 "tqdm.tqdm",
                 "typing.Any",
                 "typing.Dict",
                 "typing.List",
+                "typing.Optional",
                 "unidiff.PatchSet"
             ],
             "purpose": "No docstring found."
@@ -345,7 +361,6 @@
                 "json",
                 "logging",
                 "os",
-                "random",
                 "typing.Dict",
                 "typing.List",
                 "typing.Optional",
@@ -383,8 +398,7 @@
                 "os",
                 "typing.Dict",
                 "typing.List",
-                "typing.Optional",
-                "typing.Tuple"
+                "typing.Optional"
             ],
             "purpose": "No docstring found."
         },
@@ -397,14 +411,13 @@
                 "ai_engine.confidence_manager.AIConfidenceManager",
                 "ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager",
                 "hashlib",
+                "json",
                 "logging",
                 "openai",
                 "os",
                 "subprocess",
                 "typing.Dict",
-                "typing.List",
-                "typing.Optional",
-                "typing.Tuple"
+                "typing.Optional"
             ],
             "purpose": "No docstring found."
         },
@@ -462,6 +475,16 @@
                 "requests",
                 "typing.Dict",
                 "typing.Optional"
+            ],
+            "purpose": "No docstring found."
+        },
+        "ai_engine/models/debugger/advanced_init_setup.py": {
+            "dependencies": [
+                "ast",
+                "json",
+                "logging",
+                "os",
+                "sys"
             ],
             "purpose": "No docstring found."
         },
@@ -561,7 +584,6 @@
                 "ai_engine.models.debugger.auto_fixer.AutoFixer",
                 "ai_engine.models.debugger.error_parser.ErrorParser",
                 "logging",
-                "os",
                 "subprocess"
             ],
             "purpose": "No docstring found."
@@ -588,9 +610,13 @@
         },
         "ai_engine/models/debugger/debug_agent_auto_fixer.py": {
             "dependencies": [
+                "ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager",
                 "ast",
                 "logging",
-                "os"
+                "os",
+                "re",
+                "shutil",
+                "typing.Dict"
             ],
             "purpose": "No docstring found."
         },
@@ -598,7 +624,9 @@
             "dependencies": [
                 "email.mime.multipart.MIMEMultipart",
                 "email.mime.text.MIMEText",
+                "json",
                 "logging",
+                "re",
                 "smtplib"
             ],
             "purpose": "No docstring found."
@@ -641,7 +669,7 @@
                 "os",
                 "typing.Dict",
                 "typing.List",
-                "typing.Union"
+                "typing.Optional"
             ],
             "purpose": "No docstring found."
         },
@@ -703,7 +731,9 @@
             "purpose": "No docstring found."
         },
         "ai_engine/models/debugger/__init__.py": {
-            "dependencies": [],
+            "dependencies": [
+                "patch_tracking_manager.PatchTrackingManager"
+            ],
             "purpose": "No docstring found."
         },
         "ai_engine/models/debugger/temp_test_folder/__init__.py": {
@@ -867,23 +897,20 @@
         },
         "tests/test_agent_base.py": {
             "dependencies": [
-                "agents.core.utilities.AgentBase.AgentBase",
+                "agents.core.AgentBase.AgentBase",
                 "unittest"
             ],
             "purpose": "No docstring found."
         },
         "tests/test_agent_dispatcher.py": {
             "dependencies": [
-                "agents.AgentDispatcher.AgentDispatcher",
+                "agents.agent_dispatcher.AgentDispatcher",
                 "agents.core.AgentBase.AgentBase",
-                "agents.core.agent_registry.AgentRegistry",
-                "agents.core.utilities.CustomAgent.CustomAgent",
-                "agents.core.utilities.ai_model_manager.AIModelManager",
-                "agents.core.utilities.ai_patch_utils.AIPatchUtils",
-                "ai_engine.models.deepseek_model.DeepSeekModel",
-                "ai_engine.models.mistral_model.MistralModel",
-                "ai_engine.models.openai_model.OpenAIModel",
+                "agents.external_ai_agent.ExternalAIAdapter",
+                "json",
                 "logging",
+                "pytest",
+                "requests",
                 "unittest",
                 "unittest.mock.MagicMock",
                 "unittest.mock.patch"
@@ -892,10 +919,9 @@
         },
         "tests/test_agent_registry.py": {
             "dependencies": [
+                "agents.core.AgentBase.AgentBase",
                 "agents.core.agent_registry.AgentRegistry",
-                "importlib",
                 "unittest",
-                "unittest.mock.MagicMock",
                 "unittest.mock.patch"
             ],
             "purpose": "No docstring found."
@@ -928,7 +954,11 @@
         },
         "tests/test_ai_model_manager.py": {
             "dependencies": [
-                "agents.core.utilities.AgentBase.AIModelManager",
+                "ai_engine.confidence_manager.AIConfidenceManager",
+                "ai_engine.models.ai_model_manager.AIModelManager",
+                "openai",
+                "os",
+                "sys",
                 "unittest",
                 "unittest.mock.MagicMock",
                 "unittest.mock.patch"
@@ -952,6 +982,7 @@
                 "ai_engine.confidence_manager.AIConfidenceManager",
                 "ai_engine.models.debugger.ai_patch_retry_manager.AIPatchRetryManager",
                 "ai_engine.models.debugger.auto_fix_manager.AutoFixManager",
+                "ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager",
                 "ai_engine.patch_analyzer.AIPatchAnalyzer",
                 "unittest",
                 "unittest.mock.MagicMock",
@@ -1001,12 +1032,22 @@
         },
         "tests/test_auto_fixer.py": {
             "dependencies": [
+                "agents.core.utilities.debug_agent_utils.DebugAgentUtils",
                 "ai_engine.models.debugger.auto_fixer.AutoFixer",
                 "os",
                 "shutil",
                 "subprocess",
                 "unittest",
+                "unittest.mock.MagicMock",
                 "unittest.mock.patch"
+            ],
+            "purpose": "No docstring found."
+        },
+        "tests/test_auto_fix_manager.py": {
+            "dependencies": [
+                "ai_engine.models.debugger.auto_fix_manager.AutoFixManager",
+                "unittest",
+                "unittest.mock.MagicMock"
             ],
             "purpose": "No docstring found."
         },
@@ -1064,7 +1105,6 @@
         "tests/test_debugger_runner.py": {
             "dependencies": [
                 "ai_engine.models.debugger.debugger_runner.DebuggerRunner",
-                "logging",
                 "pytest",
                 "unittest.mock.MagicMock",
                 "unittest.mock.patch"
@@ -1078,6 +1118,7 @@
                 "logging",
                 "os",
                 "pytest",
+                "subprocess",
                 "unittest.mock.MagicMock",
                 "unittest.mock.patch"
             ],
@@ -1087,7 +1128,6 @@
             "dependencies": [
                 "ai_engine.models.debugger.debug_agent_auto_fixer.DebugAgentAutoFixer",
                 "ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager",
-                "json",
                 "os",
                 "pytest",
                 "shutil"
@@ -1119,17 +1159,9 @@
             ],
             "purpose": "No docstring found."
         },
-        "tests/test_dispatcher.py": {
+        "tests/test_email_reporter.py": {
             "dependencies": [
-                "agents.AgentDispatcher.AgentDispatcher",
-                "agents.core.AgentBase.AgentBase",
-                "agents.core.utilities.ai_patch_utils.AIPatchUtils",
-                "agents.custom_agent.CustomAgent",
-                "ai_engine.models.ai_model_manager.AIModelManager",
-                "ai_engine.models.deepseek_model.DeepSeekModel",
-                "ai_engine.models.mistral_model.MistralModel",
-                "ai_engine.models.openai_model.OpenAIModel",
-                "json",
+                "ai_engine.models.debugger.email_reporter.EmailReporter",
                 "unittest"
             ],
             "purpose": "No docstring found."
@@ -1175,6 +1207,7 @@
                 "ai_engine.models.mistral_model.MistralModel",
                 "ai_engine.models.openai_model.OpenAIModel",
                 "json",
+                "openai",
                 "os",
                 "unittest",
                 "unittest.mock.MagicMock",
@@ -1267,6 +1300,96 @@
         },
         "tests/test_debugger/__init__.py": {
             "dependencies": [],
+            "purpose": "No docstring found."
+        },
+        "tests_backup/test_agent_dispatcher.py": {
+            "dependencies": [
+                "agents.agent_dispatcher.AgentDispatcher",
+                "agents.core.AgentBase.AgentBase",
+                "agents.core.agent_registry.AgentRegistry",
+                "agents.core.utilities.CustomAgent.CustomAgent",
+                "agents.core.utilities.ai_model_manager.AIModelManager",
+                "agents.core.utilities.ai_patch_utils.AIPatchUtils",
+                "ai_engine.models.deepseek_model.DeepSeekModel",
+                "ai_engine.models.mistral_model.MistralModel",
+                "ai_engine.models.openai_model.OpenAIModel",
+                "logging",
+                "unittest",
+                "unittest.mock.MagicMock",
+                "unittest.mock.patch"
+            ],
+            "purpose": "No docstring found."
+        },
+        "tests_backup/test_ai_patch_optimizer.py": {
+            "dependencies": [
+                "agents.core.utilities.ai_model_manager.AIModelManager",
+                "ai_engine.confidence_manager.AIConfidenceManager",
+                "ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager",
+                "ai_engine.patch_optimizer.AIPatchOptimizer",
+                "unittest",
+                "unittest.mock.MagicMock",
+                "unittest.mock.patch"
+            ],
+            "purpose": "No docstring found."
+        },
+        "tests_backup/test_ai_patch_review_manager.py": {
+            "dependencies": [
+                "agents.core.utilities.ai_client.AIClient",
+                "ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager",
+                "ai_engine.patch_review_manager.AIPatchReviewManager",
+                "ai_engine.patch_review_manager.DETAILED_ERROR_LOG_FILE",
+                "ai_engine.patch_review_manager.HUMAN_REVIEW_FILE",
+                "ai_engine.patch_review_manager.PATCH_RANKINGS_FILE",
+                "json",
+                "os",
+                "unittest",
+                "unittest.mock.patch"
+            ],
+            "purpose": "No docstring found."
+        },
+        "tests_backup/tests/test_agent_dispatcher.py": {
+            "dependencies": [
+                "agents.agent_dispatcher.AgentDispatcher",
+                "agents.core.AgentBase.AgentBase",
+                "agents.core.agent_registry.AgentRegistry",
+                "agents.core.utilities.CustomAgent.CustomAgent",
+                "agents.core.utilities.ai_model_manager.AIModelManager",
+                "agents.core.utilities.ai_patch_utils.AIPatchUtils",
+                "ai_engine.models.deepseek_model.DeepSeekModel",
+                "ai_engine.models.mistral_model.MistralModel",
+                "ai_engine.models.openai_model.OpenAIModel",
+                "logging",
+                "unittest",
+                "unittest.mock.MagicMock",
+                "unittest.mock.patch"
+            ],
+            "purpose": "No docstring found."
+        },
+        "tests_backup/tests/test_ai_patch_optimizer.py": {
+            "dependencies": [
+                "agents.core.utilities.ai_model_manager.AIModelManager",
+                "ai_engine.confidence_manager.AIConfidenceManager",
+                "ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager",
+                "ai_engine.patch_optimizer.AIPatchOptimizer",
+                "unittest",
+                "unittest.mock.MagicMock",
+                "unittest.mock.patch"
+            ],
+            "purpose": "No docstring found."
+        },
+        "tests_backup/tests/test_ai_patch_review_manager.py": {
+            "dependencies": [
+                "agents.core.utilities.ai_client.AIClient",
+                "ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager",
+                "ai_engine.patch_review_manager.AIPatchReviewManager",
+                "ai_engine.patch_review_manager.DETAILED_ERROR_LOG_FILE",
+                "ai_engine.patch_review_manager.HUMAN_REVIEW_FILE",
+                "ai_engine.patch_review_manager.PATCH_RANKINGS_FILE",
+                "json",
+                "os",
+                "unittest",
+                "unittest.mock.patch"
+            ],
             "purpose": "No docstring found."
         },
         "ui/debugger_dashboard.py": {

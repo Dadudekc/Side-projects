@@ -1,16 +1,16 @@
 """
-
 This module provides unit tests for the RollbackManager in the 'ai_engine.models.debugger' package.
-It includes tests to validate the following behaviour: 
-- Rollback is triggered when necessary, particularly after multiple failed patch attempts. 
-- Previously failed patches can be successfully retried before the system falls back to AI. 
-- The system stops retrying to apply patches after reaching the max retry attempts limit.
-These tests use the pytest framework and mock objects from the unittest.mock package to simulate components
+
+Tested behaviors:
+- Rollback is triggered when a patch fails.
+- Failed patches are retried before falling back to AI.
+- Max retry attempts are properly enforced.
+
+Uses pytest and unittest.mock for testing.
 """
 
 import logging
 from unittest.mock import MagicMock, patch
-
 import pytest
 
 from ai_engine.models.debugger.rollback_manager import RollbackManager
@@ -27,7 +27,7 @@ def rollback_manager():
 # ** Test Rollback is Triggered When a Patch Fails**
 @patch.object(RollbackManager, "restore_backup")
 def test_rollback_triggered_on_failure(mock_restore_backup, rollback_manager):
-    """Tests if rollback is triggered after multiple failed patch attempts."""
+    """Rollback should be triggered after multiple failed patch attempts."""
     modified_files = ["tests/test_example.py"]
     rollback_manager.rollback_changes(modified_files)
 
@@ -35,14 +35,9 @@ def test_rollback_triggered_on_failure(mock_restore_backup, rollback_manager):
     logger.info("✅ Test passed: Rollback triggered when required.")
 
 
-@patch(
-    "ai_engine.models.debugger.rollback_manager.PatchTrackingManager.get_failed_patches",
-    return_value=["Patch1", "Patch2"],
-)
-@patch(
-    "ai_engine.models.debugger.rollback_manager.DebuggingStrategy.apply_patch",
-    side_effect=[False, True],  # First fails, second succeeds
-)
+# ** Test Retrying Failed Patches Before AI Fallback**
+@patch("ai_engine.models.debugger.rollback_manager.PatchTrackingManager.get_failed_patches", return_value=["Patch1", "Patch2"])
+@patch("ai_engine.models.debugger.rollback_manager.DebuggingStrategy.apply_patch", side_effect=[False, True])  # First fails, second succeeds
 @patch.object(RollbackManager, "backup_file")
 @patch.object(RollbackManager, "restore_backup")
 @patch("ai_engine.models.debugger.rollback_manager.PatchTrackingManager.record_successful_patch")
@@ -54,7 +49,7 @@ def test_re_attempt_failed_patches_success(
     mock_get_failed_patches,
     rollback_manager,
 ):
-    """Tests if previously failed patches are retried and succeed before falling back to AI."""
+    """Failed patches should be retried, succeeding before falling back to AI."""
     error_signature = "error_12345"
     file_path = "tests/test_example.py"
 
@@ -66,19 +61,12 @@ def test_re_attempt_failed_patches_success(
     assert mock_backup.call_count == 2  # ✅ One backup per attempted patch
     mock_restore.assert_called_once()  # ✅ Restore should be called only after the first failure
 
-    logger.info(
-        "✅ Test passed: Failed patches were retried and a successful one was found."
-    )
+    logger.info("✅ Test passed: Failed patches were retried and a successful one was found.")
+
 
 # ** Test Max Retry Limit Enforcement**
-@patch(
-    "ai_engine.models.debugger.rollback_manager.PatchTrackingManager.get_failed_patches",
-    return_value=["Patch1", "Patch2"],
-)
-@patch(
-    "ai_engine.models.debugger.rollback_manager.DebuggingStrategy.apply_patch",
-    return_value=False,
-)  # All patches fail
+@patch("ai_engine.models.debugger.rollback_manager.PatchTrackingManager.get_failed_patches", return_value=["Patch1", "Patch2"])
+@patch("ai_engine.models.debugger.rollback_manager.DebuggingStrategy.apply_patch", return_value=False)  # All patches fail
 @patch.object(RollbackManager, "backup_file")
 @patch.object(RollbackManager, "restore_backup")
 def test_max_retry_limit(
@@ -88,13 +76,11 @@ def test_max_retry_limit(
     mock_get_failed_patches,
     rollback_manager,
 ):
-    """Tests if rollback stops retrying after reaching max retry attempts."""
+    """Rollback should stop retrying after reaching max retry attempts."""
     error_signature = "error_12345"
     file_path = "tests/test_example.py"
 
-    rollback_manager.failed_attempts[error_signature] = (
-        3  # Simulate reaching max attempts
-    )
+    rollback_manager.failed_attempts[error_signature] = 3  # Simulate reaching max attempts
 
     result = rollback_manager.re_attempt_failed_patches(error_signature, file_path)
 
@@ -103,3 +89,4 @@ def test_max_retry_limit(
     mock_restore.assert_not_called()  # ✅ No rollback since no new patch was applied
 
     logger.info("✅ Test passed: Max retry limit is properly enforced.")
+

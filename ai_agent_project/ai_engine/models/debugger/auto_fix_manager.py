@@ -1,15 +1,3 @@
-"""
-
-A class to manage the process of automated test retries, patching failed tests, and rolling back changes if necessary.
-
-This manager class handles various tasks related to automated test retries and patching. 
-The class tracks multiple failed patches per each error, and tries multiple AI-generated patches before rolling back. 
-Successful patches are stored in a learning database, and a history of failed patches is maintained for later review.
-
-Attributes:
-    MAX_PATCH_ATTEMPTS (int): Maximum number of AI-generated patch attempts
-"""
-
 import os
 import shutil
 import subprocess
@@ -69,7 +57,7 @@ class AutoFixManager:
         failures = []
         failure_pattern = re.compile(r"FAILED (\S+) - (.+)")
 
-        # ✅ Convert bytes to string if necessary
+        # Convert bytes to string if necessary
         if isinstance(test_output, bytes):
             test_output = test_output.decode("utf-8")
 
@@ -79,6 +67,19 @@ class AutoFixManager:
 
         logger.info(f"⚠️ Found {len(failures)} failing tests.")
         return failures
+
+    def apply_patch(self, patch: str) -> bool:
+        """
+        Applies the given patch using the debugging strategy.
+        This wrapper method allows AIPatchRetryManager to call apply_patch on AutoFixManager.
+
+        Args:
+            patch (str): The patch to be applied.
+
+        Returns:
+            bool: True if the patch was applied successfully; False otherwise.
+        """
+        return self.debugging_strategy.apply_patch(patch)
 
     def retry_tests(self, max_retries: int = 3):
         """
@@ -90,8 +91,8 @@ class AutoFixManager:
         Returns:
             Dict[str, Any]: Final retry status.
         """
-        modified_files = set()  # ✅ Track modified files
-        failed_files = set()  # ✅ Track files that still fail after all attempts
+        modified_files = set()  # Track modified files
+        failed_files = set()  # Track files that still fail after all attempts
 
         for attempt in range(1, max_retries + 1):
             logger.info(f"🔄 Debugging Attempt {attempt}/{max_retries}...")
@@ -134,7 +135,7 @@ class AutoFixManager:
                         self.patch_tracker.record_successful_patch(error_sig, patch)
                         self.debugging_strategy.learning_db[error_sig] = {"patch": patch, "success": True}
                         self.debugging_strategy._save_learning_db()
-                        break  # ✅ Stop trying more patches since this one worked
+                        break  # Stop trying more patches since this one worked
                     else:
                         logger.warning(f"❌ Patch failed for {file_name}")
                         self.patch_tracker.record_failed_patch(error_sig, patch)
@@ -144,12 +145,11 @@ class AutoFixManager:
                     logger.error(f"❌ Could not fix {file_name} after multiple attempts.")
                     failed_files.add(file_name)
 
-        # ✅ Only roll back files that still fail, keeping successful patches
+        # Only roll back files that still fail, keeping successful patches
         if failed_files:
             logger.error(f"🛑 Rolling back changes for failed files: {failed_files}")
             self.rollback_changes(failed_files)
 
-        # ✅ If no files failed, debugging was successful
         if not failed_files:
             return {"status": "success", "message": "All failing tests were fixed!"}
 
@@ -171,7 +171,7 @@ class AutoFixManager:
             if os.path.exists(backup_path):
                 shutil.copy(backup_path, file)
                 logger.info(f"🔄 Rolled back {file} from backup.")
-
+                
 if __name__ == "__main__":
     manager = AutoFixManager()
     manager.retry_tests(max_retries=3)

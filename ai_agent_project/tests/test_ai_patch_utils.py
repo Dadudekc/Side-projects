@@ -1,17 +1,13 @@
-"""
-
-A module for unit tests for the AIPatchUtils class. 
-
-The class contains the following test methods:
-1. 'test_chunk_code' - Tests that the method 'chunk_code' in the AIPatchUtils class correctly splits content that is too long.  
-2. 'test_query_llm_success' - Tests that the 'query_llm' method in AIPatchUtils class successfully returns a patch suggestion.
-3. 'test_query_llm_failure' - Tests that the 
-"""
-
 import unittest
 from unittest.mock import MagicMock, patch
+import logging
+import openai
 
 from agents.core.utilities.ai_patch_utils import AIPatchUtils
+
+# Set up logging for debugging
+logger = logging.getLogger("TestAIPatchUtils")
+logger.setLevel(logging.DEBUG)
 
 
 class TestAIPatchUtils(unittest.TestCase):
@@ -47,7 +43,7 @@ class TestAIPatchUtils(unittest.TestCase):
         response = AIPatchUtils.query_openai("Test prompt")
         self.assertEqual(response, "Patch suggestion")
 
-    @patch("openai.ChatCompletion.create", side_effect=Exception("API error"))
+    @patch("openai.ChatCompletion.create", side_effect=openai.error.OpenAIError("API error"))
     def test_query_openai_failure(self, mock_openai):
         """Test OpenAI query failure returns None."""
         response = AIPatchUtils.query_openai("Test prompt")
@@ -62,6 +58,8 @@ class TestAIPatchUtils(unittest.TestCase):
     return 42"""
         error_msg = "SyntaxError: invalid syntax"
         patch = AIPatchUtils.generate_patch(file_content, error_msg)
+
+        logger.debug(f"Expected: 'DeepSeek Patch', Got: {patch}")
         self.assertEqual(patch, "DeepSeek Patch")
 
     @patch.object(AIPatchUtils, "query_llm", return_value=None)
@@ -73,6 +71,8 @@ class TestAIPatchUtils(unittest.TestCase):
     return 42"""
         error_msg = "SyntaxError: invalid syntax"
         patch = AIPatchUtils.generate_patch(file_content, error_msg)
+
+        logger.debug(f"Expected: 'OpenAI Patch', Got: {patch}")
         self.assertEqual(patch, "OpenAI Patch")
 
     @patch.object(AIPatchUtils, "query_llm", return_value=None)
@@ -84,6 +84,8 @@ class TestAIPatchUtils(unittest.TestCase):
     return 42"""
         error_msg = "SyntaxError: invalid syntax"
         patch = AIPatchUtils.generate_patch(file_content, error_msg)
+
+        logger.debug(f"Expected: '', Got: {patch}")
         self.assertEqual(patch, "")
 
 
