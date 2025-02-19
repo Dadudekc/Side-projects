@@ -13,31 +13,37 @@ Test cases include class setup, calls to different AI models, patch generation w
 
 import unittest
 from unittest.mock import MagicMock, patch
-import subprocess
 import openai
+import sys
+import os
 
-from ai_engine.ai_model_manager import AIModelManager
-from ai_engine.models.confidence_manager import AIConfidenceManager
+# Ensure the correct path is added for imports
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+from ai_engine.models.ai_model_manager import AIModelManager
+from ai_engine.confidence_manager import AIConfidenceManager  # Corrected import path
 
 class TestAIModelManager(unittest.TestCase):
     def setUp(self):
+        """Setup an instance of AIModelManager and mock error message, code context, and test file name."""
         self.model_manager = AIModelManager()
+        self.error_msg = "SyntaxError: invalid syntax"
+        self.code_context = "print('Hello World'"
+        self.test_file = "test_script.py"
 
-    @patch("ai_engine.ai_model_manager.open", create=True)
+    @patch("builtins.open", create=True)  # Mocking built-in open function globally
     def test_save_model(self, mock_open):
+        """Test saving model functionality."""
         mock_open.return_value.__enter__.return_value.write = MagicMock()
         self.model_manager.save_model("test_model")
         mock_open.assert_called_once()
 
-    @patch("ai_engine.ai_model_manager.open", create=True)
+    @patch("builtins.open", create=True)  # Mocking open for model loading
     def test_load_model(self, mock_open):
+        """Test loading model functionality."""
         mock_open.return_value.__enter__.return_value.read.return_value = "{}"
         result = self.model_manager.load_model("test_model")
-        self.assertEqual(result, {})
-
-        patch_result = self.manager._generate_with_openai("test_prompt")
-        self.assertIsNotNone(patch_result)
-        self.assertIn("diff --git", patch_result)
+        self.assertEqual(result, {})  # Ensuring model loads as an empty dictionary
 
     @patch.object(AIConfidenceManager, "get_best_high_confidence_patch")
     @patch.object(AIConfidenceManager, "assign_confidence_score")
@@ -52,20 +58,20 @@ class TestAIModelManager(unittest.TestCase):
         # First model generates a successful patch
         mock_generate_with_model.side_effect = ["diff --git patch", None, None]
 
-        patch_result = self.manager.generate_patch(self.error_msg, self.code_context, self.test_file)
+        patch_result = self.model_manager.generate_patch(self.error_msg, self.code_context, self.test_file)
         self.assertIsNotNone(patch_result)
         self.assertIn("diff --git", patch_result)
 
     def test_format_prompt(self):
         """Test formatting of debugging prompts."""
-        prompt = self.manager._format_prompt(self.error_msg, self.code_context, self.test_file)
+        prompt = self.model_manager._format_prompt(self.error_msg, self.code_context, self.test_file)
         self.assertIn("SyntaxError", prompt)
         self.assertIn("test_script.py", prompt)
 
     def test_compute_error_signature(self):
         """Test error signature generation."""
-        signature1 = self.manager._compute_error_signature(self.error_msg, self.code_context)
-        signature2 = self.manager._compute_error_signature(self.error_msg, self.code_context)
+        signature1 = self.model_manager._compute_error_signature(self.error_msg, self.code_context)
+        signature2 = self.model_manager._compute_error_signature(self.error_msg, self.code_context)
         self.assertEqual(signature1, signature2)  # Should be deterministic
 
 

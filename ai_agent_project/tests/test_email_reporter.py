@@ -1,6 +1,5 @@
 import unittest
-from email_reporter import EmailReporter
-
+from ai_engine.models.debugger.email_reporter import EmailReporter
 class TestEmailReporter(unittest.TestCase):
     def setUp(self):
         self.reporter = EmailReporter(

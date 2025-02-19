@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 # ✅ Updated import paths to reference the correct modules
 from ai_engine.models.debugger.ai_patch_retry_manager import AIPatchRetryManager
-from ai_engine.models.confidence_manager import AIConfidenceManager
+from ai_engine.confidence_manager import AIConfidenceManager
 from ai_engine.models.debugger.auto_fix_manager import AutoFixManager
 from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
 from ai_engine.patch_analyzer import AIPatchAnalyzer

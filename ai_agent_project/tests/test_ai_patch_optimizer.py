@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 from ai_engine.patch_optimizer import AIPatchOptimizer
 from agents.core.utilities.ai_model_manager import AIModelManager
 from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
-from ai_engine.models.confidence_manager import AIConfidenceManager
+from ai_engine.confidence_manager import AIConfidenceManager
 
 
 class TestAIPatchOptimizer(unittest.TestCase):

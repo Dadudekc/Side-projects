@@ -1,11 +1,9 @@
 """
-
 Module for unit testing the JournalAgent class. This module tests functions such as 
 create_journal_entry, retrieve_journal_entry, update_journal_entry, delete_journal_entry 
 and list_journal_entries. It also tests various task actions such as create, retrieve, 
 update, delete and handling of invalid actions. Each function and task is tested under 
 normal conditions as well as various edge-case conditions.
-
 """
 
 import json
@@ -27,6 +25,7 @@ class TestJournalAgent(unittest.TestCase):
         os.rmdir("test_journals")
 
     def test_create_journal_entry(self):
+        """Test creating a journal entry."""
         result = self.agent.create_journal_entry("test", "content")
         self.assertEqual(result["status"], "success")
 
@@ -37,26 +36,24 @@ class TestJournalAgent(unittest.TestCase):
         self.assertIn("entry", result)
         self.assertEqual(result["entry"]["content"], "This is a test.")
 
-        def test_create_journal_entry(self):
-        result = self.agent.create_journal_entry("test", "content")
-        self.assertEqual(result["status"], "success")
-
     def test_update_journal_entry(self):
+        """Test updating a journal entry."""
         self.agent.create_journal_entry("test", "content")
         result = self.agent.update_journal_entry("test", "new content")
         self.assertEqual(result["status"], "success")
 
     def test_delete_journal_entry(self):
+        """Test deleting a journal entry."""
         self.agent.create_journal_entry("test", "content")
         result = self.agent.delete_journal_entry("test")
         self.assertEqual(result["status"], "success")
 
     def test_list_journal_entries(self):
+        """Test listing all journal entries."""
         self.agent.create_journal_entry("test1", "content")
         self.agent.create_journal_entry("test2", "content")
         result = self.agent.list_journal_entries()
         self.assertEqual(len(result["entries"]), 2)
-
 
     def test_perform_task_create(self):
         """Test performing a 'create' task."""

@@ -14,7 +14,7 @@ import logging
 import openai
 from typing import Optional
 from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
-from ai_engine.models.confidence_manager import AIConfidenceManager
+from ai_engine.confidence_manager import AIConfidenceManager
 
 logger = logging.getLogger("AIModelManager")
 logger.setLevel(logging.DEBUG)

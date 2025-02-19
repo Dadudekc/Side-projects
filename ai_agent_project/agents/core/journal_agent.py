@@ -8,6 +8,7 @@ from agents.core.AgentBase import AgentBase
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+
 class JournalAgent(AgentBase):
     """
     Specialized agent for managing journal entries, extending AgentBase.
@@ -156,7 +157,7 @@ class JournalAgent(AgentBase):
 
     def solve_task(self, task: str, **kwargs) -> Dict[str, Any]:
         """
-        Perform a journaling action (create, retrieve, update, delete, or list).
+        Dispatches the task and returns the status of the operation.
 
         Args:
             task (str): Action to be performed.
@@ -178,25 +179,6 @@ class JournalAgent(AgentBase):
         else:
             logger.error(f"Invalid task '{task}' requested.")
             return {"status": "error", "message": f"Invalid task '{task}'"}
-
-        def dispatch(self, task: str, **kwargs) -> str:
-    """
-    Dispatches the task and returns the status of the operation.
-
-    Args:
-        task (str): Action to be performed.
-        **kwargs: Additional parameters.
-
-    Returns:
-        str: 'success' if the operation was successful, otherwise 'error'.
-    """
-    try:
-        result = self.solve_task(task, **kwargs)
-        return result.get("status", "error")
-    except Exception as e:
-        logger.error(f"Error dispatching task '{task}': {e}")
-        return "error"
-
 
     def shutdown(self) -> None:
         """

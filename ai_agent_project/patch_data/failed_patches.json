@@ -3,6 +3,7 @@
         "--- test_patch.py\n+++ test_patch.py\n- old_code\n+ fixed_code"
     ],
     "example_error_signature": [
-        "--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ modified code"
+        "--- a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ modified code",
+        "diff --git a/code.py\n+++ b/code.py\n@@ -1 +1 @@\n- old code\n+ modified code"
     ]
 }
