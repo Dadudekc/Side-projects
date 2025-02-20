@@ -1,63 +1,68 @@
 import logging
-from agents.core.utilities.tbow_scanner import TbowScanner
-from agents.core.utilities.tbow_trade_executor import TbowTradeExecutor
+from agents.core.AgentBase import AgentBase
+from ai_engine.models.apis.market_data import MarketData
+from ai_engine.models.trade_analyzer import TradeAnalyzer
+from utils.scheduler import TaskScheduler
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-class TbowTacticAgent:
+class TbowTacticAgent(AgentBase):
     """
-    The main trading agent that combines market scanning and trade execution.
+    AI-driven trading agent that analyzes market trends and generates Tbow Tactic trade strategies.
     """
 
-    def __init__(self, api_key: str, api_secret: str, base_url: str):
+    def __init__(self):
+        super().__init__(name="TbowTacticAgent")
+        self.market_data = MarketData()
+        self.trade_analyzer = TradeAnalyzer()
+        self.scheduler = TaskScheduler()
+
+    def generate_trade_plan(self, stock_symbol: str) -> dict:
         """
-        Initializes the Tbow Tactic Agent.
+        Fetches real-time stock data and generates a Tbow Tactic-based trade strategy.
 
         Args:
-            api_key (str): Alpaca API key.
-            api_secret (str): Alpaca API secret.
-            base_url (str): Alpaca API base URL.
-        """
-        self.scanner = TbowScanner()
-        self.executor = TbowTradeExecutor(api_key, api_secret, base_url)
+            stock_symbol (str): The stock ticker symbol.
 
-    def execute_trading_strategy(self, symbol: str, qty: int):
+        Returns:
+            dict: Trade plan details.
         """
-        Runs the trading strategy by scanning for a MACD curl and placing trades.
+        stock_info = self.market_data.get_stock_data(stock_symbol)
+        if not stock_info:
+            return {"status": "error", "message": f"Failed to retrieve data for {stock_symbol}."}
+
+        trade_plan = self.trade_analyzer.analyze(stock_info)
+        return {"status": "success", "trade_plan": trade_plan}
+
+    def schedule_trade_updates(self, interval: int = 60):
+        """
+        Schedules periodic trade strategy updates.
 
         Args:
-            symbol (str): The stock symbol to trade.
-            qty (int): Number of shares/contracts to trade.
+            interval (int): Time in minutes for updates (default: 60).
         """
-        logger.info(f"Scanning market for {symbol}...")
-        if self.scanner.detect_macd_curl():
-            logger.info(f"MACD curl detected for {symbol}. Placing buy order...")
-            order = self.executor.place_order(symbol, qty, side="buy")
-            if order:
-                logger.info(f"Trade executed: {order}")
-            else:
-                logger.error("Trade execution failed.")
+        self.scheduler.schedule_task(self.generate_trade_plan, interval)
+
+    def solve_task(self, task: str, **kwargs) -> dict:
+        """
+        Executes specific trade-related tasks.
+
+        Args:
+            task (str): Task name.
+            **kwargs: Additional parameters.
+
+        Returns:
+            dict: Task execution result.
+        """
+        if task == "generate_trade_plan":
+            return self.generate_trade_plan(kwargs.get("symbol", "TSLA"))
+        elif task == "schedule_updates":
+            self.schedule_trade_updates(kwargs.get("interval", 60))
+            return {"status": "success", "message": "Trade updates scheduled."}
         else:
-            logger.info(f"No MACD curl detected for {symbol}. No trade executed.")
+            return {"status": "error", "message": f"Unknown task '{task}'."}
 
-    def manage_risk(self, symbol: str, stop_loss: float, take_profit: float):
-        """
-        Manages risk by setting stop-loss and take-profit levels.
-
-        Args:
-            symbol (str): The stock symbol being traded.
-            stop_loss (float): Price at which to trigger a stop-loss.
-            take_profit (float): Price at which to trigger take-profit.
-        """
-        position = self.executor.get_position(symbol)
-        if position:
-            current_price = float(position["current_price"])
-            if current_price <= stop_loss:
-                logger.info(f"Stop-loss triggered for {symbol}. Closing position...")
-                self.executor.close_position(symbol)
-            elif current_price >= take_profit:
-                logger.info(f"Take-profit triggered for {symbol}. Closing position...")
-                self.executor.close_position(symbol)
-        else:
-            logger.info(f"No open position found for {symbol}.")
+    def shutdown(self):
+        """Shuts down the agent safely."""
+        logger.info(f"{self.name} is shutting down.")

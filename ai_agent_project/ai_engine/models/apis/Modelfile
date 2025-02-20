@@ -1,0 +1,6 @@
+# Modelfile
+FROM mistral:latest
+PARAMETER fine-tune=true
+
+# Attach your fine-tuning dataset
+DATA mistral_finetune.jsonl
