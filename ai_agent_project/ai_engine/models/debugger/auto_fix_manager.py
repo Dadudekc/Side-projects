@@ -57,7 +57,6 @@ class AutoFixManager:
         failures = []
         failure_pattern = re.compile(r"FAILED (\S+) - (.+)")
 
-        # Convert bytes to string if necessary
         if isinstance(test_output, bytes):
             test_output = test_output.decode("utf-8")
 
@@ -71,7 +70,6 @@ class AutoFixManager:
     def apply_patch(self, patch: str) -> bool:
         """
         Applies the given patch using the debugging strategy.
-        This wrapper method allows AIPatchRetryManager to call apply_patch on AutoFixManager.
 
         Args:
             patch (str): The patch to be applied.
@@ -91,8 +89,8 @@ class AutoFixManager:
         Returns:
             Dict[str, Any]: Final retry status.
         """
-        modified_files = set()  # Track modified files
-        failed_files = set()  # Track files that still fail after all attempts
+        modified_files = set()
+        failed_files = set()
 
         for attempt in range(1, max_retries + 1):
             logger.info(f"🔄 Debugging Attempt {attempt}/{max_retries}...")
@@ -135,7 +133,7 @@ class AutoFixManager:
                         self.patch_tracker.record_successful_patch(error_sig, patch)
                         self.debugging_strategy.learning_db[error_sig] = {"patch": patch, "success": True}
                         self.debugging_strategy._save_learning_db()
-                        break  # Stop trying more patches since this one worked
+                        break
                     else:
                         logger.warning(f"❌ Patch failed for {file_name}")
                         self.patch_tracker.record_failed_patch(error_sig, patch)
@@ -145,7 +143,6 @@ class AutoFixManager:
                     logger.error(f"❌ Could not fix {file_name} after multiple attempts.")
                     failed_files.add(file_name)
 
-        # Only roll back files that still fail, keeping successful patches
         if failed_files:
             logger.error(f"🛑 Rolling back changes for failed files: {failed_files}")
             self.rollback_changes(failed_files)
@@ -171,7 +168,7 @@ class AutoFixManager:
             if os.path.exists(backup_path):
                 shutil.copy(backup_path, file)
                 logger.info(f"🔄 Rolled back {file} from backup.")
-                
+
 if __name__ == "__main__":
     manager = AutoFixManager()
     manager.retry_tests(max_retries=3)

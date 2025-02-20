@@ -1,18 +1,21 @@
 """
-
-This module provides a class `DebuggerReporter` which generates detailed debugging session reports with AI analysis and logs failed patches and AI explanations. The report is stored locally in a JSON file and can be sent via email to a recipient.
+This module provides a class `DebuggerReporter` which generates detailed debugging session reports 
+with AI analysis and logs failed patches and AI explanations. The report is stored locally in a JSON 
+file and can be sent via email to a recipient.
 
 Class Methods:
     - __init__: Initializes a new instance of the class and loads any existing report if available.
     - load_existing_report: Loads the existing debugging report or initializes a new one.
-    - log_failed_patch: Logs a failed patch attempt with a reason
+    - log_failed_patch: Logs a failed patch attempt with a reason.
+    - log_ai_explanation: Logs AI-generated debugging insights.
+    - save_report: Saves debugging session data to a JSON file.
+    - send_email_report: Sends the debugging report via email with validation.
 """
 
 import logging
 import json
 import os
 from typing import Dict
-from collections import defaultdict
 from ai_engine.models.debugger.email_reporter import EmailReporter
 
 logger = logging.getLogger("DebuggerReporter")
@@ -30,6 +33,7 @@ class DebuggerReporter:
 
     def __init__(self):
         self.report_data = self.load_existing_report()
+        self.email_reporter = None  # Initialize email reporter only when needed
 
     def load_existing_report(self) -> Dict[str, Dict[str, str]]:
         """Loads the existing debugging report or initializes a new one."""
@@ -37,8 +41,11 @@ class DebuggerReporter:
             try:
                 with open(REPORT_FILE, "r", encoding="utf-8") as f:
                     return json.load(f)
+            except json.JSONDecodeError:
+                logger.error(f"❌ Corrupted JSON in {REPORT_FILE}. Resetting report.")
             except Exception as e:
                 logger.error(f"❌ Failed to load existing report: {e}")
+        
         return {"failed_patches": {}, "ai_explanations": {}}
 
     def log_failed_patch(self, error_signature: str, reason: str):
@@ -83,13 +90,24 @@ class DebuggerReporter:
             logger.error("❌ Invalid email address. Skipping report send.")
             return
 
-        email_client = EmailReporter()
-        success = email_client.send_debugging_report(self.report_data, recipient_email)
+        # Ensure email credentials are available
+        if not self.email_reporter:
+            self.email_reporter = EmailReporter()
 
-        if success:
-            logger.info(f"📧 Debugging report sent successfully to {recipient_email}.")
-        else:
-            logger.error(f"❌ Failed to send debugging report to {recipient_email}.")
+        if not self.email_reporter.sender_email or not self.email_reporter.sender_password:
+            logger.error("❌ Missing email credentials. Cannot send report.")
+            return
+
+        logger.info(f"📧 Sending debugging report to {recipient_email}...")
+
+        try:
+            success = self.email_reporter.send_report(self.report_data, recipient_email)
+            if success:
+                logger.info(f"✅ Debugging report sent successfully to {recipient_email}.")
+            else:
+                logger.error(f"❌ Failed to send debugging report to {recipient_email}.")
+        except Exception as e:
+            logger.error(f"❌ Error sending email report: {e}")
 
 # Example Usage:
 if __name__ == "__main__":

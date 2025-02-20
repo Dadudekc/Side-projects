@@ -23,6 +23,7 @@ from ai_engine.patch_review_manager import (
     AIPatchReviewManager,
 )
 from agents.core.utilities.ai_client import AIClient
+# Updated import: use the full module path for patch tracking manager.
 from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
 
 class TestAIPatchReviewManager(unittest.TestCase):
@@ -84,7 +85,7 @@ class TestAIPatchReviewManager(unittest.TestCase):
         best_patch = self.manager.get_best_patch(self.error_signature)
         self.assertEqual(best_patch, self.test_patch)
 
-    @patch("ai_engine.models.debugger.patch_review_manager.AIPatchReviewManager.rank_human_reviewed_patches")
+    @patch("ai_engine.patch_review_manager.AIPatchReviewManager.rank_human_reviewed_patches")
     @patch("ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager.apply_patch", return_value=True)
     def test_process_human_reviewed_patches_success(self, mock_apply_patch, mock_rank_patches):
         """Test processing of human-reviewed patches when application succeeds."""
@@ -97,7 +98,7 @@ class TestAIPatchReviewManager(unittest.TestCase):
         self.assertIn(self.error_signature, logs)
         self.assertEqual(logs[self.error_signature][0]["outcome"], "Applied Successfully")
 
-    @patch("ai_engine.models.debugger.patch_review_manager.AIPatchReviewManager.rank_human_reviewed_patches")
+    @patch("ai_engine.patch_review_manager.AIPatchReviewManager.rank_human_reviewed_patches")
     @patch("ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager.apply_patch", return_value=False)
     def test_process_human_reviewed_patches_failure(self, mock_apply_patch, mock_rank_patches):
         """Test processing of human-reviewed patches when application fails."""

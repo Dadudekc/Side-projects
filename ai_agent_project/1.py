@@ -1,55 +1,52 @@
-"""
-
-This Python module is for generating and restoring docstrings for Python files in a project.
-
-It works by reading a JSON file (project_analysis.json) that contains analysis data of the project. Files lacking docstrings
-are identified. If there are missing docstrings, it checks if there are backup files present in a backup folder. If backups are 
-available, it restores the files from backup. If not, it calls an external script (docstring_generator.py) to generate a new 
-docstring
-"""
-
-import json
 import os
+import json
 
-# Path to the extracted project analysis
-ANALYSIS_JSON_PATH = "project_analysis.json"
-BACKUP_FOLDER = "backup"
+# Define the root directory of the project
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Load analysis results
-with open(ANALYSIS_JSON_PATH, "r", encoding="utf-8") as f:
-    analysis_data = json.load(f)
+# Directories to exclude from scanning
+EXCLUDED_DIRS = {".git", "__pycache__", "venv", "node_modules", "logs"}
 
-# Identify files where docstrings are missing
-missing_docstring_files = [
-    file for file, details in analysis_data["modules"].items()
-    if details.get("purpose") == "No docstring found."
-]
+# File extensions categorized by type
+FILE_TYPES = {
+    "Python Scripts": {".py"},
+    "Config Files": {".toml", ".json", ".yaml", ".ini"},
+    "UI Files": {".ui", ".qss"},
+    "Shell Scripts": {".sh", ".bat"},
+    "Jupyter Notebooks": {".ipynb"},
+    "Text Files": {".md", ".txt"},
+    "Other": set()
+}
 
-# Identify backups to restore (if necessary)
-backup_files = {file: os.path.join(BACKUP_FOLDER, f"{file}.bak") for file in missing_docstring_files}
+def categorize_file(file_name):
+    """Determine the category of a file based on its extension."""
+    ext = os.path.splitext(file_name)[1].lower()
+    for category, extensions in FILE_TYPES.items():
+        if ext in extensions:
+            return category
+    return "Other"
 
-# Function to restore from backup (if needed)
-def restore_backup(file_path, backup_path):
-    if os.path.exists(backup_path):
-        os.remove(file_path)  # Remove the current incorrect file
-        os.rename(backup_path, file_path)  # Restore backup
-        print(f"Restored backup for: {file_path}")
-    else:
-        print(f"No backup found for: {file_path}")
+def scan_directory(directory):
+    """Recursively scans the project directory and categorizes files."""
+    file_inventory = {category: [] for category in FILE_TYPES.keys()}
 
-# Restore missing files from backups if available
-for file, backup in backup_files.items():
-    restore_backup(file, backup)
+    for root, dirs, files in os.walk(directory):
+        # Skip excluded directories
+        dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
 
-# Re-run the OpenAI docstring generation ONLY on the missing files
-def generate_docstrings_for_files(files):
-    for file in files:
-        print(f"Generating docstring for: {file}")
-        # Run the OpenAI docstring generation process for this file
-        os.system(f'python docstring_generator.py {file}')  # Adjust with your actual script name
+        for file in files:
+            category = categorize_file(file)
+            relative_path = os.path.relpath(os.path.join(root, file), ROOT_DIR)
+            file_inventory[category].append(relative_path)
 
-# Run docstring regeneration on missing files
-if missing_docstring_files:
-    generate_docstrings_for_files(missing_docstring_files)
-else:
-    print("All files already have docstrings. No action needed.")
+    return file_inventory
+
+if __name__ == "__main__":
+    project_files = scan_directory(ROOT_DIR)
+
+    # Save results to a JSON file for easy reference
+    output_file = os.path.join(ROOT_DIR, "project_inventory.json")
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(project_files, f, indent=4)
+
+    print(f"✅ Project inventory saved to: {output_file}")

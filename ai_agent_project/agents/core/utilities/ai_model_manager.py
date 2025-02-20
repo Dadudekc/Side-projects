@@ -70,17 +70,24 @@ class AIModelManager:
         error_signature = self._compute_error_signature(error_msg, code_context)
 
         # Track AI confidence for previous attempts
-        past_confidence = self.confidence_manager.get_confidence(error_signature)
+        past_confidence = self.confidence_manager.calculate_confidence(error_signature)
 
         for model in self.model_priority:
             patch = self._generate_with_model(model, request_prompt)
             if patch:
                 confidence_score, reason = self.confidence_manager.assign_confidence_score(error_signature, patch)
+
                 if confidence_score > past_confidence:
                     logger.info(f"✅ AI confidence improved ({past_confidence} ➡ {confidence_score}). Patch accepted.")
+
+                    # Store high-confidence patches for reuse
+                    if confidence_score >= 0.75:
+                        self.confidence_manager.store_patch(error_signature, patch, confidence_score)
+
                     return patch
                 else:
                     logger.warning(f"⚠️ AI confidence remains low ({confidence_score}). Skipping patch for model {model}.")
+                    
         logger.error("❌ All AI models failed to generate a useful patch.")
         return None
 

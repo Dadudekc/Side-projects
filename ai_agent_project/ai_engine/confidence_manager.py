@@ -47,7 +47,10 @@ class AIConfidenceManager:
             logger.error(f"❌ Failed to save {file_path}: {e}")
 
     def _get_historical_success_rate(self, error_signature: str) -> float:
-        """Calculates the success rate of past patches for this error."""
+        """
+        Calculates the success rate of past patches for this error.
+        Returns a default rate if no historical data exists.
+        """
         patches = self.patch_history.get(error_signature, [])
         if not patches:
             return 0.5  # Default confidence if no history exists
@@ -56,18 +59,24 @@ class AIConfidenceManager:
 
     def calculate_confidence(self, error_signature: str) -> float:
         """
-        Returns the confidence level for a given error signature.
+        Returns the overall confidence level for a given error signature.
         """
         return self.confidence_scores.get(error_signature, 0.5)
 
     def assign_confidence_score(self, error_signature: str, patch: str) -> Tuple[float, str]:
         """
-        Assigns a confidence score to the given patch.
+        Assigns a confidence score to the given patch based on historical success.
+        Also stores the patch data in the confidence_scores store and,
+        if high enough, in the high_confidence_store.
+        
+        Returns:
+            Tuple[float, str]: The assigned confidence score and a reasoning message.
         """
         historical_success = self._get_historical_success_rate(error_signature)
-        confidence_score = max(0.1, min(1.0, historical_success + 0.1))  # Ensure between 0.1 and 1.0
+        # Boost confidence slightly based on history; ensure value is within 0.1 and 1.0.
+        confidence_score = max(0.1, min(1.0, historical_success + 0.1))
 
-        # Reasoning logic
+        # Reasoning logic based on calculated confidence.
         if confidence_score >= 0.75:
             reason = "Highly similar to a past fix with high success."
         elif confidence_score >= 0.5:
@@ -75,34 +84,47 @@ class AIConfidenceManager:
         else:
             reason = "New approach detected, uncertain outcome."
 
-        # Store confidence score
+        # Append patch info to the confidence scores store.
         self.confidence_scores.setdefault(error_signature, []).append({
             "patch": patch,
             "confidence": confidence_score,
             "reason": reason
         })
-
-        # Save the updated confidence data
         self._save_json(AI_CONFIDENCE_FILE, self.confidence_scores)
+
+        # If confidence is high, store patch separately.
+        if confidence_score >= 0.75:
+            self.store_patch(error_signature, patch, confidence_score)
 
         return confidence_score, reason
 
+    def store_patch(self, error_signature: str, patch: str, confidence: float):
+        """
+        Stores high-confidence patches separately to avoid redundant processing.
+        """
+        self.high_confidence_store.setdefault(error_signature, []).append({
+            "patch": patch,
+            "confidence": confidence
+        })
+        self._save_json(CONFIDENCE_DB, self.high_confidence_store)
+        logger.info(f"📌 Stored high-confidence patch for {error_signature}")
+
     def get_best_high_confidence_patch(self, error_signature: str) -> Optional[str]:
         """
-        Retrieves the best high-confidence patch.
+        Retrieves the best high-confidence patch for a given error signature.
+        Returns None if no patch qualifies.
         """
-        patches = self.confidence_scores.get(error_signature, [])
-        valid_patches = [p for p in patches if isinstance(p, dict) and "confidence" in p]
-
-        if not valid_patches:
+        patches = self.high_confidence_store.get(error_signature, [])
+        if not patches:
             return None
 
-        best_patch = max(valid_patches, key=lambda p: p["confidence"], default=None)
-        return best_patch["patch"] if best_patch and best_patch["confidence"] >= 0.75 else None
+        best_patch = max(patches, key=lambda p: p["confidence"], default=None)
+        return best_patch["patch"] if best_patch else None
 
     def suggest_patch_reattempt(self, error_signature: str) -> Optional[str]:
         """
         Suggests a patch for reattempt if it now has improved confidence.
+        Returns the patch string if one qualifies, or None.
         """
         patches = self.confidence_scores.get(error_signature, [])
         valid_patches = [p for p in patches if isinstance(p, dict) and "confidence" in p]
@@ -112,6 +134,16 @@ class AIConfidenceManager:
                 return patch_entry["patch"]
 
         return None
+
+    def get_confidence(self, error_signature: str) -> float:
+        """
+        Returns the current confidence level for the given error signature.
+        If no confidence data exists, returns a default value (e.g., 0.5).
+        """
+        entries = self.confidence_scores.get(error_signature, [])
+        if entries:
+            return max(entry.get("confidence", 0) for entry in entries)
+        return 0.5
 
 if __name__ == "__main__":
     manager = AIConfidenceManager()

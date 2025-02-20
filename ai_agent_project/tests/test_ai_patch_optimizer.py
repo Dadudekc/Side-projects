@@ -1,10 +1,9 @@
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from ai_engine.patch_optimizer import AIPatchOptimizer
 from agents.core.utilities.ai_model_manager import AIModelManager
 from ai_engine.models.debugger.patch_tracking_manager import PatchTrackingManager
 from ai_engine.confidence_manager import AIConfidenceManager
-
 
 class TestAIPatchOptimizer(unittest.TestCase):
     """Unit tests for the AIPatchOptimizer class."""
@@ -20,8 +19,8 @@ class TestAIPatchOptimizer(unittest.TestCase):
 + fixed code"""
 
     @patch("ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager.get_failed_patches", return_value=[])
-    @patch("ai_engine.models.confidence_manager.AIConfidenceManager.assign_confidence_score", return_value=(0.8, "Improved fix"))
-    @patch("ai_engine.models.confidence_manager.AIConfidenceManager.get_confidence", return_value=0.6)
+    @patch("ai_engine.confidence_manager.AIConfidenceManager.assign_confidence_score", return_value=(0.8, "Improved fix"))
+    @patch("ai_engine.confidence_manager.AIConfidenceManager.get_confidence", return_value=0.6)
     def test_refine_failed_patch_success(self, mock_get_confidence, mock_assign_confidence, mock_get_failed_patches):
         """Test refining a failed patch when AI confidence improves."""
         modified_patch = self.optimizer.refine_failed_patch(self.error_signature, self.original_patch)
@@ -35,8 +34,8 @@ class TestAIPatchOptimizer(unittest.TestCase):
         self.assertIsNone(modified_patch)
 
     @patch("ai_engine.models.debugger.patch_tracking_manager.PatchTrackingManager.get_failed_patches", return_value=[])
-    @patch("ai_engine.models.confidence_manager.AIConfidenceManager.assign_confidence_score", return_value=(0.5, "No improvement"))
-    @patch("ai_engine.models.confidence_manager.AIConfidenceManager.get_confidence", return_value=0.6)
+    @patch("ai_engine.confidence_manager.AIConfidenceManager.assign_confidence_score", return_value=(0.5, "No improvement"))
+    @patch("ai_engine.confidence_manager.AIConfidenceManager.get_confidence", return_value=0.6)
     def test_refine_failed_patch_low_confidence(self, mock_get_confidence, mock_assign_confidence, mock_get_failed_patches):
         """Test refining a failed patch when AI confidence does not improve."""
         modified_patch = self.optimizer.refine_failed_patch(self.error_signature, self.original_patch)
@@ -55,7 +54,6 @@ class TestAIPatchOptimizer(unittest.TestCase):
         """Test that a patch reapply fails when no valid modifications are found."""
         result = self.optimizer.attempt_patch_reapply(self.error_signature, "test_file.py", self.original_patch)
         self.assertFalse(result)
-
 
 if __name__ == "__main__":
     unittest.main()

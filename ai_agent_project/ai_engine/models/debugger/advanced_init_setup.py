@@ -8,13 +8,14 @@ It defines two main classes:
      - Scans a Python project for modules.
      - Extracts module-level docstrings and maps dependencies.
      - Saves the analysis results (metadata) to a JSON file.
-     
+     - Provides package-level metadata for directories.
+
   2. InitFileSetupManager:
      - Uses the analysis from ProjectContextAnalyzer to determine which directories
        should be treated as Python packages.
      - Creates missing __init__.py files in those directories.
      - Optionally includes metadata (e.g. extracted docstrings) in the generated __init__.py files.
-     
+
 This advanced setup can be used by your debugger to “understand” the project context and
 improve automated repairs by providing a guide to the project structure and intent.
 """
@@ -22,9 +23,12 @@ improve automated repairs by providing a guide to the project structure and inte
 import os
 import json
 import logging
+import ast
+from typing import Dict, Any, Set, Optional
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
 
 class ProjectContextAnalyzer:
     """
@@ -37,26 +41,25 @@ class ProjectContextAnalyzer:
       - Saving the analysis results to a JSON file in the project root.
     """
 
-    def __init__(self, project_root: str):
+    def __init__(self, project_root: str) -> None:
         """
         Initialize the analyzer.
 
         Args:
             project_root (str): Path to the root of the project.
         """
-        self.project_root = project_root
-        self.context_data = {"modules": {}, "dependencies": {}, "summary": {}}
-        self.package_dirs = set()
+        self.project_root: str = project_root
+        self.context_data: Dict[str, Any] = {"modules": {}, "dependencies": {}, "summary": {}}
+        self.package_dirs: Set[str] = set()
 
-    def scan_directories(self):
+    def scan_directories(self) -> None:
         """Recursively scans the project directory for Python files."""
         logger.info("📂 Scanning project directories for Python files...")
         for root, _, files in os.walk(self.project_root):
-            # Skip hidden directories
+            # Skip hidden files
             files = [f for f in files if not f.startswith('.')]
             if any(f.endswith(".py") for f in files):
                 rel_path = os.path.relpath(root, self.project_root)
-                # Normalize the path for cross-platform compatibility
                 norm_path = rel_path.replace("\\", "/")
                 self.package_dirs.add(os.path.abspath(root))
                 # Initialize module info for each Python file in this directory
@@ -65,7 +68,7 @@ class ProjectContextAnalyzer:
                         module_rel_path = os.path.join(norm_path, file) if norm_path != "." else file
                         self.context_data["modules"][module_rel_path] = {"dependencies": []}
 
-    def extract_code_context(self):
+    def extract_code_context(self) -> None:
         """
         Extracts module-level docstrings (if present) from each Python file.
         For each module, stores a "purpose" field in the context data.
@@ -77,19 +80,18 @@ class ProjectContextAnalyzer:
                 with open(abs_path, "r", encoding="utf-8") as f:
                     content = f.read()
                 # Look for a module-level docstring (triple-quoted string at the top)
-                docstring = None
+                docstring: Optional[str] = None
                 if content.startswith('"""'):
                     end = content.find('"""', 3)
                     if end != -1:
                         docstring = content[3:end].strip()
-                self.context_data["modules"][module_path]["purpose"] = docstring if docstring else "No docstring found."
+                self.context_data["modules"][module_path]["purpose"] = docstring or "No docstring found."
             except Exception as e:
                 logger.error(f"Failed to extract docstring from {module_path}: {e}")
                 self.context_data["modules"][module_path]["purpose"] = "Error extracting docstring."
 
-    def map_dependencies(self):
+    def map_dependencies(self) -> None:
         """Parses each Python file and extracts import dependencies using AST."""
-        import ast
         logger.info("🔗 Mapping module dependencies...")
         for module_path in self.context_data["modules"].keys():
             abs_path = os.path.join(self.project_root, module_path)
@@ -110,7 +112,7 @@ class ProjectContextAnalyzer:
                 logger.error(f"Error mapping dependencies in {module_path}: {e}")
                 self.context_data["modules"][module_path]["dependencies"] = []
 
-    def save_analysis(self):
+    def save_analysis(self) -> None:
         """Saves the analysis results to a JSON file in the project root."""
         output_path = os.path.join(self.project_root, "project_analysis.json")
         try:
@@ -120,7 +122,7 @@ class ProjectContextAnalyzer:
         except Exception as e:
             logger.error(f"Failed to save analysis to {output_path}: {e}")
 
-    def analyze_project(self):
+    def analyze_project(self) -> None:
         """Runs a full analysis of the project."""
         logger.info("📊 Analyzing project structure...")
         self.scan_directories()
@@ -133,9 +135,22 @@ class ProjectContextAnalyzer:
         """Returns the full analysis data as a dictionary."""
         return self.context_data
 
-    def get_package_dirs(self) -> set:
+    def get_package_dirs(self) -> Set[str]:
         """Returns the set of directories (absolute paths) that contain Python files."""
         return self.package_dirs
+
+    def get_docstring_for_directory(self, directory: str) -> str:
+        """
+        Returns a package docstring based on the directory name or analysis data.
+        For now, returns a placeholder value.
+
+        Args:
+            directory (str): The absolute path to the directory.
+        
+        Returns:
+            str: A package-level docstring.
+        """
+        return f'"""Package: {os.path.basename(directory)} - Auto-generated init file."""'
 
 
 class InitFileSetupManager:
@@ -146,7 +161,7 @@ class InitFileSetupManager:
     It can include additional metadata (e.g. a package docstring) in the generated __init__.py files.
     """
 
-    def __init__(self, analyzer: ProjectContextAnalyzer, default_header: str = "# Automatically generated __init__.py\n"):
+    def __init__(self, analyzer: ProjectContextAnalyzer, default_header: str = "# Automatically generated __init__.py\n") -> None:
         """
         Args:
             analyzer (ProjectContextAnalyzer): The analyzer with project context.
@@ -186,20 +201,7 @@ class InitFileSetupManager:
             logger.error(f"Failed to create __init__.py at {file_path}: {e}")
 
 
-# Extend ProjectContextAnalyzer with an optional method for package metadata.
-def get_docstring_for_directory(self, directory: str) -> str:
-    """
-    Returns a package docstring based on the directory name or analysis data.
-    For now, returns a placeholder value.
-    """
-    return f'"""Package: {os.path.basename(directory)} - Auto-generated init file."""'
-
-# Monkey-patch the analyzer class to include this method.
-ProjectContextAnalyzer.get_docstring_for_directory = get_docstring_for_directory
-
-
-# **Wrapper Function to Run Both Analysis and Init File Setup**
-def run_project_setup(project_root: str = None) -> None:
+def run_project_setup(project_root: Optional[str] = None) -> None:
     """
     Runs the project analysis and then sets up missing __init__.py files based on the analysis.
     

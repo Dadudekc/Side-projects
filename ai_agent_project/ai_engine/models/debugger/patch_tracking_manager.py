@@ -1,22 +1,18 @@
 """
-This Python module allows for tracking of debugging patches added to AI models. The main class,
-PatchTrackingManager, tracks both failed and successful patches, import fixes, AI feedback, and
-AI performance analytics.
-
-Key functionalities include:
-  - Initializing persistent storage for patch tracking data.
-  - Loading and saving JSON patch data.
+This Python module allows for tracking of debugging patches added to AI models.
+It includes functionalities for:
   - Recording failed patches to avoid duplicate attempts.
-  - Recording successful patches to monitor progress.
-  - Tracking import fixes separately.
-  - Storing AI-generated feedback on patch quality.
+  - Logging successful patches.
+  - Tracking applied patches.
+  - Managing import fixes.
+  - Storing AI-generated feedback.
   - Tracking daily AI performance metrics.
-  - Providing methods to retrieve failed or successful patches.
-  - Allowing rollback (undo) of the last applied fix.
+  - Retrieving failed or successful patches.
+  - Rolling back (undoing) the last applied fix.
   
 Usage:
-    Instantiate the PatchTrackingManager and use its methods to record patch attempts, analyze
-    performance, and manage rollback operations.
+    Instantiate the PatchTrackingManager and use its methods to record patch attempts,
+    analyze performance, manage applied patches, and perform rollback operations.
 """
 
 import os
@@ -33,6 +29,7 @@ class PatchTrackingManager:
     Manages AI debugging patch tracking, including:
       - Failed patches
       - Successful patches
+      - Applied patches
       - Import fixes tracking
       - AI feedback storage
       - AI performance analytics
@@ -46,6 +43,7 @@ class PatchTrackingManager:
         # File paths for different tracking data
         self.FAILED_PATCHES_FILE = os.path.join(self.PATCH_STORAGE_DIR, "failed_patches.json")
         self.SUCCESSFUL_PATCHES_FILE = os.path.join(self.PATCH_STORAGE_DIR, "successful_patches.json")
+        self.APPLIED_PATCHES_FILE = os.path.join(self.PATCH_STORAGE_DIR, "applied_patches.json")
         self.IMPORT_FIXES_FILE = os.path.join(self.PATCH_STORAGE_DIR, "import_fixes.json")
         self.AI_FEEDBACK_FILE = os.path.join(self.PATCH_STORAGE_DIR, "ai_feedback.json")
         self.AI_PERFORMANCE_FILE = os.path.join(self.PATCH_STORAGE_DIR, "ai_performance.json")
@@ -53,6 +51,7 @@ class PatchTrackingManager:
         # Load existing data or initialize empty dictionaries
         self.failed_patches = self._load_patch_data(self.FAILED_PATCHES_FILE, default={})
         self.successful_patches = self._load_patch_data(self.SUCCESSFUL_PATCHES_FILE, default={})
+        self.applied_patches = self._load_patch_data(self.APPLIED_PATCHES_FILE, default={})
         self.import_fixes = self._load_patch_data(self.IMPORT_FIXES_FILE, default={})
         self.ai_feedback = self._load_patch_data(self.AI_FEEDBACK_FILE, default={})
         self.ai_performance = self._load_patch_data(self.AI_PERFORMANCE_FILE, default={})
@@ -129,6 +128,22 @@ class PatchTrackingManager:
             self._save_patch_data(self.SUCCESSFUL_PATCHES_FILE, self.successful_patches)
             logger.info(f"🟢 Successful patch recorded for error: {error_signature}")
 
+    # -------------------- Applied Patch Handling --------------------
+
+    def record_applied_patch(self, error_signature: str, patch: str):
+        """
+        Logs an applied patch to track which patches were successfully used.
+
+        Args:
+            error_signature (str): A unique signature for the error.
+            patch (str): The patch content that was applied.
+        """
+        self.applied_patches.setdefault(error_signature, [])
+        if patch not in self.applied_patches[error_signature]:
+            self.applied_patches[error_signature].append(patch)
+            self._save_patch_data(self.APPLIED_PATCHES_FILE, self.applied_patches)
+            logger.info(f"✅ Patch applied successfully for error: {error_signature}")
+
     # -------------------- Import Fix Tracking --------------------
 
     def record_import_fix(self, module_name: str, fix_success: bool):
@@ -187,7 +202,7 @@ class PatchTrackingManager:
         self._save_patch_data(self.AI_PERFORMANCE_FILE, self.ai_performance)
         logger.info(f"📈 AI Debugging Performance Updated for {today}: {self.ai_performance[today]}")
 
-    # -------------------- Review & Rollback --------------------
+    # -------------------- Patch Retrieval & Rollback --------------------
 
     def get_failed_patches(self, error_signature: str) -> List[str]:
         """
@@ -232,7 +247,8 @@ class PatchTrackingManager:
             logger.info(f"⚠️ No fix found to roll back for {error_signature}.")
             return None
 
-    # -------------------- New: Patch Application --------------------
+    # -------------------- Patch Application --------------------
+
     def apply_patch(self, patch: str) -> bool:
         """
         Attempts to apply a given patch.
@@ -254,9 +270,11 @@ if __name__ == "__main__":
     # Example Usage:
     tracker.record_failed_patch("error123", "--- old_code.py\n+++ new_code.py\n- old\n+ new")
     tracker.record_successful_patch("error123", "--- old_code.py\n+++ new_code.py\n- error\n+ fixed")
+    tracker.record_applied_patch("error123", "--- old_code.py\n+++ new_code.py\n- error\n+ fixed")
     tracker.record_import_fix("numpy", True)
     tracker.record_ai_feedback("error123", "AI improved patch by refining logic.", 85)
     tracker.track_ai_performance()
 
     print("Failed patches for error123:", tracker.get_failed_patches("error123"))
     print("Successful patches for error123:", tracker.get_successful_patches("error123"))
+    print("Applied patches for error123:", tracker.applied_patches.get("error123", []))

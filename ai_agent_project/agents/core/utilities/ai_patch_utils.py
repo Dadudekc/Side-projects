@@ -15,6 +15,7 @@ import os
 import subprocess
 import logging
 import openai
+from openai import OpenAIError  # ✅ Corrected import
 from tqdm import tqdm
 from typing import List, Optional
 
@@ -34,14 +35,18 @@ class AIPatchUtils:
 
     @staticmethod
     def chunk_code(file_content: str, max_chars: int = 1000) -> List[str]:
-        """Splits file content into chunks for LLM processing."""
-        return [file_content[i : i + max_chars] for i in range(0, len(file_content), max_chars)]
+        """Splits file content into manageable chunks for LLM processing."""
+        return [file_content[i: i + max_chars] for i in range(0, len(file_content), max_chars)]
 
     @staticmethod
     def query_llm(prompt: str, model: str) -> Optional[str]:
-        """Executes a subprocess call to run a local LLM (Ollama or DeepSeek)."""
+        """
+        Executes a subprocess call to run a local LLM (Ollama or DeepSeek).
+        Handles errors and provides logs for debugging.
+        """
         try:
             result = subprocess.run(["ollama", "run", model, prompt], capture_output=True, text=True)
+
             if result.returncode == 0 and result.stdout.strip():
                 return result.stdout.strip()
             else:
@@ -50,11 +55,14 @@ class AIPatchUtils:
             logger.warning(f"🚨 Model {model} not found. Skipping...")
         except subprocess.SubprocessError as e:
             logger.error(f"⚠️ Error executing subprocess for {model}: {str(e)}")
+
         return None
 
     @staticmethod
     def query_openai(prompt: str) -> Optional[str]:
-        """Queries OpenAI GPT for patch suggestions."""
+        """
+        Queries OpenAI GPT for patch suggestions with proper error handling.
+        """
         if not OPENAI_API_KEY:
             logger.error("🚨 OpenAI API Key not set. Skipping OpenAI fallback.")
             return None
@@ -66,10 +74,14 @@ class AIPatchUtils:
                 max_tokens=1024
             )
             return response["choices"][0]["message"]["content"].strip()
-        except AttributeError:
-            logger.error("🚨 OpenAI module is missing required attributes.")
-        except openai.error.OpenAIError as e:
+
+        except AttributeError as e:
+            logger.error(f"🚨 OpenAI module error: {e}")
+        except OpenAIError as e:
             logger.error(f"⚠️ OpenAI API call failed: {e}")
+        except Exception as e:
+            logger.error(f"⚠️ Unexpected OpenAI error: {e}")
+
         return None
 
     @classmethod

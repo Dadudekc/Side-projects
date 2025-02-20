@@ -1,15 +1,8 @@
-"""
-This python module is an implementation of advanced logging. It creates a custom logger instance that logs both to the console and to a file. 
-
-The 'LOG_LEVEL' is an environmental variable that can be set, determining the log level of the logger. If not set, the default value will be 'DEBUG'. 
-
-Two handlers are added to the logger - one for displaying logs on the console, and another for storing logs in a file. The console handler uses a custom formatter ('ColoredFormatter')
-"""
-
 import logging
 import logging.handlers
 import os
 import sys
+from importlib import reload
 
 # Define log level (can be set via an environment variable or hardcoded)
 LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG").upper()
@@ -42,7 +35,7 @@ console_formatter = ColoredFormatter("%(asctime)s - %(name)s - %(levelname)s - %
 console_handler.setFormatter(console_formatter)
 
 # File handler with rotation (max 10 MB per file, up to 5 backups)
-log_file = os.path.join(os.path.dirname(__file__), "app.log")
+log_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app.log")
 file_handler = logging.handlers.RotatingFileHandler(log_file, maxBytes=10 * 1024 * 1024, backupCount=5)
 file_handler.setLevel(getattr(logging, LOG_LEVEL, logging.DEBUG))
 file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
