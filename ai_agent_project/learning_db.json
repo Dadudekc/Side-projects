@@ -1,6 +1,0 @@
-{
-    "36faebb61d33f5878698af1dcfa8f7a2196edb59a14cea9a3fd1b88fbd512570": {
-        "patch": "--- a/test.py\n+++ b/test.py\n@@ -1 +1 @@\n+print('Fixed')",
-        "attempts": 1
-    }
-}

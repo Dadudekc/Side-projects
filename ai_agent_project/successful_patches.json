@@ -1,5 +1,0 @@
-{
-    "error123": [
-        "--- old_code.py\n+++ new_code.py\n- old\n+ new"
-    ]
-}
