@@ -1,0 +1,260 @@
+{
+  "timestamp": "2025-06-10T13:25:43.550067",
+  "environment": {
+    "directories": {
+      "core": true,
+      "api_intergrations": true,
+      "tests": true,
+      "ui": true,
+      "data": true
+    },
+    "env_vars": {
+      "OPENAI_API_KEY": true,
+      "YOUTUBE_API_KEY": false,
+      "INSTAGRAM_API_KEY": false
+    },
+    "dependencies": {
+      "total": 15,
+      "installed": 15,
+      "missing": []
+    },
+    "python_version": "3.11.9"
+  },
+  "core_components": {
+    "auto_posting": {
+      "status": "passed",
+      "methods": [
+        "AutoPostScheduler",
+        "TestAutoPostScheduler",
+        "datetime",
+        "patch",
+        "timedelta",
+        "unittest"
+      ]
+    },
+    "hashtag_performance": {
+      "status": "passed",
+      "methods": [
+        "HashtagPerformanceTracker",
+        "TestHashtagPerformanceTracker",
+        "defaultdict",
+        "pd",
+        "unittest"
+      ]
+    },
+    "audience_tracker": {
+      "status": "passed",
+      "methods": [
+        "AudienceInteractionTracker",
+        "Dict",
+        "List",
+        "OAuth1",
+        "Optional",
+        "datetime",
+        "load_dotenv",
+        "os",
+        "requests",
+        "time"
+      ]
+    },
+    "engagement_tracker": {
+      "status": "passed",
+      "methods": [
+        "EngagementTracker",
+        "pd"
+      ]
+    },
+    "social_media_analyzer": {
+      "status": "passed",
+      "methods": [
+        "BeautifulSoup",
+        "Mock",
+        "SocialMediaAnalyzer",
+        "TestSocialMediaAnalyzer",
+        "TextBlob",
+        "ThreadPoolExecutor",
+        "csv",
+        "patch",
+        "pd",
+        "plt",
+        "requests",
+        "unittest"
+      ]
+    },
+    "pdf_report_generator": {
+      "status": "passed",
+      "methods": [
+        "FPDF",
+        "PDFReportGenerator",
+        "PdfReader",
+        "TestPDFReportGenerator",
+        "datetime",
+        "generate_pdf_report",
+        "os",
+        "plt",
+        "unittest"
+      ]
+    },
+    "lead_magnet": {
+      "status": "passed",
+      "methods": [
+        "LeadMagnet",
+        "MAILCHIMP_API_ENDPOINT",
+        "MAILCHIMP_API_KEY",
+        "MAILCHIMP_LIST_ID",
+        "MAILCHIMP_SERVER_PREFIX",
+        "TestLeadMagnet",
+        "datetime",
+        "dotenv_path",
+        "hashlib",
+        "load_dotenv",
+        "os",
+        "re",
+        "requests",
+        "time",
+        "timedelta",
+        "unittest"
+      ]
+    },
+    "idea_vault": {
+      "status": "passed",
+      "methods": [
+        "IdeaVault",
+        "TestIdeaVault",
+        "datetime",
+        "json",
+        "os",
+        "unittest"
+      ]
+    },
+    "idea_integrator": {
+      "status": "passed",
+      "methods": [
+        "IdeaIntegrator",
+        "IdeaVault",
+        "MagicMock",
+        "SocialMediaAnalyzer",
+        "TestIdeaIntegrator",
+        "datetime",
+        "os",
+        "patch",
+        "unittest"
+      ]
+    },
+    "content_manager": {
+      "status": "passed",
+      "methods": [
+        "ContentManager",
+        "csv",
+        "datetime",
+        "timedelta"
+      ]
+    },
+    "batch_content_generator": {
+      "status": "passed",
+      "methods": [
+        "BatchContentGenerator",
+        "TestBatchContentGenerator",
+        "TextBlob",
+        "datetime",
+        "random",
+        "unittest"
+      ]
+    },
+    "a_b_testing": {
+      "status": "passed",
+      "methods": [
+        "ABTestExperiment",
+        "TestABTestExperiment",
+        "json",
+        "logging",
+        "os",
+        "statistics",
+        "stats",
+        "unittest"
+      ]
+    },
+    "referral_tracker": {
+      "status": "passed",
+      "methods": [
+        "ReferralManager",
+        "csv",
+        "datetime",
+        "logging",
+        "os",
+        "pd",
+        "timedelta"
+      ]
+    },
+    "engagement_heatmap": {
+      "status": "passed",
+      "methods": [
+        "EngagementHeatmap",
+        "TestEngagementHeatmap",
+        "datetime",
+        "pd",
+        "plt",
+        "sns",
+        "unittest"
+      ]
+    },
+    "ai_caption_suggester": {
+      "status": "passed",
+      "methods": [
+        "AICaptionSuggester",
+        "List",
+        "Optional",
+        "TestAICaptionSuggester",
+        "re",
+        "unittest"
+      ]
+    }
+  },
+  "integration_points": {
+    "youtube_api": {
+      "status": "passed",
+      "methods": [
+        "HttpError",
+        "YouTubeDataFetcher",
+        "build",
+        "load_dotenv",
+        "logging",
+        "os"
+      ]
+    },
+    "instagram_api": {
+      "status": "passed",
+      "methods": [
+        "Dict",
+        "InstagramAPI",
+        "List",
+        "OAuth2Session",
+        "Optional",
+        "Union",
+        "datetime",
+        "json",
+        "logger",
+        "logging",
+        "main",
+        "os",
+        "requests"
+      ]
+    },
+    "twitter_api": {
+      "status": "passed",
+      "methods": [
+        "TwitterClientV2",
+        "load_dotenv",
+        "logging",
+        "os",
+        "tweepy"
+      ]
+    }
+  },
+  "summary": {
+    "total_tests": 26,
+    "passed": 15,
+    "failed": 0,
+    "warnings": 2
+  }
+}
