@@ -1,0 +1,6 @@
+# Base schema for trade log
+- ticker: "AAPL"
+  entry: 150.0
+  exit: 155.0
+  notes: "Sample trade"
+  timestamp: "2024-01-01T00:00:00"
