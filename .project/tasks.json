@@ -1,0 +1,187 @@
+{
+  "owner": "dadudekc",
+  "repo": "Side-projects",
+  "repo_path": "D:\\repositories\\dadudekc\\Side-projects",
+  "primary_file": "D:\\repositories\\dadudekc\\Side-projects\\README.md",
+  "tasks": [
+    {
+      "text": "Core modules implemented and unit tested",
+      "done": false,
+      "section": "VlogForge",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 6,
+      "indent": 0
+    },
+    {
+      "text": "UI modules functional with basic tests",
+      "done": false,
+      "section": "VlogForge",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 7,
+      "indent": 0
+    },
+    {
+      "text": "API integrations configured with `.env` examples",
+      "done": false,
+      "section": "VlogForge",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 8,
+      "indent": 0
+    },
+    {
+      "text": "`verify_beta.py` run and report reviewed",
+      "done": false,
+      "section": "VlogForge",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 9,
+      "indent": 0
+    },
+    {
+      "text": "FastAPI endpoints return valid projects",
+      "done": false,
+      "section": "AI Architect",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 12,
+      "indent": 0
+    },
+    {
+      "text": "Code generator and self-evolver tested",
+      "done": false,
+      "section": "AI Architect",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 13,
+      "indent": 0
+    },
+    {
+      "text": "Bootstrap and deployment scripts execute without errors",
+      "done": false,
+      "section": "AI Architect",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 14,
+      "indent": 0
+    },
+    {
+      "text": "CI pipeline runs unit tests automatically",
+      "done": false,
+      "section": "AI Architect",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 15,
+      "indent": 0
+    },
+    {
+      "text": "Basic Flask wizard flows work end-to-end",
+      "done": false,
+      "section": "API Wizard",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 18,
+      "indent": 0
+    },
+    {
+      "text": "Automation scripts tested with at least one API",
+      "done": false,
+      "section": "API Wizard",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 19,
+      "indent": 0
+    },
+    {
+      "text": "Celery worker handles tasks reliably",
+      "done": false,
+      "section": "API Wizard",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 20,
+      "indent": 0
+    },
+    {
+      "text": "Documentation covers setup and troubleshooting",
+      "done": false,
+      "section": "API Wizard",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 21,
+      "indent": 0
+    },
+    {
+      "text": "User onboarding, matching, chat and feedback implemented",
+      "done": false,
+      "section": "SkillSwap",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 24,
+      "indent": 0
+    },
+    {
+      "text": "Point wallet and safety features deployed",
+      "done": false,
+      "section": "SkillSwap",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 25,
+      "indent": 0
+    },
+    {
+      "text": "Load tests and QA pass on staging",
+      "done": false,
+      "section": "SkillSwap",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 26,
+      "indent": 0
+    },
+    {
+      "text": "Trade entry GUI logs to YAML correctly",
+      "done": false,
+      "section": "Trading System Optimizer",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 29,
+      "indent": 0
+    },
+    {
+      "text": "Analytics modules generate equity curves",
+      "done": false,
+      "section": "Trading System Optimizer",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 30,
+      "indent": 0
+    },
+    {
+      "text": "Discord notifications send successfully",
+      "done": false,
+      "section": "Trading System Optimizer",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 31,
+      "indent": 0
+    },
+    {
+      "text": "Unit tests for analytics and bot modules pass",
+      "done": false,
+      "section": "Trading System Optimizer",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 32,
+      "indent": 0
+    },
+    {
+      "text": "Tasks persist to `tasks.json` or CSV",
+      "done": false,
+      "section": "GUI Task Managers",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 35,
+      "indent": 0
+    },
+    {
+      "text": "Basic filtering and progress indicators work",
+      "done": false,
+      "section": "GUI Task Managers",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 36,
+      "indent": 0
+    },
+    {
+      "text": "Tests in `tests/test_tasks_json.py` pass",
+      "done": false,
+      "section": "GUI Task Managers",
+      "file": "D:\\repositories\\dadudekc\\Side-projects\\BETA_READY_CHECKLISTS.md",
+      "line": 37,
+      "indent": 0
+    }
+  ],
+  "milestones": [],
+  "objectives": [],
+  "updated_at": "2025-08-09T21:23:16.410913Z"
+}
