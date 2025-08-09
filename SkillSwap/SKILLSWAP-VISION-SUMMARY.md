@@ -16,4 +16,4 @@ SkillSwap empowers communities to share skills without money, breaking down econ
 ## Long-Term Vision
 - **Skill trees**: Gamified progression maps your growth and encourages challenges.
 - **Institutional partnerships**: Co-hosted workshops with schools and libraries.
-- **Global network**: Connect regions, share best practice-projectss, and spotlight social impact metrics.
+- **Global network**: Connect regions, share best practice-projects-projectss, and spotlight social impact metrics.
